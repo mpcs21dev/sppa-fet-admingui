@@ -1,0 +1,54 @@
+/* CSS FOR IFRAME WINDOW */
+.frmain {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    border-radius: 5px;
+}
+.frmain > div:first-child {
+    border-radius: 5px 5px 0 0;
+    border-color: red;
+    border-width: 2px 2px 0 2px;
+    border-style: solid;
+}
+.frmain > iframe,
+.frmain > div:nth-child(2) {
+    flex: 1 0 0;
+    border: 2px solid red;
+    background-color: rgb(255,255,255);
+}
+.frmain > div:last-child {
+    border-radius: 0 0 5px 5px;
+    border-color: red;
+    border-width: 0px 2px 2px 2px;
+    border-style: solid;
+}
+.frmain .frcap {
+    padding: 5px 10px;
+    font-weight: bold;
+    background-color: rgba(255,0,0,.5);
+    display: flex;
+    flex-direction: row;
+}
+.frmain .frcap > span:first-child {
+    flex: 1 0 0;
+}
+.frmain .frcap > span:last-child {
+    cursor: pointer;
+}
+
+.frmain.blue > div:first-child,
+.frmain.blue > iframe,
+.frmain.blue > div:nth-child(2),
+.frmain.blue > div:last-child {
+    border-color: blue !important;
+}
+.frmain.blue .frcap {
+    background-color: rgba(0,0,255,.5) !important;
+    color: yellow;
+}
+.greybox {
+    position: absolute;
+    filter: blur(3px);
+    background-color: rgba(90,90,90,.8);
+}

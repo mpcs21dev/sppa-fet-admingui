@@ -1,0 +1,87 @@
+.boxserver {
+    filter: drop-shadow(3px 3px 6px #000000);
+    border-radius: 3px;
+    border: 1px solid gray;
+    padding: 3px;
+    font-size: 8pt;
+    margin-bottom: 10px;
+    min-width: 350px;
+    max-width: 350px;
+}
+.boxserver.yellow { background-color: rgb(255,255,180); border-color: rgba(175,175,0,.4); }
+.boxserver.ungu { background-color: rgb(220,255,180); border-color: rgba(175,0,175,.4); }
+.boxserver .caption { font-weight: bold; padding: 0px 3px; }
+.boxserver .console {
+    padding: 3px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+.boxserver .console > div {
+    flex: none;
+    font-family: monospace;
+    font-size: 8pt;
+    font-weight: normal;
+}
+
+.SInfo {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+}
+.SInfo > div {
+    border: 1px solid gray;
+    border-radius: 5px;
+    margin-right: 3px;
+}
+.SInfo > div:last-child {
+    margin-right: 0 !important;
+}
+.SInfo > button {
+    margin-right: 5px;
+    min-width: 80px;
+    min-height: 30px;
+    cursor: pointer;
+}
+.SInfo > div > div {
+    text-align: center;
+    padding: 0px 4px;
+    max-width: 100px;
+    overflow:hidden;
+    white-space:nowrap;
+}
+.SInfo > div > div:first-child {
+    font-weight: bold;
+    font-size: 1.1em;
+    background-color: white;
+    border-radius: 5px 5px 0 0;
+}
+.SInfo > div > div:last-child {
+    font-weight: bold;
+    font-size: .9em;
+    color: white;
+    border-radius: 0 0 4px 4px;
+    background-color: gray;
+}
+.SInfo > div > div.error:last-child {
+    background-color: maroon !important;
+}
+.SInfo > div > div.send:last-child {
+    background-color: green !important;
+}
+.SInfo > div > div.cpu:last-child {
+    background-color: navy !important;
+}
+.SInfo > div > div.mem:last-child {
+    background-color: navy !important;
+}
+.SInfo-separator {
+    flex: 1 0 0;
+    border-width: 0px !important;
+}
+.SInfo-separator-2 {
+    min-width: 5px;
+    max-width: 5px;
+    border-width: 0px !important;
+}
+
