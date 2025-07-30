@@ -64,6 +64,7 @@ function api_fn($hasil, $parm, $json) {
                     break;
             }
             break;
+
         case 'wsc':
             $doby = array(array("field"=>"id","dir"=>"asc"));
             switch ($action) {
@@ -88,6 +89,20 @@ function api_fn($hasil, $parm, $json) {
                     break;
             }
             break;
+
+        case 'connection':
+            $doby = array(array("field"=>"id","dir"=>"asc"));
+            switch ($action) {
+                case 'latest':
+                    $sql = "SELECT * FROM wsc_login";
+
+                    break;
+                default:
+                    $sql = "";
+                    break;
+            }
+            break;
+
         default:
             # code...
             break;

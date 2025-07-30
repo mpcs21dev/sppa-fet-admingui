@@ -93,6 +93,7 @@ function api_fn($hasil, $parm, $json) {
                     unset($json["bbId"]);
                     unset($json["firmId"]);
                     unset($json["sourceId"]);
+                    unset($json["rec_type_str"]);
                     break;
                 case 'delete':
                     $sql = "public.config";

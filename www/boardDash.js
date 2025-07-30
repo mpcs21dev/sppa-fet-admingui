@@ -85,6 +85,25 @@ class Config extends Common {
         }
         return hasil;
     }
+    updateConn(j,ix,origin=""){
+        if (ix === false) return false;
+        var m = this.data[ix];
+        if (j.appId == this.part_id+'-'+m.clientId) {
+            try {
+                if (j.data.description == "FIX Client logon") {
+                    $id("clientId_"+this.part_id+'-'+m.clientId).className = 'send';
+                }
+                if (j.data.description == "FIX Client logout") {
+                    $id("clientId_"+this.part_id+'-'+m.clientId).className = 'error';
+                }
+                //console.log('updateConn-oke',origin,'clientId_'+this.part_id+'-'+m.clientId,j);
+            } catch(e) {
+                console.log('updateConn-error',origin,e,'clientId_'+this.part_id+'-'+m.clientId,j.data);
+            }
+            return true;
+        }
+        return false;
+    }
     updateStat(j,ix,origin=""){
         //const j = JSON.parse(data);
         if (ix === false) return false;
@@ -124,7 +143,7 @@ class Config extends Common {
                 cli += `
                     <div class='console'>
                         <div class='SInfo'>
-                            <div><div>${rec.clientName}</div><div class="cpu">${rec.clientId}</div></div>
+                            <div><div>${rec.clientName}</div><div id="${this.genId('clientId',recid)}" class="error">${rec.clientId}</div></div>
                             <div class="SInfo-separator"></div>
                             <div><div id="${this.genId('rfoRequest',recid)}">${rec.rfoRequest}</div><div>RFO</div></div>
                             <div><div id="${this.genId('approved',recid)}">${rec.approved}</div><div>APPRV</div></div>
@@ -249,6 +268,18 @@ class ConBox {
             let ix = this.box[i].indexByClientId(j.appId);
             if (ix !== false) {
                 return this.box[i].updateStat(j,ix,origin);
+                //break;
+            }
+        }
+        return false;
+    }
+    updateConn(j,origin=""){
+        //const j = JSON.parse(data);
+        const x = this.box.length;
+        for (var i=0; i<x; i++) {
+            let ix = this.box[i].indexByClientId(j.appId);
+            if (ix !== false) {
+                return this.box[i].updateConn(j,ix,origin);
                 //break;
             }
         }

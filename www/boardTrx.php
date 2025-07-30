@@ -11,6 +11,7 @@
                 <div class="toolbar orange"><div class='ui vertical icon buttons'>
                     <button id='btnLRefresh' class='ui mini violet icon button fixedvert'><i class='redo large icon'></i><br><span>Refresh</span></button>
                     <button id='btnLView' class='ui mini blue icon button fixedvert'><i class='eye outline large icon'></i><br><span>View</span></button>
+                    <button id='btnLResend' class='ui mini yellow icon button fixedvert'><i class='share square large icon'></i><br><span>Resend</span></button>
                     <!--
                     <button id='btnLAdd' class='ui mini blue icon button fixedvert'><i class='plus circle large icon'></i><br><span>Add</span></button>
                     <button id='btnLEdit' class='ui mini blue icon button fixedvert'><i class='edit outline large icon'></i><br><span>Edit</span></button>
@@ -37,37 +38,6 @@
         </div>
     </div>
 </div>
-<!--
-<div id="trxBoard" class="board">
-    <div id="leher" class="attached standard">
-        <div id='leher-1' class='ui rounded' style='margin-bottom: 5px;'>
-            <span class='ui small text'>Participant</span>
-            <span class='padder2'></span>
-            <select class='ui mini search dropdown' id='cbxPart'></select>
-        </div>
-        <div class="ui grid">
-            <div class="eight wide column">
-                <div id="kiri" class="attached">
-                    <div class="ui mini orange tag label"><h5>RFO</h5></div>
-                    <button class="ui mini violet icon button" id="btnLRefresh" data-tooltip="Refresh" data-position="bottom left"><i class="redo icon"></i></button>
-                    <button class="ui mini violet icon button" id="btnLView" data-tooltip="View" data-position="bottom left"><i class="eye outline icon"></i></button>
-                </div>
-                <div id="table_left" class="ui orange table"></div>
-            </div>
-            <div class="eight wide column">
-                <div id="kanan" class="attached">
-                    <div class="ui mini green tag label"><h5>Message</h5></div>
-                    <div class="ui buttons">
-                        <button class="ui mini violet icon button" id="btnRRefresh" data-tooltip="Refresh" data-position="bottom left"><i class="redo icon"></i></button>
-                        <button class="ui mini violet icon button" id="btnRView" data-tooltip="View" data-position="bottom left"><i class="eye outline icon"></i></button>
-                    </div>
-                </div>
-                <div id="table_right" class="ui green table"></div>
-            </div>
-        </div>
-    </div>
-</div>
--->
 <script type="text/javascript">
     Trx = {
         Tabll: null,
@@ -79,6 +49,28 @@
         leftData: null,
         leftID: 0,
         partID: '',
+        resendUrl: 'http://localhost:9090/sppa-fet/admin/resend',
+        resend: function(row) {
+            var obj = {RfoResendRequest: {
+                participantId: row.partid,
+                clientId: row.cln_user_id,
+                clnOrderId: row.cln_order_id
+            }};
+            $('body').modal('myConfirm', "<i class='exclamation triangle icon red'></i> Resend Order", "Continue resend selected order?", ()=>{
+                Loader("Resending order...");
+                Api(this.resendUrl, {body: JSON.stringify(obj)}).then(
+                    oke => {
+                        LoaderHide();
+                        ToastSuccess("Resend order success");
+                    },
+                    err => {
+                        LoaderHide();
+                        ToastError("Resend order error");
+                        console.log(err);
+                    }
+                );
+            });
+        },
         init_model: function() {
             this.frmLeft.setModel({
                 id: {caption: "ID", title: "No", type: "numeric", autoValue: true, formatter: "rownum"},
@@ -117,11 +109,11 @@
                 w1 = Math.ceil($("#menubar").outerHeight()),
                 w2 = $id("leher-1").offsetHeight; //parseInt($id("leher-1").height),
                 k1 = Math.ceil($("#kanan").outerHeight());
-            //console.log([w0,w1,w2,k1]);
             const tinggi = w0 / 2 - 45;
             this.Tabll = this.frmLeft.xTabulator("table_left", tinggi, "board_trx_trx", urll, {
                 layout: "fitDataFill", 
                 initialSort:this.leftInitialSort,
+                initialHeaderFilter: [{field:"record_date", value:<?=date("Ymd")?>}],
                 rowFormatter: (row) => {
                     var data = row.getData();
                     switch (data.status){
@@ -155,9 +147,7 @@
             this.Tabll.on('rowSelected', function(row){
                 //e - the click event object
                 //row - row component
-                //console.log(row.getData());
                 that.leftData = row.getData();
-                console.log(that.leftData);
                 that.leftID = that.leftData.id;
                 that.partID = that.leftData.partid;
                 that.Tablr.setData('api/?1/trx/message/list/'+that.partID+'/'+that.leftID);
@@ -203,8 +193,6 @@
             });
         },
         leftRefresh: function() {
-            //var cp = this.Tabll.getPage();
-            //this.Tabll.setPage(cp);
             this.Tabll.setData();
         },
         rightRefresh: function() {
@@ -223,6 +211,16 @@
             var parm = {id: sel.id, partid: sel.partid};
             XFrame.setCaption("RFO").setContent(this.frmLeft.viewCard(parm)).setAction(false).show(false);
         },
+        leftResend: function() {
+            var sel = (this.Tabll.getSelectedData())[0]; // get first selected element
+            if (sel == undefined) {
+                ToastError("No row selected");
+                return;
+            }
+            //var parm = {id: sel.id, partid: sel.partid};
+            //XFrame.setCaption("RFO").setContent(this.frmLeft.viewCard(parm)).setAction(false).show(false);
+            this.resend(sel);
+        },
         rightView: function() {
             var sel = (this.Tablr.getSelectedData())[0]; // get first selected element
             if (sel == undefined) {
@@ -240,6 +238,7 @@
             $("#btnLView").on("click", ()=>{ that.leftView(); });
             $("#btnRRefresh").on("click", ()=>{ that.rightRefresh(); });
             $("#btnRView").on("click", ()=>{ that.rightView(); });
+            $("#btnLResend").on("click", ()=>{ that.leftResend(); });
             Api("api/?1/config/config/listall-noftp").then(
                 data => {
                     if (data.error == 0) {
@@ -275,7 +274,6 @@
                                 });
                             }
                         }
-                        //that.Tabll.setData("api/?1/trx/transaction/list/all");
                     } else {
                         //SwalToast('error','Error Get Challange');
                         ToastError("Error readng config table");
@@ -290,11 +288,4 @@
             );
         }
     };
-
-    /*
-    Tabll.on("rowClick", function(e, row){
-        //leftData = row.getData();
-        //leftID = leftData.ID;
-    });
-    */
 </script>

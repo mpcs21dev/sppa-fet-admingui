@@ -289,7 +289,7 @@ $PRM = array(
                 return;
             }
 
-            $('body').modal('myConfirm', \"<i class='exclamation triangle icon red'></i> Delete Record\", \"Delete [\"+sel.participantId+\"] ?\", ()=>{
+            $('body').modal('myConfirm', \"<i class='exclamation triangle icon red'></i> Delete Record\", \"Delete [\"+sel.participant_id+\"] ?\", ()=>{
                 Loader('Deleting record...');
                 var fdata = frmLeft.formDataTabRow(sel);
                 Api('api/?1/config/config/delete', {body: fdata}).then(

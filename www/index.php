@@ -72,6 +72,7 @@ $lastId = getVars("last-id",0);
     </style>
     <link rel="stylesheet" type="text/css" href="classes.css">
     <link rel="stylesheet" type="text/css" href="framer.css">
+    <script src="lib/forge-sha256.min.js"></script>
     <script src="index.js"></script>
     <script src="classes.js"></script>
     <script src="framer.js"></script>
@@ -215,7 +216,64 @@ $lastId = getVars("last-id",0);
         $("#mnu-user").on("click", ()=>{assignFr("musr","User","loader.php?p=cmsuser");});
         $("#mnu-right").on("click", ()=>{assignFr("mrig","Right","loader.php?p=right");});
         $("#mnu-role").on("click", ()=>{assignFr("mrol","Role","loader.php?p=role");});
-        $("#mnu-chpwd").on("click", ()=>{assignFr("mcpw","Change Password","loader.php?p=passwd");});
+        $("#mnu-chpwd").on("click", ()=>{
+            var frmPwd = new Formation();
+            frmPwd.setModel({
+                pwd0: {caption:"Old Password", type:"string", control:"password"},
+                pwd1: {caption:"New Password", type:"string", control:"password"},
+                pwd2: {caption:"Confirm New Password", type:"string", control:"password"}
+            });
+
+            XFrame.setCaption('Change Password')
+                .setContent(frmPwd.formAdd('chg_user_pass'))
+                .setConfirmation("Change Password")
+                .setVerifier(true, ()=>{ return frmPwd.doVerify(); })
+                .setAction(true,()=>{
+                    var fdata = frmPwd.readForm(false,true, true);
+                    var opwd = fdata['pwd0'];
+                    var npwd = fdata['pwd1'];
+                    var cpwd = fdata['pwd2'];
+                    if (npwd != cpwd) {
+                        ToastError('New password not confirmed');
+                        return;
+                    }
+                    if (npwd == opwd) {
+                        ToastError('New password same as old password');
+                        return;
+                    }
+                    if (npwd == "") {
+                        ToastError('New password empty');
+                        return;
+                    }
+                    if (npwd.length < 6) {
+                        ToastError('Minimum password length is six chars');
+                        return;
+                    }
+                    fdata['pwd0'] = forge_sha256(opwd);
+                    fdata['pwd1'] = forge_sha256(npwd);
+                    fdata['pwd2'] = forge_sha256(cpwd);
+                    const usr = getSetting("user-data", {});
+                    fdata['id'] = usr["id"];
+                    Loader('Changing user password...');
+                    //console.log(fdata);
+                    Api('api/?1/passwd', {body: JSON.stringify(fdata)}).then(
+                        data => {
+                            LoaderHide();
+                            if (data.error == 0) {
+                                ToastSuccess('Change password success');
+                                //btnRefresh_click();
+                            } else {
+                                FError('Change password failed', data.message);
+                            }
+                        },
+                        error => {
+                            LoaderHide();
+                            FError('Change password error', error);
+                        }
+                    );
+                })
+                .show();
+        });
 
         $("#mnu-logout").on("click", ()=>{
             if (confirm("Logout ?")) {

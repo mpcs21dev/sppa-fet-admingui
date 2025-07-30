@@ -1398,6 +1398,7 @@ class Formation {
             this.setData(param.initialData);
         }
         if (param.initialFilter != undefined) obj["initialFilter"] = param.initialFilter;
+        if (param.initialHeaderFilter != undefined) obj["initialHeaderFilter"] = param.initialHeaderFilter;
         if (param.initialSort != undefined) obj["initialSort"] = param.initialSort;
         if (param.rowFormatter != undefined) obj["rowFormatter"] = param.rowFormatter;
         //if (param.ajaxResponse != undefined) obj["ajaxResponse"] = param.ajaxResponse;

@@ -9,6 +9,7 @@
         lastId: 0,
         syncUrl: "api/?1/wsc/wsc/latest",
         metrUrl: "api/?1/wsc/metric/latest",
+        connUrl: "api/?1/wsc/connection/latest",
         xbj: null,
         xdate: "",
         IID: null,
@@ -54,6 +55,10 @@
                                 if (self.xbj.logType == "STAT") {
                                     Dash.Ses.updateStat(self.xbj,"doit");
                                 }
+                                if (self.xbj.logType == "EVNT" && self.xbj.appType == "FIX" && self.xbj.data.description == "FIX Client logon") {
+                                    Dash.Ses.updateConn(self.xbj,"doit");
+                                    //console.log(JSON.parse(row.msg));
+                                }
                                 if ((self.xbj.logType=='INFO') && (self.xbj.appType=='FTP') && (self.xbj.appId=='FTP-XML')) rtrx = true;
                                 if ((self.xbj.logType!='METR') && (self.xbj.logType!='STAT')) reve = true;
                                 self.lastId = row.id;
@@ -89,6 +94,32 @@
                 );
             }
             doit_repeat();
+        },
+        clientConn: function(){
+            Api(this.connUrl).then(
+                oke => {
+                    if (oke.error == 0) {
+                        //
+                    } else {
+                        let obj = {
+                            error: 'Fetch previous values failed',
+                            message: oke.message,
+                            date: (new Date()).format("localShortTime")
+                        };
+                        $id('errInfo').innerText = JSON.stringify(obj,null,2);
+                        this.changeIcon();
+                    }
+                },
+                err => {
+                    let obj = {
+                        error: 'Fetch prev values error',
+                        message: err,
+                        date: (new Date()).format("localShortTime")
+                    };
+                    $id('errInfo').innerText = JSON.stringify(obj,null,2);
+                    this.changeIcon();
+                }
+            );
         },
         currentBox: function(){
             self = this;
