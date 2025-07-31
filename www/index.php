@@ -9,6 +9,7 @@ spl_autoload_register(function ($class_name) {
 });
 */
 require_once("check.php");
+require_once("api/const.php");
 $lastId = getVars("last-id",0);
 ?><!DOCTYPE html>
 <html>
@@ -97,15 +98,13 @@ $lastId = getVars("last-id",0);
                         <div class="item" id="mnu-config">Config</div>
                         <div class="item" id="mnu-holiday">Holiday</div>
                     </div>
-                </div>
-                <div class="item">
+                </div> 
+                <div class="item" <?= cekLevel(LEVEL_ADMIN) ? "" : "style=\"display:none;\"" ?>>
                     <i class="dropdown icon"></i>
                     <span class="text">Administrative</span>
                     <div class="menu">
-                        <div class="item" id="mnu-ref">Reference</div>
+                        <div class="item" id="mnu-ref" <?= cekLevel(LEVEL_DEV) ? "" : "style=\"display:none;\"" ?>>Reference</div>
                         <div class="item" id="mnu-user">User</div>
-                        <div class="item" id="mnu-right">Right</div>
-                        <div class="item" id="mnu-role">Role</div>
                     </div>
                 </div>
             </div>
@@ -120,7 +119,7 @@ $lastId = getVars("last-id",0);
         <!-- TASKBAR :: END -->
         <!-- MENU KANAN :: START -->
         <div class="right menu">
-            <a id='tsync' class="item"><i id="icon_sync" class="sync icon"></i> Sync</a>
+            <a id='tsync' class="item" <?= cekLevel(LEVEL_DEV) ? "" : "style=\"visibility:hidden;\"" ?>><i id="icon_sync" class="sync icon"></i> Sync</a>
             <div id='menu-kanan' class="ui inverted dropdown item">
                 <i class="user icon"></i>
                 Session
@@ -214,8 +213,6 @@ $lastId = getVars("last-id",0);
 
         $("#mnu-ref").on("click", ()=>{assignFr("mref","Reference","loader.php?p=ref");});
         $("#mnu-user").on("click", ()=>{assignFr("musr","User","loader.php?p=cmsuser");});
-        $("#mnu-right").on("click", ()=>{assignFr("mrig","Right","loader.php?p=right");});
-        $("#mnu-role").on("click", ()=>{assignFr("mrol","Role","loader.php?p=role");});
         $("#mnu-chpwd").on("click", ()=>{
             var frmPwd = new Formation();
             frmPwd.setModel({

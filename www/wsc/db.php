@@ -1,4 +1,6 @@
 <?php
+require_once(__DIR__."/../api/const.php");
+
 class XDSN {
     static function mssql($svr,$db) {
         return "sqlsrv:server={$svr}; Database={$db}; TrustServerCertificate=true;";
@@ -163,14 +165,14 @@ class Hpdo extends PDO
 
 function DBX($idx) {
     static $slfile = null;
-    if ($slfile == null) $slfile = PHP_OS == "Linux" ? "/dev/shm/sppa_fet_log.db" : "../sppa_fet_log.db";
+    if ($slfile == null) $slfile = "/dev/shm/sppa_fet_log.db";
 
     static $dbusr = null;
     static $dbpas = null;
     static $dbip = null;
-    if ($dbusr == null) $dbusr = PHP_OS == "Linux" ? "sppa" : "postgres";
-    if ($dbpas == null) $dbpas = PHP_OS == "Linux" ? "bjfgua5M5gkUDZxjXxkIOMYZ4" : "postgres";
-    if ($dbip == null) $dbip = PHP_OS == "Linux" ? "10.102.0.43" : "127.0.0.1";
+    if ($dbusr == null) $dbusr = "sppa";
+    if ($dbpas == null) $dbpas = "bjfgua5M5gkUDZxjXxkIOMYZ4";
+    if ($dbip == null) $dbip = "10.102.0.43";
 
     static $hdb = null;
     static $ldb = null;
@@ -179,7 +181,7 @@ function DBX($idx) {
     if ($ldb == null) $ldb = new Hpdo(array("","",XDSN::sqlite($slfile,false)),"SQLITE");
     
     switch ($idx) {
-        case 1:
+        case 2:
             return $ldb;
         default:
             return $hdb;

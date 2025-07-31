@@ -1,8 +1,8 @@
 <?php
 function initdb() {
-    $sql_1 = "create table wsc_log (id integer primary key AUTOINCREMENT, msg varchar(100), tgl datetime)";
+    $sql_1 = "create table wsc_log (id integer primary key, msg varchar(100), tgl text)";
     $sql_2 = "create table wsc_box (
-        id integer primary key autoincrement,
+        id integer primary key,
         appId varchar(10),
         totalCpu varchar(10),
         userPercent varchar(10),
@@ -12,11 +12,11 @@ function initdb() {
         userMemory varchar(10),
         systemMemory varchar(10),
         idleMemory varchar(10),
-        lastUpdate datetime
+        lastUpdate text
     )";
-    $sql_3 = "create table wsc_err (id integer primary key AUTOINCREMENT, msg varchar(100), sql varchar(100), prm varchar(100), tgl datetime)";
+    $sql_3 = "create table wsc_err (id integer primary key, msg varchar(100), sql varchar(100), prm varchar(100), tgl text)";
     $sql_4 = "create table wsc_stat (
-        id integer primary key autoincrement,
+        id integer primary key,
         appId varchar(20),
         rfoRequest integer,
         approved integer,
@@ -24,28 +24,37 @@ function initdb() {
         trade integer,
         error integer,
         send integer,
-        lastUpdate datetime
+        lastUpdate text
     )";
+    $sql_5 = "CREATE TABLE wsc_login (
+        'id' INTEGER primary key,
+        'appId' VARCHAR(10),
+        'login' INTEGER,
+        'lastUpdate' TIMESTAMP
+    );";
     try {
-        DBX(1)->run($sql_1);
+        DBX(2)->run($sql_1);
     } catch (Exception $e) {
-        echo($e->getMessage());
-    }
-    /*
-    try {
-        DBX(1)->run($sql_2);
-    } catch (Exception $e) {
-        echo($e->getMessage());
-    }
-    try {
-        DBX(1)->run($sql_3);
-    } catch (Exception $e) {
-        echo($e->getMessage());
+        echo($e->getMessage()."\n");
     }
     try {
-        DBX(1)->run($sql_4);
+        DBX(2)->run($sql_2);
     } catch (Exception $e) {
-        echo($e->getMessage());
+        echo($e->getMessage()."\n");
     }
-    */
+    try {
+        DBX(2)->run($sql_3);
+    } catch (Exception $e) {
+        echo($e->getMessage()."\n");
+    }
+    try {
+        DBX(2)->run($sql_4);
+    } catch (Exception $e) {
+        echo($e->getMessage()."\n");
+    }
+    try {
+        DBX(2)->run($sql_5);
+    } catch (Exception $e) {
+        echo($e->getMessage()."\n");
+    }
 }

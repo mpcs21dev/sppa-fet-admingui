@@ -179,8 +179,11 @@ function data_update($table, $keyfld, $json, $dbx=0, $selectFrom = "") {
 
     //print_r($sql);
     //print_r($arm);
-
-    DBX($dbx)->run($sql, $arm);
+    try {
+        DBX($dbx)->run($sql, $arm);
+    } catch (Exception $e) {
+        return array("sql"=>$sql,"prm"=>$arm);
+    }
 
     if ($selectFrom == "") {
         return data_read($table, $keyfield, $val_key, $dbx);

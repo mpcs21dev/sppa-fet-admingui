@@ -50,6 +50,14 @@ function api_fn($hasil, $parm, $json) {
     $hasil->debug = array();
 
     switch ($table) {
+        case 'stat':
+            $dbx = 2;
+            $sql = "select * from wsc_stat";
+            break;
+        case 'fix':
+            $dbx = 2;
+            $sql = "select * from wsc_login";
+            break;
         case 'ref':
             switch ($action) {
                 case 'rec-type':
@@ -176,6 +184,7 @@ function api_fn($hasil, $parm, $json) {
             break;
 
         case 'create':
+            if (!cekLevel(LEVEL_ADMIN)) done($hasil, 26);
             $obj = null;
             try {
                 $obj = data_create($sql,"id",$json, false, false, $dbx);
@@ -224,6 +233,7 @@ function api_fn($hasil, $parm, $json) {
             break;
 
         case 'update':
+            if (!cekLevel(LEVEL_ADMIN)) done($hasil, 26);
             $old = data_read($sql,"id",$json["id"],$dbx);
             $new = null;
             try {
@@ -238,6 +248,7 @@ function api_fn($hasil, $parm, $json) {
            break;
 
         case 'delete':
+            if (!cekLevel(LEVEL_ADMIN)) done($hasil, 26);
             $obj = null;
             try {
                 $obj = data_delete($sql,"id",$json["id"],$dbx);
@@ -250,6 +261,7 @@ function api_fn($hasil, $parm, $json) {
             break;
 
         case 'execsql':
+            if (!cekLevel(LEVEL_ADMIN)) done($hasil, 26);
             try {
                 DBX($dbx)::run($sql,$prms);
             } catch (Exception $e) {

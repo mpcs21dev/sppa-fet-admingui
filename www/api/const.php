@@ -6,9 +6,14 @@ define("DEF_SCHEMA","public");
 //define("FIREBASE_JSON","firebase.json");
 define("CHECK_RIGHT", false);
 define("DS","/"); // directory separator
+
 define("DB_DATA",0);
 define("DB_RIGHT",1);
 define("DB_LOG",2);
+
+define("LEVEL_USER",1);
+define("LEVEL_ADMIN",5);
+define("LEVEL_DEV", 99);
 
 $ERR = array(
     "",
@@ -37,7 +42,7 @@ $ERR = array(
     "",
     "",
     "Not authorized to modify this entry",  // 25
-    "",
+    "User not authorized",                  // 26
     "",
     "",
     "",
@@ -54,35 +59,15 @@ $ERR = array(
     "Access Denied" // 40
 );
 
-$VERSIONS = array("1","99");
+$VERSIONS = array("1");
 $FUNCTIONS = new stdClass();
-$FUNCTIONS->v99 = array(
-    "cmsasset",
-    "writedbcon"
-);
 $FUNCTIONS->v1 = array(
-    "user-create",
-    "user-update",
-    "user-delete",
-    "user-list",
-    "user-reset",
-    
-    "domain-list",
-    "domain-add",
-    "domain-update",
-    "domain-delete",
-    "domain-list-2",
-    
-    "domainkey-list",
-    "domainkey-add",
-    "domainkey-update",
-    "domainkey-delete",
-
     "holiday",
     "config",
     "trx",
     "wsc",
     "ref",
+    "user",
         
     "getChallange",
     "login",

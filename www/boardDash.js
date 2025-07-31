@@ -165,8 +165,8 @@ class Config extends Common {
                         </div>
                         <div class='console'>
                             <div class="SInfo">
-                                <button>Message</button>
-                                <button>Event</button>
+                                <button onclick="showTrx('${this.part_id}')">Transaction</button>
+                                <button onclick="showEvent()">Event</button>
                                 <div class="SInfo-separator"></div>
                                 <!--
                                 <div><div id="${this.genId('core')}">${this.cpu_core}</div><div>CORE</div></div>
@@ -446,6 +446,52 @@ Dash = {
     RootID: 'dashBoard',
     Data: [],
     Ses: new ConBox(),
+    readStat: function(){
+        Api("api/?1/config/stat/listall").then(oke => {
+            if (oke.error == 0) {
+                for (var i=0; i<oke.data.length; i++) {
+                    let dx = oke.data[i];
+                    const appid = dx.appId;
+                    delete dx["id"];
+                    delete dx["appId"];
+                    delete dx["lastUpdate"];
+                    const dk = Object.keys(dx);
+                    for (var k=0; k<dk.length; k++) {
+                        try {
+                            $id(dk[k]+'_'+appid).innerText = dx[dk[k]];
+                        } catch(e) {
+                            console.log('updateStat-error',e,dk[k],dx[k]);
+                        }
+                    }
+                }
+            } else {
+                ToastError("Error readng connection table");
+                console.log(oke);
+            }
+        }, err => {
+            ToastError("Connection Status: Server Error");
+            console.log({status: "Connection Status: Server Error", detail: err});
+        });
+    },
+    readConn: function(){
+        Api("api/?1/config/fix/listall").then(oke => {
+            if (oke.error == 0) {
+                for (var i=0; i<oke.data.length; i++) {
+                    try {
+                        $id("clientId_"+oke.data[i].appId).className = oke.data[i].login == "1" ? 'send':'error';
+                    } catch(e) {
+                        console.log('updateConn-error',e,'clientId_'+this.appId,oke.data[i]);
+                    }
+                }
+            } else {
+                ToastError("Error readng connection table");
+                console.log(oke);
+            }
+        }, err => {
+            ToastError("Connection Status: Server Error");
+            console.log({status: "Connection Status: Server Error", detail: err});
+        });
+    },
     render_wrap: function(html) {
         let div = document.createElement("div");
         div.id = "sesgrid";
@@ -455,7 +501,7 @@ Dash = {
         $id(this.RootID).appendChild(div);
     },
     render: function(upd = false) {
-        //let self1 = this;
+        let selfDash = this;
         Api("api/?1/config/config/listall").then(
             data => {
                 if (data.error == 0) {
@@ -482,6 +528,8 @@ Dash = {
                     ToastError("Error readng config table");
                     console.log(data);
                 }
+                setTimeout(selfDash.readConn,500);
+                setTimeout(selfDash.readStat,1500);
             },
             error => {
                 //SwalToast('error','Get Challange: Server Error');
@@ -493,4 +541,12 @@ Dash = {
     startup: function() {
         this.render();
     }
+}
+
+function showTrx(partid) {
+    Task.Show('ttrx');
+    Trx.Tabll.setHeaderFilterValue("participant",partid);
+}
+function showEvent() {
+    Task.Show('tevent');
 }

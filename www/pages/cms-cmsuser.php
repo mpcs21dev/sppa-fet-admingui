@@ -25,11 +25,13 @@ $Model = '{
                 return true;
             }
         }},
-        email: {caption: "Email", type: "string"},
-        chpwd: {caption: "Ch Pass", type: "boolean", formatter: boolFormatter, hozAlign: "center"},
-        enabled: {caption: "Enable", type: "boolean", noadd: true, formatter: boolFormatter, hozAlign: "center"},
-        inserted_at: {caption: "Created", type: "datetime", autoValue: true, formatter: datetimeFormatter},
-        updated_at: {caption: "Updated", type: "datetime", autoValue: true, formatter: datetimeFormatter}
+        ulevel:{caption:"User Level", type:"numeric", noview:true, visible:false, control:"lookup", option:{table:"UserLevel", id:"xkey", text:"xval"}},
+        user_level:{caption:"User Level", type:"string", noadd:true, noedit:true},
+        email: {caption:"Email", type: "string"},
+        chpwd: {caption:"Ch Pass", type: "boolean", formatter: boolFormatter, hozAlign: "center"},
+        enabled: {caption:"Enable", type: "boolean", noadd: true, formatter: boolFormatter, hozAlign: "center"},
+        inserted_at: {caption:"Created", type: "datetime", autoValue: true, formatter: datetimeFormatter},
+        updated_at: {caption:"Updated", type: "datetime", autoValue: true, formatter: datetimeFormatter}
 }';
 
 $PRM = array(
@@ -37,9 +39,9 @@ $PRM = array(
     "caption" => "CMS Users",
     "accordionID" => "acc_cms",
     "menuID" => "menu-cmsuser",
-    "apiList" => "api/?1/user-list",
+    "apiList" => "api/?1/user/user/list",
     "apiCreate" => "",
-    "apiUpdate" => "api/?1/user-update",
+    "apiUpdate" => "api/?1/user/user/update",
     "apiDelete" => "",
     "uppercase" => false,
     "labelField" => "UserName",
@@ -48,21 +50,17 @@ $PRM = array(
         <div class='ui mini icon buttons'>
             <button class='ui orange button' id='btnReset'><i class='key icon'></i> Reset Pwd</button>
         </div>
-        <div class='padder2'></div>
-        <div class='ui mini icon buttons'>
-            <button class='ui mini green button' id='btnRole'><i class='medal icon'></i> User Roles</button>
-            <button class='ui mini green button' id='btnRight'><i class='check double icon'></i> User Rights</button>
-        </div>
     ",
     "jsStartup" => "
         $('#btnReset').on('click', btnReset_click);
-        $('#btnRole').on('click', btnRole_click);
-        $('#btnRight').on('click', btnRight_click);
 
-        Ref.load('User', 'api/?99/cmsasset/user/listall');
+        Ref.load('User', 'api/?1/user/user/listall');
+        Ref.load('UserLevel', 'api/?1/user/user/level');
     ",
     "addAfterShow" => "",
-    "editAfterShow" => "",
+    "editAfterShow" => "
+        \$('#fld-ulevel').dropdown('set selected', sel['ulevel']);
+    ",
     "model" => $Model,
     "extraJS" => "
         btnAdd_click = () => {
@@ -76,7 +74,7 @@ $PRM = array(
                     fdata.set('passwd',forge_sha256(pwd));
                     Loader('Creating New User...');
                     //console.log(fdata);
-                    Api('api/?1/user-create', {body: fdata}).then(
+                    Api('api/?1/user/user/create', {body: fdata}).then(
                         data => {
                             LoaderHide();
                             if (data.error == 0) {
@@ -114,7 +112,7 @@ $PRM = array(
             $('body').modal('myConfirm', `<i class='exclamation triangle icon red'></i> Delete User`, `Delete user [\${sel.user_name}] ?`, ()=>{
                 Loader('Deleting User...');
                 var fdata = frmPage.formDataTabRow(sel);
-                Api('api/?1/user-delete', {body: fdata}).then(
+                Api('api/?1/user/user/delete', {body: fdata}).then(
                     data => {
                         LoaderHide();
                         if (data.error == 0) {
@@ -138,13 +136,13 @@ $PRM = array(
                 return;
             }
 
-            if (sel['id'] == 1) {
+            if (sel['ulevel'] == 99) {
                 ToastError('Reset Password','Cannot reset password for user ROOT');
                 return;
             }
 
-            if (getSetting('user-data')['id'] != 1) {
-                ToastError('Reset Password','Only ROOT can reset user password');
+            if (getSetting('user-data')['ulevel'] < 5) {
+                ToastError('Reset Password','Only Administrator can reset user password');
                 return;
             }
 
@@ -184,7 +182,7 @@ $PRM = array(
                 .setAction(true,()=>{
                     var fdata = frmPage.formDataManual(['id',sel['id'],'passwd',forge_sha256(\$id('fld-pwd0').value)]);
                     Loader('Resetting Password...');
-                    Api('api/?1/user-reset', {body: fdata}).then(
+                    Api('api/?1/user/user/reset', {body: fdata}).then(
                         data => {
                             LoaderHide();
                             if (data.error == 0) {
@@ -201,22 +199,6 @@ $PRM = array(
                     );
                 })
                 .show();
-        }
-        btnRole_click = () => {
-            var sel = (Table.getSelectedData())[0]; // get first selected element
-            if (sel == undefined) {
-                ToastError('No row selected');
-                return;
-            }
-            document.location = 'loader.php?p=cmsuserrole/'+sel.id;
-        }
-        btnRight_click = () => {
-            var sel = (Table.getSelectedData())[0]; // get first selected element
-            if (sel == undefined) {
-                ToastError('No row selected');
-                return;
-            }
-            document.location = 'loader.php?p=cmsuserright/'+sel.id;
         }
     "
 );

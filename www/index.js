@@ -1091,6 +1091,18 @@ class Formation {
 
     doVerify() {
         var keys = Object.keys(this.Model);
+        var vals = {};
+        for (var i in keys) {
+            var key = keys[i];
+            var meta = this.Model[key];
+            var ucase = meta.upperCase || this.upperValue;
+            var theval = null;
+            var e = document.getElementById(this.prefixId+key);
+            if (e) {
+                theval = ucase ? e.value.toUpperCase() : e.value;
+            }
+            vals[key] = theval;
+        }
         for (var i in keys) {
             var key = keys[i];
             var meta = this.Model[key];
@@ -1103,7 +1115,7 @@ class Formation {
                 var e = document.getElementById(this.prefixId+key);
                 if (e) {
                     var theval = ucase ? e.value.toUpperCase() : e.value;
-                    if (!meta.verify(theval)) {
+                    if (!meta.verify(theval,vals)) {
                         e.focus();
                         return false;
                     }

@@ -88,6 +88,38 @@ function url_get_content($URL){
       return $data;
 }
 
+function postJson($url, $json) {
+    // Initialize cURL
+    $ch = curl_init($url);
+    
+    // Set cURL options
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+        'Content-Type: application/json',
+        'Content-Length: ' . strlen($json)
+    ]);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $json);
+    
+    // Execute the request and capture the response
+    $response = curl_exec($ch);
+
+    $hasil = array();
+    // Check for errors
+    if (curl_errno($ch)) {
+        $hasil[] = false;
+        $hasil[] = curl_error($ch);
+    } else {
+        $hasil[] = true;
+        $hasil[] = $response;
+    }
+    
+    // Close the cURL session
+    curl_close($ch);
+    
+    return $hasil;
+}
+
 function fmtParagraph($teks) {
     $tar = explode(".", $teks);
     $ct = count($tar);

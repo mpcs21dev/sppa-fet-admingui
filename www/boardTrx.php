@@ -45,11 +45,11 @@
         MenuID: 'mnu-transaction',
         frmLeft: new Formation(),
         frmRight: new Formation(),
-        leftInitialSort: [{column:'id',dir:'desc'}],
+        leftInitialSort: [{column:'inserted_at',dir:'desc'}],
         leftData: null,
         leftID: 0,
         partID: '',
-        resendUrl: 'http://localhost:9090/sppa-fet/admin/resend',
+        resendUrl: 'api/?1/trx/resend/',
         resend: function(row) {
             var obj = {RfoResendRequest: {
                 participantId: row.partid,
@@ -58,10 +58,15 @@
             }};
             $('body').modal('myConfirm', "<i class='exclamation triangle icon red'></i> Resend Order", "Continue resend selected order?", ()=>{
                 Loader("Resending order...");
-                Api(this.resendUrl, {body: JSON.stringify(obj)}).then(
+                Api(this.resendUrl+row.cln_order_id, {body: JSON.stringify(obj)}).then(
                     oke => {
                         LoaderHide();
-                        ToastSuccess("Resend order success");
+                        if (oke.error == 0) {
+                            ToastSuccess("Resend command sent");
+                        } else {
+                            ToastError(oke.message);
+                            console.log(oke);
+                        }
                     },
                     err => {
                         LoaderHide();
@@ -77,7 +82,40 @@
                 partid: {caption: "partid", type: "string", visible: false, noview:true,noadd:true,noedit:true},
                 participant: {caption: "Participant", type:"string", headerFilter:true},
                 record_date: {caption: "Rec Date", type: "numeric", headerFilter: true, editor:"number",headerFilterLiveFilter:false},
-                status_enum: {caption: "Status", type: "string", headerFilter: true},
+                status_enum: {caption: "Status", type: "string", headerFilter: true, formatter: (c)=>{
+                    const val = c.getValue();
+                    let lmn = c.getElement();
+                    switch (val) {
+                        case 'RFO STATUS NEW':
+                            lmn.style.backgroundColor = "#fff";
+                            break;
+                
+                        case 'RFO STATUS AI':
+                            lmn.style.backgroundColor = "#ffe";
+                            break;
+                
+                        case 'RFO STATUS AJ':
+                            lmn.style.backgroundColor = "#fef";
+                            break;
+                
+                        case 'RFO STATUS AE':
+                            lmn.style.backgroundColor = "#aaa";
+                            break;
+                    
+                        case 'RFO STATUS AG':
+                            lmn.style.backgroundColor = "#eff";
+                            break;
+                
+                        case 'RFO STATUS J':
+                            lmn.style.backgroundColor = "#777";
+                            lmn.style.color = "#ff7";
+                            break;
+                
+                        default:
+                            break;
+                    }
+                    return val;
+                }},
                 order_side: {caption: "Order Side", type: "string", headerFilter: true},
                 order_id: {caption: "OrderID", type: "string", headerFilter: true},
                 cln_order_id: {caption: "Client OID", type: "string", headerFilter: true},
@@ -113,7 +151,8 @@
             this.Tabll = this.frmLeft.xTabulator("table_left", tinggi, "board_trx_trx", urll, {
                 layout: "fitDataFill", 
                 initialSort:this.leftInitialSort,
-                initialHeaderFilter: [{field:"record_date", value:<?=date("Ymd")?>}],
+                initialHeaderFilter: [{field:"record_date", value:<?=date("Ymd")?>}]
+                /*
                 rowFormatter: (row) => {
                     var data = row.getData();
                     switch (data.status){
@@ -131,6 +170,7 @@
                             break;
                     }
                 }
+                */
             });
             this.Tablr = this.frmRight.xTabulator("table_right", tinggi, "board_trx_msg", urlr, {layout: "fitDataFill"});
 

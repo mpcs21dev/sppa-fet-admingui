@@ -57,6 +57,7 @@ function api_fn($hasil, $parm, $json) {
                     $sql = "SELECT * FROM public.holiday";
                     break;
                 case 'create':
+                    if (!cekLevel(LEVEL_ADMIN)) done($hasil, 26);
                     $sql = "public.holiday";
                     $json["inserted_at"] = date('Y-m-d H:i:s');
                     //$json["inserted_by"] = $usr["id"];
@@ -64,11 +65,13 @@ function api_fn($hasil, $parm, $json) {
                     //$json["updated_by"] = $usr["id"];
                     break;
                 case 'update':
+                    if (!cekLevel(LEVEL_ADMIN)) done($hasil, 26);
                     $sql = "public.holiday";
                     $json["updated_at"] = date('Y-m-d H:i:s');
                     //$json["updated_by"] = $usr["id"];
                     break;
                 case 'delete':
+                    if (!cekLevel(LEVEL_ADMIN)) done($hasil, 26);
                     $sql = "public.holiday";
                     break;
                 default:

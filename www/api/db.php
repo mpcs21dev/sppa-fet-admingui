@@ -280,21 +280,21 @@ class DBR
 
 function DBX($idx) {
     static $slfile = null;
-    if ($slfile == null) $slfile = PHP_OS == "Linux" ? "/dev/shm/sppa_fet_log.db" : "../../sppa_fet_log.db";
+    if ($slfile == null) $slfile = "/dev/shm/sppa_fet_log.db";
 
     static $dbusr = null;
     static $dbpas = null;
     static $dbip = null;
-    if ($dbusr == null) $dbusr = PHP_OS == "Linux" ? "sppa" : "postgres";
-    if ($dbpas == null) $dbpas = PHP_OS == "Linux" ? "bjfgua5M5gkUDZxjXxkIOMYZ4" : "postgres";
-    if ($dbip == null) $dbip = PHP_OS == "Linux" ? "10.102.0.43" : "127.0.0.1";
+    if ($dbusr == null) $dbusr = "sppa";
+    if ($dbpas == null) $dbpas = "bjfgua5M5gkUDZxjXxkIOMYZ4";
+    if ($dbip == null) $dbip = "10.102.0.43";
 
     static $hdb = null;
     static $hdbr = null;
     static $hdbl = null;
     if ($hdb == null) $hdb = new Hpdo(array($dbusr,$dbpas,XDSN::postgresql($dbip,"sppa_fet")),"POSTGRESQL");
     if ($hdbr == null) $hdbr = new Hpdo(array($dbusr,$dbpas,XDSN::postgresql($dbip,"sppa_fet")),"POSTGRESQL");
-    if ($hdbl == null) $hdbl = new Hpdo(array("","",XDSN::sqlite($slfile,false)),"POSTGRESQL");
+    if ($hdbl == null) $hdbl = new Hpdo(array("","",XDSN::sqlite($slfile,false)),"SQLITE");
     
     switch ($idx) {
         case 1:

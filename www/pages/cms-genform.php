@@ -125,6 +125,15 @@ foreach ($DPRM as $key=>$val) $PPRM[$key] = array_key_exists($key, $PRM) ? $PRM[
             .setVerifier(true, ()=>{ return frmPage.doVerify(); })
             .setAction(true,()=>{
                 var fdata = frmPage.readForm(<?=$PPRM['add_readform_isedit']?>,<?=$PPRM['add_readform_getro']?>);
+                /*
+                if (checkAdd) {
+                    const cea = checkAdd(fdata);
+                    if (!cea[0]) {
+                        ToastError(cea[1]);
+                        return;
+                    }
+                }
+                */
                 Loader("Saving new record...");
                 //console.log(fdata);
                 Api("<?=$PPRM['apiCreate']?>", {body: fdata}).then(
@@ -163,6 +172,15 @@ foreach ($DPRM as $key=>$val) $PPRM[$key] = array_key_exists($key, $PRM) ? $PRM[
             .setVerifier(true, ()=>{ return frmPage.doVerify(); })
             .setAction(true,()=>{
                 var fdata = frmPage.readForm(<?=$PPRM['edt_readform_isedit']?>,<?=$PPRM['edt_readform_getro']?>);
+                /*
+                if (checkEdit) {
+                    const cea = checkEdit(fdata);
+                    if (!cea[0]) {
+                        ToastError(cea[1]);
+                        return;
+                    }
+                }
+                */
                 Loader("Updating record...");
                 Api("<?=$PPRM['apiUpdate']?>", {body: fdata}).then(
                     data => {

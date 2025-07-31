@@ -4,7 +4,7 @@
 </div>
 <script type="text/javascript">
     TSync = {
-        interval: 5000,
+        interval: 3000,
         active: true,
         lastId: 0,
         syncUrl: "api/?1/wsc/wsc/latest",

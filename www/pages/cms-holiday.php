@@ -2,7 +2,20 @@
 $Model = '{
     id:    {caption:"ID", type:"string", formatting: "rownum", autoValue:true, frozen:true},
     month_name:  {caption:"Month Name", type:"string"},
-    date_list: {caption:"Date List", type:"string"},
+    date_list: {title:"Date List",caption:"Date List (numbers and pipe only)", type:"string",verify:(val)=>{
+        let hasil = true;
+        const arr = val.split("");
+        for (var i in arr) {
+            const c = arr[i];
+            const d = "1234567890|".indexOf(c);
+            if (d<0) {
+                hasil = false;
+                FiError("Error","Illegal character detected. Only numbers and pipe are allowed.");
+                break;
+            }
+        }
+        return hasil;        
+    }},
     inserted_at: {caption: "Created", type: "datetime", autoValue: true, formatter: datetimeFormatter},
     updated_at: {caption: "Updated", type: "datetime", autoValue: true, formatter: datetimeFormatter}
 }';
@@ -20,14 +33,12 @@ $PRM = array(
     "extraButtons" => "",
     "jsStartup" => "
         //Ref.load('User', 'api/?99/cmsasset/user/listall');
-      //  \$id('btnAdd').parentNode.removeChild(\$id('btnAdd'));
+       // \$id('btnAdd').parentNode.removeChild(\$id('btnAdd'));
       //  \$id('btnDelete').parentNode.removeChild(\$id('btnDelete'));
     ",
     "addAfterShow" => "",
     "editAfterShow" => "",
     "model" => $Model,
-    //"fnView" => "btnView2_click",
-    //"fnEdit" => "btnEdit2_click",
     "extraJS" => "",
 );
 

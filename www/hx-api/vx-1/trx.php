@@ -53,16 +53,26 @@ function api_fn($hasil, $parm, $json) {
     $hasil->debug = array();
 
     switch ($table) {
+        case 'resend':
+            if (!cekLevel(LEVEL_ADMIN)) done($hasil, 26);
+            $res = postJson("http://sppafet-admin-net/sppa-fet/admin/resend",json_encode($JPOST));
+            if ($res[0]) {
+                done($hasil,0,$res[1]);
+            } else {
+                done($hasil,950,$res[1]);
+            }
+            break;
         case 'transaction':
-            $doby = array(array("field"=>"id","dir"=>"asc"));
+            $doby = array(array("field"=>"inserted_at","dir"=>"desc"));
             switch ($action) {
                 case 'list':
+                    //$doby = array(array("field"=>"created_at","dir"=>"desc"));
                     if (strtolower($partid) == "all") {
                         $uni = "";
                         $prts = DBX($dbx)->run("select participant_id partid, participant_name partname from public.config where record_type <> 'FTP'")->fetchAll();
                         foreach ($prts as $part) {
                             if (strlen($uni)>0) $uni .= "union ";
-                            $uni .= "select '".$part["partid"]."' partid, '".$part["partname"]."' participant, * FROM public.transaction_".$part["partid"]." ";
+                            $uni .= "select '".$part["partid"]."' partid, '".$part["partname"]."' participant, id, record_date, order_side, cln_order_id, mkt_order_id, cln_user_id, cln_party_id, trd_user_id, trd_party_id, initiator, status, inserted_at, updated_at, trade_id FROM public.transaction_".$part["partid"]." ";
                         }
                         $sql = "select a.*, b.str_val status_enum from (".$uni.") a left join public.reference b on a.status=b.int_key and b.name='RFO-STATUS'";
                     } else {
@@ -77,7 +87,7 @@ function api_fn($hasil, $parm, $json) {
             break;
 
         case 'message':
-            $doby = array(array("field"=>"id","dir"=>"asc"));
+            $doby = array(array("field"=>"id","dir"=>"desc"));
             switch ($action) {
                 case 'list':
                     $sql = "SELECT * FROM public.message_".$partid." where parent_id=".$parent;
