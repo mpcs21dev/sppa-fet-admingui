@@ -2,7 +2,7 @@
 date_default_timezone_set('Asia/Jakarta');
 
 require_once(__DIR__."/vendor/autoload.php");
-require_once(__DIR__."/../api/const.php");
+require_once(__DIR__."/../html/api/const.php");
 require_once(__DIR__."/db.php");
 require_once(__DIR__."/fn.db.php");
 
@@ -13,6 +13,7 @@ define("DBPG",0);
 $url = "ws://localhost:9090/sppa-fet/admin/ws?id=GUI";
 $url = "ws://sppafet-admin-net:80/sppa-fet/admin/ws?id=GUI";
 $active = true;
+
 $sql = "insert into wsc_log(msg,tgl) values (?,?)";
 $ins = "insert into wsc_box(appId,totalCpu,userPercent,systemPercent,idlePercent,totalMemory,userMemory,systemMemory,idleMemory,lastUpdate)
     values (:appId,:totalCpu,:userPercent,:systemPercent,:idlePercent,:totalMemory,:userMemory,:systemMemory,:idleMemory,:lastUpdate)";

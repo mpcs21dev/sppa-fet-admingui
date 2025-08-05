@@ -34,7 +34,7 @@ function api_fn($hasil, $parm, $json) {
 
     $usr = getVars("user-data");
     $dpage = 1;
-    $drpp = 5000;
+    $drpp = 50;
     $doby = array();
     $dwhr = array();
 
@@ -90,11 +90,50 @@ function api_fn($hasil, $parm, $json) {
             }
             break;
 
+        case 'stat':
+            $doby = array(array("field"=>"id","dir"=>"asc"));
+            switch ($action) {
+                case 'latest':
+                    $sql = "SELECT * FROM wsc_stat";
+
+                    break;
+                default:
+                    $sql = "";
+                    break;
+            }
+            break;
+    
         case 'connection':
             $doby = array(array("field"=>"id","dir"=>"asc"));
             switch ($action) {
                 case 'latest':
                     $sql = "SELECT * FROM wsc_login";
+
+                    break;
+                default:
+                    $sql = "";
+                    break;
+            }
+            break;
+
+        case 'err':
+            $doby = array(array("field"=>"id","dir"=>"desc"));
+            switch ($action) {
+                case 'latest':
+                    $sql = "SELECT * FROM wsc_err";
+
+                    break;
+                default:
+                    $sql = "";
+                    break;
+            }
+            break;
+    
+        case 'log':
+            $doby = array(array("field"=>"id","dir"=>"desc"));
+            switch ($action) {
+                case 'latest':
+                    $sql = "SELECT * FROM wsc_log";
 
                     break;
                 default:
@@ -145,7 +184,7 @@ function api_fn($hasil, $parm, $json) {
 
             if ($table == "event") {
                 if ($lst["count"] > 0) {
-                    $lastId = $lst["rows"][$lst["count"]-1]["id"];
+                    $lastId = $lst["rows"][count($lst["rows"])-1]["id"];
                     setVars("last-id", $lastId);
                 }
             }
