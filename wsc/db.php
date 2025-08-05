@@ -1,5 +1,5 @@
 <?php
-require_once(__DIR__."/../api/const.php");
+require_once(__DIR__."/../html/api/const.php");
 
 class XDSN {
     static function mssql($svr,$db) {
@@ -170,10 +170,16 @@ function DBX($idx) {
     static $dbusr = null;
     static $dbpas = null;
     static $dbip = null;
+    
     if ($dbusr == null) $dbusr = "sppa";
     if ($dbpas == null) $dbpas = "bjfgua5M5gkUDZxjXxkIOMYZ4";
     if ($dbip == null) $dbip = "10.102.0.43";
-
+    /*
+    if ($dbusr == null) $dbusr = "postgres";
+    if ($dbpas == null) $dbpas = "postgres";
+    if ($dbip == null) $dbip = "192.168.0.13";
+    */
+    
     static $hdb = null;
     static $ldb = null;
 
