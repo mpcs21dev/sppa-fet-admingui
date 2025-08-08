@@ -10,8 +10,8 @@ define("DBMEM",2);
 define("DBDISK",2);
 define("DBPG",0);
 
-$url = "ws://localhost:9090/sppa-fet/admin/ws?id=GUI";
-$url = "ws://sppafet-admin-net:80/sppa-fet/admin/ws?id=GUI";
+//$url = "ws://localhost:9090/sppa-fet/admin/ws?id=GUI";
+$url = getenv('WSC_URL') ?? "ws://sppafet-admin-net:80/sppa-fet/admin/ws?id=GUI";
 $active = true;
 
 $sql = "insert into wsc_log(msg,tgl) values (?,?)";

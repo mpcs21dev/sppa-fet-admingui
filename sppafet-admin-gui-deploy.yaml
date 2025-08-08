@@ -1,0 +1,115 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sppa-fet-adminguiv20250806e
+  namespace: sppa-fet-dev
+  labels:
+    app: adminguiv20250806e
+status:
+  observedGeneration: 1
+  replicas: 1
+  updatedReplicas: 1
+  readyReplicas: 1
+  availableReplicas: 1
+  conditions:
+    - type: Available
+      status: 'True'
+      lastUpdateTime: '2025-07-31T14:38:07Z'
+      lastTransitionTime: '2025-07-31T14:38:07Z'
+      reason: MinimumReplicasAvailable
+      message: Deployment has minimum availability.
+    - type: Progressing
+      status: 'True'
+      lastUpdateTime: '2025-07-31T14:38:07Z'
+      lastTransitionTime: '2025-07-31T14:38:00Z'
+      reason: NewReplicaSetAvailable
+      message: >-
+        ReplicaSet "sppa-fet-adminguiv1-deployment-77cd694c45" has successfully
+        progressed.
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: adminguiv20250806e-deployment
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: adminguiv20250806e-deployment
+    spec:
+      containers:
+        - name: adminguiv20250806e-deployment
+          image: docker.io/ureh/sppa-fet-admin-gui:2025-08-06-E
+          ports:
+            - containerPort: 80
+              protocol: TCP
+          env:
+          - name: ADMIN_URL
+            value: "http://sppafet-admin-net:80/"
+          - name: WSC_URL
+            value: "ws://sppafet-admin-net:80/sppa-fet/admin/ws?id=GUI"
+          - name: RESEND_URL
+            value: "http://sppafet-admin-net/sppa-fet/admin/resend"
+          - name: DB_TRX_DSN
+            value: "pgsql:host=10.102.0.43;port=5432;dbname=sppa_fet;sslmode=disable"
+          - name: DB_TRX_USR
+            value: "sppa"
+          - name: DB_TRX_PAS
+            value: "bjfgua5M5gkUDZxjXxkIOMYZ4"
+          - name: DB_MEM_DSN
+            value: "sqlite:/dev/shm/sppa_fet_log.db"
+          - name: DB_TRX_URL
+            value: "postgresql://sppa:bjfgua5M5gkUDZxjXxkIOMYZ4@10.102.0.43:5432/sppa_fet?sslmode=disable"
+          - name: DB_LOG_URL
+            value: "postgresql://sppa:bjfgua5M5gkUDZxjXxkIOMYZ4@10.102.0.43:5432/sppa_fet?sslmode=disable"
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          imagePullPolicy: Always
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      dnsPolicy: ClusterFirst
+      securityContext: {}
+      schedulerName: default-scheduler
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 25%
+      maxSurge: 25%
+  revisionHistoryLimit: 10
+  progressDeadlineSeconds: 600
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: svc-sppa-admingui
+  namespace: sppa-fet-dev
+  labels:
+    k8slens-edit-resource-version: v1
+status:
+  loadBalancer:
+    ingress:
+      - ip: 10.102.0.66
+spec:
+  ports:
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: 80
+      nodePort: 31552
+  selector:
+    app: adminguiv20250806e-deployment
+  clusterIP: 10.1.70.75
+  clusterIPs:
+    - 10.1.70.75
+  type: LoadBalancer
+  sessionAffinity: None
+  loadBalancerIP: 10.102.0.66
+  externalTrafficPolicy: Cluster
+  ipFamilies:
+    - IPv4
+  ipFamilyPolicy: SingleStack
+  allocateLoadBalancerNodePorts: true
+  internalTrafficPolicy: Cluster

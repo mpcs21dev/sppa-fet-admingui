@@ -165,26 +165,26 @@ class Hpdo extends PDO
 
 function DBX($idx) {
     static $slfile = null;
-    if ($slfile == null) $slfile = "/dev/shm/sppa_fet_log.db";
+    if ($slfile == null) $slfile = getenv('DB_MEM_DSN') ?? "sqlite:/dev/shm/sppa_fet_log.db";
 
     static $dbusr = null;
     static $dbpas = null;
-    static $dbip = null;
+    static $dbdsn = null;
     
-    if ($dbusr == null) $dbusr = "sppa";
-    if ($dbpas == null) $dbpas = "bjfgua5M5gkUDZxjXxkIOMYZ4";
-    if ($dbip == null) $dbip = "10.102.0.43";
+    if ($dbusr == null) $dbusr = getenv('DB_TRX_USR') ?? "sppa";
+    if ($dbpas == null) $dbpas = getenv('DB_TRX_PAS') ?? "bjfgua5M5gkUDZxjXxkIOMYZ4";
+    if ($dbdsn == null) $dbdsn = getenv('DB_TRX_DSN') ?? "pgsql:host=10.102.0.43;port=5432;dbname=sppa_fet;sslmode=disable";
     /*
     if ($dbusr == null) $dbusr = "postgres";
     if ($dbpas == null) $dbpas = "postgres";
     if ($dbip == null) $dbip = "192.168.0.13";
     */
-    
+
     static $hdb = null;
     static $ldb = null;
 
-    if ($hdb == null) $hdb = new Hpdo(array($dbusr,$dbpas,XDSN::postgresql($dbip,"sppa_fet")),"POSTGRESQL");
-    if ($ldb == null) $ldb = new Hpdo(array("","",XDSN::sqlite($slfile,false)),"SQLITE");
+    if ($hdb == null) $hdb = new Hpdo(array($dbusr,$dbpas,$dbdsn),"POSTGRESQL");
+    if ($ldb == null) $ldb = new Hpdo(array("","",$slfile),"SQLITE");
     
     switch ($idx) {
         case 2:
