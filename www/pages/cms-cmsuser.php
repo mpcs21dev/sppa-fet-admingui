@@ -17,7 +17,7 @@ $Model = '{
                 return true;
             }
         }},
-        passwd: {caption: "Password", type: "string", control: "password", readOnly: true, verify: (v)=>{
+        passwd: {caption: "Password", type: "string", control: "password", readOnly: true, visible:false, verify: (v)=>{
             if (v.length == 0) {
                 FiError("Error","Empty password is not allowed");
                 return false;
@@ -57,13 +57,15 @@ $PRM = array(
         Ref.load('User', 'api/?1/user/user/listall');
         Ref.load('UserLevel', 'api/?1/user/user/level');
     ",
+    "fnAdd" => "btnAdd2_click",
+    "fnDelete" => "btnDel_click",
     "addAfterShow" => "",
     "editAfterShow" => "
         \$('#fld-ulevel').dropdown('set selected', sel['ulevel']);
     ",
     "model" => $Model,
     "extraJS" => "
-        btnAdd_click = () => {
+        btnAdd2_click = () => {
             XFrame.setCaption('Add User')
                 .setContent(frmPage.formAdd('add_user'))
                 .setConfirmation()
@@ -90,9 +92,13 @@ $PRM = array(
                         }
                     );
                 })
+                .setAfterShow(()=>{
+                    $('.dropdown').dropdown();
+                    $('#fld-ulevel').dropdown('set selected', 1);
+                })
                 .show();
         }
-        btnDelete_click = () => {
+        btnDel_click = () => {
             var sel = (Table.getSelectedData())[0]; // get first selected element
             if (sel == undefined) {
                 ToastError('No row selected');

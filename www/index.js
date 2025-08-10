@@ -875,7 +875,7 @@ class Formation {
         this.customModel = null;
         this.useCustomModel = false;
         this.useTag = "";
-        this.TabKeys = ["frozen", "width", "formatter", "hozAlign", "headerHozAlign", "headerSort", "headerFilter","headerFilterParam","headerFilterLiveFilter", "cellClick", "visible","editor"]; // keys for tabulator
+        this.TabKeys = ["frozen", "width", "formatter", "hozAlign", "headerHozAlign", "headerSort", "headerFilter","headerFilterFunc","headerFilterParam","headerFilterLiveFilter", "cellClick", "visible","editor"]; // keys for tabulator
     }
 
     setData(data) {
@@ -958,6 +958,7 @@ class Formation {
             headerHozAlign
             headerSort
             headerFilter
+            headerFilterFunc
             headerFilterParam
             cellClick
             visible
@@ -1355,21 +1356,22 @@ class Formation {
 
     xTabulator(domID, domHeight, table_name, ajaxUrl, param={}) {
         var self = this;
-        var _tlayout = param.layout || "fitDataFill";
+        var _tlayout = param.layout || "fitColumns";
         var _ajaxCallback = param.ajaxCallback == undefined ? null : param.ajaxCallback;
         var _ajaxConfig = param.ajaxConfig || "POST";
         var _ajaxContentType = param.ajaxContentType || "json";
         var _movableColumns = param.movableColumns == undefined ? true : param.movableColumns;
-        var _pagination = param.pagination == undefined ? true : param.pagination;
-        var _paginationMode = param.paginationMode || "remote";
-        var _paginationCounter = param.paginationCounter || "rows";
 
         var _sortMode = param.sortMode == undefined ? "remote" : param.sortMode;
         var _filterMode = param.filterMode == undefined ? "remote" : param.filterMode;
 
+        var _pagination = param.pagination == undefined ? true : param.pagination;
+        var _paginationMode = param.paginationMode || "remote";
+        var _paginationCounter = param.paginationCounter || "rows";
+
         var obj = {
             placeholder:"No Data Available",
-            height: domHeight,
+            height: domHeight+"px",
             selectableRows: 1,
             layout: _tlayout,
             selectablePersistence:true,
@@ -1394,10 +1396,11 @@ class Formation {
             movableColumns: _movableColumns,
             //pagination: _pagination,
             //paginationMode: _paginationMode,
-            //paginationInitialPage: 1,
             //paginationCounter: _paginationCounter,
+            //paginationInitialPage: 1,
             progressiveLoad:"scroll",
-            progressiveLoadScrollMargin:300,
+            progressiveLoadScrollMargin:100,
+            paginationSize: 50,
             //sortMode: _sortMode,
             //filterMode: _filterMode,
             columns: this.useCustomModel ? this.customModel : this.getModelTabulator()
@@ -1413,6 +1416,7 @@ class Formation {
         if (param.initialHeaderFilter != undefined) obj["initialHeaderFilter"] = param.initialHeaderFilter;
         if (param.initialSort != undefined) obj["initialSort"] = param.initialSort;
         if (param.rowFormatter != undefined) obj["rowFormatter"] = param.rowFormatter;
+        if (param.autoColumns != undefined) obj["autoColumns"] = param.autoColumns;
         //if (param.ajaxResponse != undefined) obj["ajaxResponse"] = param.ajaxResponse;
 
         return new Tabulator("#"+domID, obj);

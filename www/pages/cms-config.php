@@ -24,13 +24,13 @@ $Model2 = '{
     fixMainUrl_ip:   {caption:"Fix Server IP", type:"string", noview:true, visible:false},
     fixMainUrl_port: {caption:"Fix Port", type:"string", noview:true, visible:false},
     fixMainUrl_sender:{caption:"Sender Comp ID", type:"string", noview:true, visible:false},
-    fixMainUrl_target:{caption:"Target Comp Id", type:"string", noview:true, visible:false},
+    fixMainUrl_target:{caption:"Target Comp Id", type:"string", noview:true, visible:false, defaultValue:"AXECHANGE"},
     fixDrcUrl_user:  {caption:"<hr><span style='."'".'color: navy; font-family: serif; font-style:italic; font-size:1.3em;'."'".'>Fix DRC URL</span><br>Fix DRC User", type:"string", placeholder:"Fix DRC User", noview:true, visible:false},
     fixDrcUrl_pass:  {caption:"Fix DRC Password", type:"string", noview:true, visible:false},
     fixDrcUrl_ip:    {caption:"Fix DRC Server IP", type:"string", noview:true, visible:false},
     fixDrcUrl_port:  {caption:"Fix DRC Port", type:"string", noview:true, visible:false},
     fixDrcUrl_sender:{caption:"DRC Sender Comp ID", type:"string", noview:true, visible:false},
-    fixDrcUrl_target:{caption:"DRC Target Comp ID", type:"string", noview:true, visible:false}
+    fixDrcUrl_target:{caption:"DRC Target Comp ID", type:"string", noview:true, visible:false, defaultValue:"AXECHANGE"}
 }';
 
 $Model3 = '{

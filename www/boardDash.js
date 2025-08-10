@@ -446,6 +446,7 @@ Dash = {
     RootID: 'dashBoard',
     Data: [],
     Ses: new ConBox(),
+    /*
     readStat: function(){
         Api("api/?1/config/stat/listall").then(oke => {
             if (oke.error == 0) {
@@ -492,6 +493,7 @@ Dash = {
             console.log({status: "Connection Status: Server Error", detail: err});
         });
     },
+    */
     render_wrap: function(html) {
         let div = document.createElement("div");
         div.id = "sesgrid";
@@ -528,8 +530,8 @@ Dash = {
                     ToastError("Error readng config table");
                     console.log(data);
                 }
-                setTimeout(selfDash.readConn,500);
-                setTimeout(selfDash.readStat,1500);
+                //setTimeout(selfDash.readConn,500);
+                //setTimeout(selfDash.readStat,1500);
             },
             error => {
                 //SwalToast('error','Get Challange: Server Error');

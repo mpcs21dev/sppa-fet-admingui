@@ -139,25 +139,38 @@ function api_fn($hasil, $parm, $json) {
         case 'rec-type':
         case 'listall':
         case 'listall-noftp':
-            $lst = DBX($dbx)->run($sql)->fetchAll();
-            $hasil->data = $lst;
-            $hasil->last_page = 1;
-            $hasil->last_row = count($lst);
-            $hasil->count = count($lst);
-            $hasil->page = 1;
+            try {
+                $lst = DBX($dbx)->run($sql)->fetchAll();
+                $hasil->data = $lst;
+                $hasil->last_page = 1;
+                $hasil->last_row = count($lst);
+                $hasil->count = count($lst);
+                $hasil->page = 1;
+            } catch (Exception $e) {
+                $hasil->data = array();
+                $hasil->last_page = 1;
+                $hasil->last_row = 0;
+                $hasil->count = 0;
+                $hasil->page = 1;
+            }
             break;
         case 'listservice':
-            $lst = DBX($dbx)->run($sql)->fetchAll();
             $dat = array();
-            foreach ($lst as $row) {
-                $rec = array(
-                    "id" => $row["id"],
-                    "participant_id" => $row["participant_id"],
-                    "service_name" => "sppafet-service-dev-".strtolower($row['participant_id'])."-net",
-                    "service_port" => "80",
-                    "status" => "---"
-                );
-                $dat[] = $rec;
+            try {
+                $lst = DBX($dbx)->run($sql)->fetchAll();
+                foreach ($lst as $row) {
+                    $rec = array(
+                        "id" => $row["id"],
+                        "participant_id" => $row["participant_id"],
+                        "service_name" => "sppafet-service-dev-".strtolower($row['participant_id'])."-net",
+                        "service_port" => "80",
+                        "status" => "---"
+                    );
+                    $dat[] = $rec;
+                }    
+            } catch (Exception $e) {
+                $hasil->debug[] = $e->getMessage();
+                $hasil->debug[] = $e->getTraceAsString();
             }
             $hasil->data = $dat;
             $hasil->last_page = 1;

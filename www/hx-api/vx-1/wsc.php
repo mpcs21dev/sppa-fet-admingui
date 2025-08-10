@@ -171,7 +171,7 @@ function api_fn($hasil, $parm, $json) {
                 $lst = data_list_sql($sql,true,$page,$rpp,$oby,$whr,$dbx);
                 //$lst = DBX($dbx)->run($sql,array())->fetchAll();
             } catch (Exception $e) {
-                $hasil->debug[] = array("error"=>$e->getMessage(), "sql"=>$sql,"data"=>$json);
+                $hasil->debug[] = array("error"=>$e->getMessage(), "sql"=>$sql,"data"=>$json,"where"=>$whr);
                 done($hasil, 889, "Error listing data.");
             }
             $hasil->data = $lst["rows"];
@@ -182,7 +182,7 @@ function api_fn($hasil, $parm, $json) {
             $hasil->page = $page;
             $hasil->debug[] = array("list-debug"=>$lst["debug"],"data"=>$json);
 
-            if ($table == "event") {
+            if ($table == "wsc") {
                 if ($lst["count"] > 0) {
                     $lastId = $lst["rows"][count($lst["rows"])-1]["id"];
                     setVars("last-id", $lastId);

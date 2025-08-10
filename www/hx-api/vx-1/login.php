@@ -40,7 +40,8 @@ function api_fn($hasil, $ar = array(), $json = null) {
     $sql = "select max(id) maxid from wsc_log";
     $lastId = DBX(DB_LOG)->run($sql,array())->fetchColumn();
     $usr["passwd"] = "";
-    setVars("user-data",$usr);    
+    if ($usr["ulevel"] == "") $usr["ulevel"] = 1;
+    setVars("user-data",$usr);
     setVars("user-right",$rig);
     setVars("asset",$ast);
     setVars("last-id", $lastId);

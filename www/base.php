@@ -71,5 +71,7 @@ function cekRight($assetName,$dataAsset,$dataRight) {
 
 function cekLevel($min) {
     $usr = getVars("user-data");
-    return intval($usr["ulevel"]) >= $min;
+    $lvl = intval($usr["ulevel"]);
+    if ($lvl == 0) $lvl = 1;
+    return $lvl >= $min;
 }

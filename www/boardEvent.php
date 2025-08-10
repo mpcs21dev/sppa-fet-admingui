@@ -48,7 +48,7 @@
                 app_type: {caption: "App Type", type:"string", headerFilter: true},
                 app_id: {caption: "App ID", type:"string", headerFilter: true},
                 data: {caption: "Data", type: "string", headerFilter: true},
-                inserted_at: {caption: "Created at", type: "datetime", autoValue: true},
+                inserted_at: {caption: "Created at", type: "datetime", autoValue: true, headerFilter:"input", headerFilterFunc:">="},
             });
             var w0 = Math.ceil(window.innerHeight),
                 w1 = Math.ceil($("#menubar").outerHeight()),
@@ -56,7 +56,10 @@
                 //k1 = Math.ceil($("#kanan").outerHeight());
             //console.log([w0,w1,w2,k1]);
             const tinggi = w0-w1-50;
-            this.Table = this.frmPage.xTabulator("table_event", tinggi, "cms_event", this.url, {layout: "fitDataStretch",initialSort:this.initialSort});
+            this.Table = this.frmPage.xTabulator("table_event", tinggi, "cms_event", this.url, {
+                initialSort:this.initialSort,
+                initialHeaderFilter: [{field:"inserted_at", value:"<?=date("Y-m-d 00:00:00")?>"}]
+            });
 
             $("#btnERefresh").on("click", ()=>{ meee.refresh(); });
 

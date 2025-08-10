@@ -69,8 +69,8 @@
             w1 = Math.ceil($("#leher").outerHeight()),
             w2 = 0; //parseInt($("#leher").css("margin")),
             k1 = Math.ceil($("#kanan").outerHeight());
-        Tabll = frmLeft.xTabulator("table_left", w0-w1-k1-w2-w2-w2, "cms_left", urll, {layout: "fitDataStretch"});
-        Tablr = frmRight.xTabulator("table_right", w0-w1-k1-w2-w2-w2, "cms_right", urlr, {layout: "fitDataStretch"});
+        Tabll = frmLeft.xTabulator("table_left", w0-w1-k1-w2-w2-w2, "cms_left", urll);
+        Tablr = frmRight.xTabulator("table_right", w0-w1-k1-w2-w2-w2, "cms_right", urlr);
     }
 
     mod_startup = () => {

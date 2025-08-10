@@ -1,5 +1,5 @@
 <?php
-require_once(__DIR__."/../html/api/const.php");
+//require_once(__DIR__."/../html/api/const.php");
 
 class XDSN {
     static function mssql($svr,$db) {
@@ -165,15 +165,15 @@ class Hpdo extends PDO
 
 function DBX($idx) {
     static $slfile = null;
-    if ($slfile == null) $slfile = getenv('DB_MEM_DSN') ?? "sqlite:/dev/shm/sppa_fet_log.db";
+    if ($slfile == null) $slfile = "sqlite:/dev/shm/sppa_fet_log.db";
 
     static $dbusr = null;
     static $dbpas = null;
     static $dbdsn = null;
     
-    if ($dbusr == null) $dbusr = getenv('DB_TRX_USR') ?? "sppa";
-    if ($dbpas == null) $dbpas = getenv('DB_TRX_PAS') ?? "bjfgua5M5gkUDZxjXxkIOMYZ4";
-    if ($dbdsn == null) $dbdsn = getenv('DB_TRX_DSN') ?? "pgsql:host=10.102.0.43;port=5432;dbname=sppa_fet;sslmode=disable";
+    if ($dbusr == null) $dbusr = "sppa";
+    if ($dbpas == null) $dbpas = "bjfgua5M5gkUDZxjXxkIOMYZ4";
+    if ($dbdsn == null) $dbdsn = "pgsql:host=10.102.0.43;port=5432;dbname=sppa_fet;sslmode=disable";
     /*
     if ($dbusr == null) $dbusr = "postgres";
     if ($dbpas == null) $dbpas = "postgres";
@@ -183,7 +183,10 @@ function DBX($idx) {
     static $hdb = null;
     static $ldb = null;
 
-    if ($hdb == null) $hdb = new Hpdo(array($dbusr,$dbpas,$dbdsn),"POSTGRESQL");
+    if ($hdb == null) {
+        //echo print_r(array($dbusr,$dbpas,$dbdsn));
+        $hdb = new Hpdo(array($dbusr,$dbpas,$dbdsn),"POSTGRESQL");
+    }
     if ($ldb == null) $ldb = new Hpdo(array("","",$slfile),"SQLITE");
     
     switch ($idx) {

@@ -2,7 +2,7 @@
 date_default_timezone_set('Asia/Jakarta');
 
 require_once(__DIR__."/vendor/autoload.php");
-require_once(__DIR__."/../html/api/const.php");
+//require_once(__DIR__."/../html/api/const.php");
 require_once(__DIR__."/db.php");
 require_once(__DIR__."/fn.db.php");
 
@@ -11,7 +11,7 @@ define("DBDISK",2);
 define("DBPG",0);
 
 //$url = "ws://localhost:9090/sppa-fet/admin/ws?id=GUI";
-$url = getenv('WSC_URL') ?? "ws://sppafet-admin-net:80/sppa-fet/admin/ws?id=GUI";
+$url = "ws://sppafet-admin-net:80/sppa-fet/admin/ws?id=GUI";
 $active = true;
 
 $sql = "insert into wsc_log(msg,tgl) values (?,?)";
@@ -60,6 +60,7 @@ function cekTgl() {
     global $lastTgl;
 
     if ($lastTgl != date("Y-m-d")) {
+        $lastTgl = date("Y-m-d");
         $cm1 = "delete from wsc_log";
         $cm2 = "update wsc_stat set rfoRequest=0, approved=0, rejected=0, trade=0, error=0, send=0, lastUpdate='".date("Y-m-d H:i:s")."'";
         $cm3 = "update wsc_login set login=0, lastUpdate='".date("Y-m-d H:i:s")."'";
@@ -83,7 +84,6 @@ function cekTgl() {
         } catch (Exception $e) {
             echo date("Y-m-d H:i:s")." VACUUM ".$e->getMessage()."\n";
         }
-        $lastTgl = date("Y-m-d");
         return true;
     }
     return false;

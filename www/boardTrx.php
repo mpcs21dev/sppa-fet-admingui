@@ -149,7 +149,6 @@
                 k1 = Math.ceil($("#kanan").outerHeight());
             const tinggi = w0 / 2 - 45;
             this.Tabll = this.frmLeft.xTabulator("table_left", tinggi, "board_trx_trx", urll, {
-                layout: "fitDataFill", 
                 initialSort:this.leftInitialSort,
                 initialHeaderFilter: [{field:"record_date", value:<?=date("Ymd")?>}]
                 /*
@@ -172,7 +171,7 @@
                 }
                 */
             });
-            this.Tablr = this.frmRight.xTabulator("table_right", tinggi, "board_trx_msg", urlr, {layout: "fitDataFill"});
+            this.Tablr = this.frmRight.xTabulator("table_right", tinggi, "board_trx_msg", urlr);
 
             this.Tabll.on('tableBuilt', function(){
                 let af = "";

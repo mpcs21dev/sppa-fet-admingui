@@ -70,6 +70,39 @@ $lastId = getVars("last-id",0);
             align-content: flex-start;
             gap: 2px 10px;
         }
+        .sync_outer_box {
+            padding: 10px;
+            display: flex;
+            flex-direction: row;
+            height: -webkit-fill-available;
+        }
+        .sync_box {
+            display: flex;
+            flex-direction: column;
+            margin: 0 !important;
+            padding: 10px;
+        }
+        .sync_box > div {
+            padding: 5px 0;
+            display: flex;
+            flex-direction: row;
+        }
+        .sync_box > div > div:first-child {
+            flex: 1 0 0;
+        }
+        .sync_box > div > div {
+            min-width: 200px;
+        }
+        .sync_box .grow {
+            flex: 1 0 0;
+            overflow: auto;
+        }
+        .sync_box legend {
+            background-color: navy;
+            border-radius: 9px;
+            color: yellow;
+            padding: 3px 10px;
+        }
     </style>
     <link rel="stylesheet" type="text/css" href="classes.css">
     <link rel="stylesheet" type="text/css" href="framer.css">
@@ -81,6 +114,7 @@ $lastId = getVars("last-id",0);
     </script>
 
     <script src="boardDash.js"></script>
+    <script src="boardSync.js"></script>
 </head>
 <body>
     <div id='menubar' class="ui top inverted attached mini pointing menu">
@@ -132,10 +166,10 @@ $lastId = getVars("last-id",0);
         <!-- MENU KANAN :: END -->
     </div>
     <div id="dashBoard"></div>
-    <?php //require_once("boardDash.php"); ?>
+    <div id="syncBoard" class="board"></div>
     <?php require_once("boardTrx.php"); ?>
     <?php require_once("boardEvent.php"); ?>
-    <?php require_once("boardSync.php"); ?>
+    <?php //require_once("boardSync.php"); ?>
     <div id="frame_" class="ui longer coupled modal">
         <div id="frame_header" class="header">Header</div>
         <div id="frame_content" class="scrolling content">
@@ -301,11 +335,12 @@ $lastId = getVars("last-id",0);
                     this.Active = id;
                     $id(this.Active).classList.add('active');
                     $id(this.Map[this.Active]).style.display = "block";  //.classList.add('board-active');
+                    $id(this.Map[this.Active]).style.height = (window.innerHeight-$id("menubar").offsetHeight)+"px";
                     if (id == 'tsync') $id('icon_sync').className = 'sync icon';
                 }
                 //console.log(this.Active);
             }
-        }
+        };
 
         $("#tdash").on("click", ()=>{Task.Show('tdash')});
         $("#ttrx").on("click", ()=>{Task.Show('ttrx')});
@@ -317,7 +352,8 @@ $lastId = getVars("last-id",0);
             Dash.startup();
             Trx.startup();
             XEvent.startup();
-            TSync.currentBox();
+
+            TSync.startup();
             TSync.doit(<?=$lastId?>);
         });
     </script>

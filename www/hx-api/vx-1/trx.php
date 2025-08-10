@@ -121,6 +121,8 @@ function api_fn($hasil, $parm, $json) {
     switch ($action) {
         case 'list':
             $hasil->sql = $sql;
+            $hasil->rpp = $rpp;
+            $hasil->page = $page;
             $lst = null;
             try {
                 if ($partid != "") {
@@ -134,6 +136,10 @@ function api_fn($hasil, $parm, $json) {
                     );
                 }
             } catch (Exception $e) {
+                $hasil->data = array();
+                $hasil->last_page = 1;
+                $hasil->last_row = 0;
+                $hasil->count = 0;
                 $hasil->debug[] = array("error"=>$e->getMessage(), "sql"=>$sql,"data"=>$json);
                 done($hasil, 889, "Error listing data.");
             }
@@ -141,8 +147,6 @@ function api_fn($hasil, $parm, $json) {
             $hasil->last_page = $lst["pages"];
             $hasil->last_row = $lst["count"];
             $hasil->count = $lst["count"];
-            $hasil->rpp = $rpp;
-            $hasil->page = $page;
             $hasil->debug[] = array("list-debug"=>$lst["debug"],"data"=>$json);
             break;
 

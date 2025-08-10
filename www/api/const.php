@@ -15,7 +15,7 @@ define("LEVEL_USER",1);
 define("LEVEL_ADMIN",5);
 define("LEVEL_DEV", 99);
 
-$RESEND_URL = getenv('RESEND_URL') ?? "http://sppafet-admin-net/sppa-fet/admin/resend";
+$RESEND_URL = "http://sppafet-admin-net/sppa-fet/admin/resend";
 
 $ERR = array(
     "",
