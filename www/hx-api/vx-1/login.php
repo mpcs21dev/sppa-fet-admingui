@@ -5,6 +5,9 @@
 */
 function api_fn($hasil, $ar = array(), $json = null) {
     global $LOGGED;
+    global $HX;
+
+    //session_start();
 
     $ch = getChallange();
     $uid = $json["uid"];
@@ -32,6 +35,11 @@ function api_fn($hasil, $ar = array(), $json = null) {
     }
 
     log_add($usr["id"], "LOGIN", $uid);
+    /*
+    if ($HX->reset($uid)) {
+        $HX->save();
+    }
+    */
 
     $sql = "select * from CMSUser_Right where User_ID = ?";
     $rig = array(); //DBX(DB_RIGHT)->run($sql,array($usr["ID"]))->fetchAll();

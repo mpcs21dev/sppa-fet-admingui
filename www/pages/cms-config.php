@@ -1,36 +1,36 @@
 <?php
 $Model = '{
     id:             {caption:"ID", type:"numeric", formatting: "rownum", autoValue:true, frozen:true},
-    participant_id: {title:"Participant ID",caption:"Participant ID<br><span class=\"navy\">(Only letters, numbers and underscore are allowed)</span>", type:"string", placeholder:"Participant ID", readOnly: true, noedit:true, headerFilter:true},
-    participant_name:{caption:"Name", type:"string", headerFilter:true},
+    participant_id: {caption:"SPPA Firm ID",posttext:"(Only letters, numbers and underscore are allowed)", type:"string", placeholder:"Participant ID", readOnly: true, noedit:true, headerFilter:true},
+    participant_name:{caption:"Firm Name", type:"string", headerFilter:true},
     record_type:    {caption:"Record Type", type:"string", readOnly: true, noedit:true, noview:true, visible: false, control:"lookup", option:{table:"PartRecType",id:"xkey",text:"xval"}},
     rec_type_str:   {caption:"Record Type", type:"string", readOnly: true, noadd:true, headerFilter:true},
     data:           {caption:"Data", type:"string", visible:false, noadd:true, noedit:true, useTag:true, tagFormat:"json"},
     inserted_at:    {caption: "Created", type: "datetime", autoValue: true, formatter: datetimeFormatter},
     updated_at:     {caption: "Updated", type: "datetime", autoValue: true, formatter: datetimeFormatter}
 }';
-
+// @#?&=+%/
 $Model2 = '{
     id:          {caption:"ID", type:"numeric", formatting: "rownum", autoValue:true, frozen:true},
     rowid:       {caption:"", type:"numeric", noadd:true, noedit:true, noview:true, visible:false},
-    clientId:    {caption:"Client ID", type:"string", headerFilter:true},
-    clientName:  {caption:"Client Name", type:"string",upperCase:true, headerFilter:true},
-    fixFirmId:   {caption:"Fix Firm ID", type:"string",upperCase:true, headerFilter:true},
-    fixSourceId: {caption:"Fix Source ID", type:"string", defaultValue:"D", upperCase:true},
+    clientId:    {caption:"3rd Party ID", type:"string", headerFilter:true,verify:(v)=>{return FieldVerifier(v.length<1,"Field [3rd Party ID] blank.")}},
+    clientName:  {caption:"3rd Party User Name", type:"string",upperCase:true, headerFilter:true,verify:(v)=>{return FieldVerifier(v.length<1,"Field [3rd Party User Name] blank.")}},
+    fixFirmId:   {caption:"Fix SPPA Firm ID", type:"string",upperCase:true, headerFilter:true,verify:(v)=>{return FieldVerifier(v.length<1,"Field [SPPA Firm ID] blank.")}},
+    fixSourceId: {caption:"Fix Source ID", type:"string", defaultValue:"D", upperCase:true,verify:(v)=>{return FieldVerifier(v.length<1,"Field [FIX Source ID] blank.")}},
     fixMainUrl:  {caption:"Fix Main Url", type:"string", noedit:true, noadd:true},
     fixDrcUrl:   {caption:"Fix DRC Url", type:"string", noedit:true, noadd:true},
-    fixMainUrl_user: {caption:"<hr><span style='."'".'color: navy; font-family: serif; font-style:italic; font-size:1.3em;'."'".'>Fix Main URL</span><br>Fix User", type:"string", placeholder:"Fix User", noview:true, visible:false},
-    fixMainUrl_pass: {caption:"Fix Password ", type:"string", noview:true, visible:false},
-    fixMainUrl_ip:   {caption:"Fix Server IP", type:"string", noview:true, visible:false},
-    fixMainUrl_port: {caption:"Fix Port", type:"string", noview:true, visible:false},
-    fixMainUrl_sender:{caption:"Sender Comp ID", type:"string", noview:true, visible:false},
-    fixMainUrl_target:{caption:"Target Comp Id", type:"string", noview:true, visible:false, defaultValue:"AXECHANGE"},
-    fixDrcUrl_user:  {caption:"<hr><span style='."'".'color: navy; font-family: serif; font-style:italic; font-size:1.3em;'."'".'>Fix DRC URL</span><br>Fix DRC User", type:"string", placeholder:"Fix DRC User", noview:true, visible:false},
-    fixDrcUrl_pass:  {caption:"Fix DRC Password", type:"string", noview:true, visible:false},
-    fixDrcUrl_ip:    {caption:"Fix DRC Server IP", type:"string", noview:true, visible:false},
-    fixDrcUrl_port:  {caption:"Fix DRC Port", type:"string", noview:true, visible:false},
-    fixDrcUrl_sender:{caption:"DRC Sender Comp ID", type:"string", noview:true, visible:false},
-    fixDrcUrl_target:{caption:"DRC Target Comp ID", type:"string", noview:true, visible:false, defaultValue:"AXECHANGE"}
+    fixMainUrl_user: {caption:"Fix User", type:"string", pretext:"<hr>Fix Main URL", placeholder:"SPPA User Name", upperCase:true, noview:true, visible:false,verify:(v)=>{return FieldVerifier(v.length<1,"Field [FIX User] blank.")}},
+    fixMainUrl_pass: {caption:"SPPA Password", posttext:"( Do not use these chars for password: @#?&=:+%/\' )", type:"string", noview:true, placeholder:"SPPA Password", visible:false,verify:(v)=>{return FieldVerifier(v.length<1,"Field [SPPA Password] blank.")}},
+    fixMainUrl_ip:   {caption:"Fix Server IP", type:"string", noview:true, visible:false, defaultValue:"172.61.2.34",verify:(v)=>{return FieldVerifier(v.length<1,"Field [FIX Server IP] blank.")}},
+    fixMainUrl_port: {caption:"Fix Server Port", type:"string", noview:true, visible:false, defaultValue:"11000",verify:(v)=>{return FieldVerifier(v.length<1,"Field [FIX Server Port] blank.")}},
+    fixMainUrl_sender:{caption:"User Comp ID", posttext:"(Only letters allowed)", type:"string", noview:true, visible:false,verify:(v)=>{return FieldVerifier(v.length<1,"Field [SPPA User Comp ID] blank.")}},
+    fixMainUrl_target:{caption:"Target Comp Id", posttext:"(Only letters allowed)", type:"string", noview:true, visible:false, defaultValue:"AXECHANGE",verify:(v)=>{return FieldVerifier(v.length<1,"Field [SPPA Target Comp ID] blank.")}},
+    fixDrcUrl_user:  {caption:"SPPA DRC User Name", pretext:"<hr>Fix DRC URL", type:"string", placeholder:"SPPA DRC User Name", upperCase:true, noview:true, visible:false,verify:(v)=>{return FieldVerifier(v.length<1,"Field [SPPA DRC User Name] blank.")}},
+    fixDrcUrl_pass:  {caption:"SPPA DRC Password", posttext:"( Do not use these chars for password: @#?&=:+%/\' )", type:"string", noview:true, visible:false,verify:(v)=>{return FieldVerifier(v.length<1,"Field [SPPA DRC Password] blank.")}},
+    fixDrcUrl_ip:    {caption:"Fix DRC Server IP", type:"string", noview:true, visible:false, defaultValue:"172.61.2.36",verify:(v)=>{return FieldVerifier(v.length<1,"Field [SPPA DRC Server IP] blank.")}},
+    fixDrcUrl_port:  {caption:"Fix DRC Port", type:"string", noview:true, visible:false, defaultValue:"11000",verify:(v)=>{return FieldVerifier(v.length<1,"Field [SPPA DRC Server Port] blank.")}},
+    fixDrcUrl_sender:{caption:"DRC User Comp ID", posttext:"(Only letters allowed)", upperCase:true, type:"string", noview:true, visible:false,verify:(v)=>{return FieldVerifier(v.length<1,"Field [DRC User Comp ID] blank.")}},
+    fixDrcUrl_target:{caption:"DRC Target Comp ID", posttext:"(Only letters allowed)", upperCase:true, type:"string", noview:true, visible:false, defaultValue:"AXECHANGE",verify:(v)=>{return FieldVerifier(v.length<1,"Field [DRC Target Comp ID] blank.")}}
 }';
 
 $Model3 = '{
@@ -38,113 +38,6 @@ $Model3 = '{
     rowid:   {caption:"", type:"numeric", noadd:true, noedit:true, noview:true, visible:false},
     ftpUrl:  {caption:"FTP Url", type:"string"}
 }';
-
-$PRM = array(
-    "icon" => "file invoice dollar",
-    "caption" => "Config",
-    "accordionID" => "",
-    "menuID" => "menu-config",
-    "apiList" => "api/?1/config/config/list",
-    "apiCreate" => "api/?1/config/config/create",
-    "apiUpdate" => "api/?1/config/config/update",
-    "apiDelete" => "api/?1/config/config/delete",
-    "labelField" => "participant_id",
-    "extraButtons" => "",
-    "jsStartup" => "",
-    "addAfterShow" => "",
-    "editAfterShow" => "",
-    "model" => $Model,
-    "fnAdd" => "btnAdd2_click",
-    "fnEdit" => "btnEdit2_click",
-    "extraJS" => "
-        btnAdd2_click = () => {
-            XFrame.setCaption('Add Record')
-                .setContent(frmPage.formAdd('add_rec',2))
-                .setConfirmation()
-                .setVerifier(true, ()=>{ return frmPage.doVerify(); })
-                .setAction(true,()=>{
-                    var fdata = frmPage.readForm(false,true);
-                    Loader('Saving new record...');
-                    //console.log(fdata);
-                    Api('api/?1/config/config/create', {body: fdata}).then(
-                        data => {
-                            LoaderHide();
-                            if (data.error == 0) {
-                                ToastSuccess('New record saved');
-                                btnRefresh_click();
-                                window.parent.refreshDashboard();
-                            } else {
-                                FError('Saving record failed', data.message);
-                            }
-                        },
-                        error => {
-                            LoaderHide();
-                            FError('Saving record error', error);
-                        }
-                    );
-                })
-                .setAfterShow(()=>{
-                    $('.dropdown').dropdown();
-                })
-                .show();
-        }
-        btnEdit2_click = () => {
-            var sel = (Table.getSelectedData())[0]; // get first selected element
-            if (sel == undefined) {
-                ToastError('No row selected');
-                return;
-            }
-
-            var parm = {id: sel.id};
-            XFrame.setCaption('Edit Record')
-                .setContent(frmPage.formEdit(parm, 'edt_rec', 2))
-                .setConfirmation()
-                .setVerifier(true, ()=>{ return frmPage.doVerify(); })
-                .setAction(true,()=>{
-                    var fdata = frmPage.readForm(true,true);
-                    Loader('Updating record...');
-                    Api('api/?1/config/config/update', {body: fdata}).then(
-                        data => {
-                            LoaderHide();
-                            if (data.error == 0) {
-                                ToastSuccess('Record updated');
-                                btnRefresh_click();
-                                window.parent.refreshDashboard();
-                            } else {
-                                FError('Update record failed', data.message);
-                            }
-                        },
-                        error => {
-                            LoaderHide();
-                            FError('Update record error', error);
-                        }
-                    );
-                })
-                .setAfterShow(()=>{
-                    $('.dropdown').dropdown();
-                })
-                .show();
-        }
-    ",
-    "add_readform_isedit" => "false",
-    "add_readform_getro" => "true",
-    "tabulatorOption" => "
-        ajaxCallback : (url, params, response) => {
-            var resp = response;
-            if (resp.data != null) {
-                if (Array.isArray(resp.data)) {
-                    for (var i=0; i<resp.data.length; i++) {
-                        var d1 = JSON.parse(resp.data[i].data);
-                        resp.data[i].bbId = d1.bbId;
-                        resp.data[i].firmId = d1.firmId;
-                        resp.data[i].sourceId = d1.sourceId;
-                    }
-                }
-            }
-            return resp;
-        }
-    "
-);
 
 $PRM = array(
     "caption" => "Config",
@@ -199,6 +92,7 @@ $PRM = array(
         });
 
         Ref.load('PartRecType', 'api/?1/config/ref/rec-type');
+        Ref.load('DefaultValue', 'api/?1/config/ref/default-value');
     ",
     "extraJS" => "
         function btnLRefresh_click() {
@@ -243,6 +137,10 @@ $PRM = array(
                 })
                 .setAfterShow(()=>{
                     $('.dropdown').dropdown();
+                    $('#fld-record_type').dropdown('set selected', 'PART');
+                    document.getElementById('fld-participant_id').addEventListener('input', function(ev) {
+                    	includeChars(ev,'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_');
+                    });
                 })
                 .show();
         }
@@ -279,6 +177,9 @@ $PRM = array(
                 })
                 .setAfterShow(()=>{
                     $('.dropdown').dropdown();
+                    document.getElementById('fld-participant_id').addEventListener('input', function(ev) {
+                    	includeChars(ev,'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_');
+                    });
                 })
                 .show();
         }
@@ -324,10 +225,22 @@ $PRM = array(
                 frmRight.setModel(".$Model2.");
                 \$id('btnRAdd').style.display = 'block';
                 \$id('btnRDelete').style.display = 'block';
-            } else {
+                \$id('btnRRefresh').style.display = 'block';
+                \$id('btnRView').style.display = 'block';                
+                \$id('btnREdit').style.display = 'block';
+            } else if (tipe == 'FTP') {
                 frmRight.setModel(".$Model3.");
                 \$id('btnRAdd').style.display = 'none';
                 \$id('btnRDelete').style.display = 'none';
+                \$id('btnRRefresh').style.display = 'block';
+                \$id('btnRView').style.display = 'block';                
+                \$id('btnREdit').style.display = 'block';
+            } else {
+                \$id('btnRAdd').style.display = 'none';
+                \$id('btnRDelete').style.display = 'none';                
+                \$id('btnRRefresh').style.display = 'none';
+                \$id('btnRView').style.display = 'none';                
+                \$id('btnREdit').style.display = 'none';
             }
             var rows = [];
             if (tipe == 'PART') {
@@ -390,11 +303,20 @@ $PRM = array(
                 leftData = xel;
             }
             XFrame.setCaption('Add Data')
-                .setContent(frmRight.formAdd('add_rec',2))
+                .setContent(frmRight.formAdd('add_rec',2,true))
                 .setConfirmation()
                 .setVerifier(true, ()=>{ return frmRight.doVerify(); })
                 .setAction(true,()=>{
                     var odata = frmRight.readForm(false,false,true);
+                    for (var i=0; i<frmRight.Data.length; i++){
+                        var d = frmRight.Data[i];
+                        if (d.clientId == odata['clientId']) {
+                            //FError('Error', 'Duplicate 3rd Party ID');
+                            alert('ERROR :: Duplicate 3rd Party ID detected.');
+                            window.location.reload();
+                            return;
+                        }
+                    }
                     odata['id'] = 1+frmRight.Data.length;
                     odata['rowid'] = leftID;
                     //odata['fixMainUrl'] = '';
@@ -430,6 +352,9 @@ $PRM = array(
 
                     var fdata = frmLeft.formDataTabRow(leftData);
                     fdata.delete('rec_type_str');
+                    fdata.append('SEND_operation','NEW');
+                    fdata.append('SEND_participantId',leftData.participant_id);
+                    fdata.append('SEND_userid',odata.fixMainUrl_user);
                     Loader('Saving new record...');
                     //console.log(fdata);
                     Api('api/?1/config/config/update', {body: fdata}).then(
@@ -450,6 +375,34 @@ $PRM = array(
                 })
                 .setAfterShow(()=>{
                     $('.dropdown').dropdown();
+                    document.getElementById('fld-fixMainUrl_pass').addEventListener('input', function(ev) {
+                    	excludeChars(ev,'@#?&:=+%/\'');
+                    });
+                    document.getElementById('fld-fixDrcUrl_pass').addEventListener('input', function(ev) {
+                    	excludeChars(ev,'@#?&:=+%/\'');
+                    });
+                    document.getElementById('fld-fixMainUrl_sender').addEventListener('input', function(ev) {
+                    	includeChars(ev);
+                    });
+                    document.getElementById('fld-fixDrcUrl_sender').addEventListener('input', function(ev) {
+                    	includeChars(ev);
+                    });
+                    
+                    \$id('fld-fixMainUrl_ip').value = Ref.find('DefaultValue','xkey','MAIN-SERVER-IP','xval');
+                    \$id('fld-fixMainUrl_port').value = Ref.find('DefaultValue','xkey','MAIN-SERVER-PORT','xval');
+                    \$id('fld-fixMainUrl_target').value = Ref.find('DefaultValue','xkey','MAIN-TARGET-COMPID','xval');
+                    \$id('fld-fixDrcUrl_ip').value = Ref.find('DefaultValue','xkey','DRC-SERVER-IP','xval');
+                    \$id('fld-fixDrcUrl_port').value = Ref.find('DefaultValue','xkey','DRC-SERVER-PORT','xval');
+                    \$id('fld-fixDrcUrl_target').value = Ref.find('DefaultValue','xkey','DRC-TARGET-COMPID','xval');
+                    \$id('fld-fixSourceId').value = Ref.find('DefaultValue','xkey','FIXSOURCEID','xval');
+
+                    \$id('fld-fixMainUrl_ip').readOnly = true;
+                    \$id('fld-fixMainUrl_port').readOnly = true;
+                    \$id('fld-fixMainUrl_target').readOnly = true;
+                    \$id('fld-fixDrcUrl_ip').readOnly = true;
+                    \$id('fld-fixDrcUrl_port').readOnly = true;
+                    \$id('fld-fixDrcUrl_target').readOnly = true;
+                    \$id('fld-fixSourceId').readOnly = true;
                 })
                 .show();
         }
@@ -508,6 +461,19 @@ $PRM = array(
                     adata['fixDrcUrl'] = 'fix5://'+url2;
                     //adata['rowid'] = leftID;
                     frmRight.updateData(adata,['id']);
+                    rids = [];
+                    for (var i=0; i<frmRight.Data.length; i++){
+                        var d = frmRight.Data[i];
+                        var c = d.clientId;
+                        if (rids.includes(c)) {
+                            //FError('Error', 'Duplicate 3rd Party ID detected.');
+                            alert('ERROR :: Duplicate 3rd Party ID detected.');
+                            window.location.reload();
+                            return;
+                        }
+                        rids.push(c);
+                    }
+
                     if (leftData.record_type == 'PART') {
                         var jeje = [];
                         for (var i=0; i<frmRight.Data.length; i++) {
@@ -530,6 +496,9 @@ $PRM = array(
 
                     var fdata = frmLeft.formDataTabRow(leftData);
                     fdata.delete('rec_type_str');
+                    fdata.append('SEND_operation','EDIT');
+                    fdata.append('SEND_participantId',leftData.participant_id);
+                    fdata.append('SEND_userid',adata.fixMainUrl_user);
                     Loader('Updating record...');
                     Api('api/?1/config/config/update', {body: fdata}).then(
                         data => {
@@ -550,6 +519,18 @@ $PRM = array(
                 })
                 .setAfterShow(()=>{
                     $('.dropdown').dropdown();
+                    document.getElementById('fld-fixMainUrl_pass').addEventListener('input', function(ev) {
+                    	excludeChars(ev,'@#?&=:+%/\'');
+                    });
+                    document.getElementById('fld-fixDrcUrl_pass').addEventListener('input', function(ev) {
+                    	excludeChars(ev,'@#?&=:+%/\'');
+                    });
+                    document.getElementById('fld-fixMainUrl_sender').addEventListener('input', function(ev) {
+                    	includeChars(ev);
+                    });
+                    document.getElementById('fld-fixDrcUrl_sender').addEventListener('input', function(ev) {
+                    	includeChars(ev);
+                    });
                 })
                 .show();
         }
@@ -588,6 +569,9 @@ $PRM = array(
                 leftData.data = JSON.stringify(jeje);
 
                 var fdata = frmLeft.formDataTabRow(leftData);
+                fdata.append('SEND_operation','DELETE');
+                fdata.append('SEND_participantId',leftData.participant_id);
+                fdata.append('SEND_userid',sel.fixMainUrl_user);
                 Api('api/?1/config/config/update', {body: fdata}).then(
                     data => {
                         LoaderHide();

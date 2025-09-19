@@ -667,6 +667,29 @@ function RealTimeNumberFormat(event, fmtr, unfmtr) {
     o.setSelectionRange(cpf,cpf);
 }
 
+function excludeChars(event,chars) {
+    var o = event.target;
+    var cpo = o.selectionStart; // cursor position original
+    var oto = o.value;          // object text original
+    let regex = new RegExp(`[${chars}]`, 'g');
+    var nto = oto.replace(regex,'');
+    if (oto.length != nto.length) cpo--;
+    o.value = nto;
+    o.setSelectionRange(cpo,cpo);
+}
+
+function includeChars(event,chars="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ") {
+    var o = event.target;
+    var cpo = o.selectionStart; // cursor position original
+    var oto = o.value;          // object text original
+    var esc = chars.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    let regex = new RegExp(`[^${esc}]`, 'g');
+    var nto = oto.replace(regex,'');
+    if (oto.length != nto.length) cpo--;
+    o.value = nto;
+    o.setSelectionRange(cpo,cpo);
+}
+
 
 
 /*
@@ -676,13 +699,22 @@ class Refs {
     constructor() {
         this.Data = {};
     }
-    load(name, url) {
+    load(name, url, fn=false) {
         Api(url).then(
             data => {
                 this.Data[name] = data.data; // array of row;
+                if (fn) setTimeout(()=>{fn()}, 500);
             },
             error => {}
         );
+    }
+    find(name,fkey,key,fval){
+        var hasil = "";
+        for (var i in this.Data[name]) {
+            var row = Ref.Data[name][i];
+            if (row[fkey] == key) hasil = row[fval];
+        }
+        return hasil;
     }
 }
 
@@ -874,8 +906,9 @@ class Formation {
         this.tempData = null;
         this.customModel = null;
         this.useCustomModel = false;
+        this.ajaxConfig = "POST";
         this.useTag = "";
-        this.TabKeys = ["frozen", "width", "formatter", "hozAlign", "headerHozAlign", "headerSort", "headerFilter","headerFilterFunc","headerFilterParam","headerFilterLiveFilter", "cellClick", "visible","editor"]; // keys for tabulator
+        this.TabKeys = ["frozen", "width", "formatter", "hozAlign", "headerHozAlign", "headerSort", "headerFilter","headerFilterFunc","headerFilterParams","headerFilterLiveFilter", "cellClick", "visible","editor","editorParams","editable"]; // keys for tabulator
     }
 
     setData(data) {
@@ -949,6 +982,8 @@ class Formation {
             editorFormat: function for editor
             defaultValue: default value
             useTag:     wrap tag in view
+            pretext:    text before field label
+            posttext:   text after field label
             <-- for tabulator -->
             title
             formatter
@@ -958,6 +993,7 @@ class Formation {
             headerHozAlign
             headerSort
             headerFilter
+            initialHeaderFilter
             headerFilterFunc
             headerFilterParam
             cellClick
@@ -1137,9 +1173,13 @@ class Formation {
             if (meta.noadd || false) continue;
             var auto = meta.autoValue || false;
             if (auto) continue;
-            var readonly = auto || meta.readOnly;
+            var readonly = meta.readOnly ?? false;
             var ph = meta.placeholder || meta.caption;
-            var ctr = meta.control || "input";
+            //var ctr = meta.control ?? "input";
+            var pretex = meta.pretext ?? "";
+            if (pretex != "") pretex = `<div class='pretext'>${pretex}</div>`;
+            var postex = meta.posttext ?? "";
+            if (postex != "") postex = `<div class='postext'>${postex}</div>`;
             var uclass = (meta.upperCase == undefined ? this.upperValue : meta.upperCase) ? `class="upper-value"` : "";
             //var uclass = (meta.upperCase || this.upperValue) ? `class="upper-value"` : "";
             var maxl = (meta.maxLength || "") == "" ? "" : `maxlength="${meta.maxLength}"`;
@@ -1149,7 +1189,7 @@ class Formation {
             //if (deef != "") deef = " value='"+deef+"'";
             var dsbld = readonly && showro ? " disabled" : "";
 
-            hasil += `<div class="field" id="div-${this.prefixId}${key}"><label>${meta.caption}</label>`;
+            hasil += `<div class="field" id="div-${this.prefixId}${key}">${pretex}<label>${meta.caption}</label>${postex}`;
             var control = "";
             switch (meta.control || meta.type || "input") {
                 case "password":
@@ -1238,9 +1278,15 @@ class Formation {
             var fval = data[key];
             if (meta.lookup) fval = Lookup.value(meta.lookup.table, fval);
             if (meta.editorFormat) fval = meta.editorFormat({getValue:()=>fval});
-            var addx = `value="${fval}"`;
-            
-            var pref = `<div class="field" id="div-${this.prefixId}${key}"><label>${meta.caption}</label>`;
+            var nval = (fval+"").replace(/"/g, '&quot;');
+            var addx = `value="${nval}"`;
+ 
+            var pretex = meta.pretext ?? "";
+            if (pretex != "") pretex = `<div class='pretext'>${pretex}</div>`;
+            var postex = meta.posttext ?? "";
+            if (postex != "") postex = `<div class='postext'>${postex}</div>`;
+             
+            var pref = `<div class="field" id="div-${this.prefixId}${key}">${pretex}<label>${meta.caption}</label>${postex}`;
             var suff = `</div>`;
             if (readonly && (meta.type != "boolean")) {
                 pref += `<div class="ui disabled input">`;
@@ -1356,18 +1402,18 @@ class Formation {
 
     xTabulator(domID, domHeight, table_name, ajaxUrl, param={}) {
         var self = this;
-        var _tlayout = param.layout || "fitColumns";
-        var _ajaxCallback = param.ajaxCallback == undefined ? null : param.ajaxCallback;
-        var _ajaxConfig = param.ajaxConfig || "POST";
-        var _ajaxContentType = param.ajaxContentType || "json";
-        var _movableColumns = param.movableColumns == undefined ? true : param.movableColumns;
+        var _tlayout = param.layout ?? "fitData";
+        var _ajaxCallback = param.ajaxCallback ?? null;
+        //var _ajaxConfig = param.ajaxConfig ?? "POST";
+        var _ajaxContentType = param.ajaxContentType ?? "json";
+        var _movableColumns = param.movableColumns ?? true;
 
-        var _sortMode = param.sortMode == undefined ? "remote" : param.sortMode;
-        var _filterMode = param.filterMode == undefined ? "remote" : param.filterMode;
+        var _sortMode = param.sortMode ?? "remote";
+        var _filterMode = param.filterMode ?? "remote";
 
-        var _pagination = param.pagination == undefined ? true : param.pagination;
-        var _paginationMode = param.paginationMode || "remote";
-        var _paginationCounter = param.paginationCounter || "rows";
+        var _pagination = param.pagination ?? true;
+        var _paginationMode = param.paginationMode ?? "remote";
+        var _paginationCounter = param.paginationCounter ?? "rows";
 
         var obj = {
             placeholder:"No Data Available",
@@ -1380,15 +1426,23 @@ class Formation {
             persistence: {
                 columns: true
             },
-            ajaxConfig: _ajaxConfig,
+            ajaxConfig: this.ajaxConfig,
             ajaxContentType: _ajaxContentType,
             ajaxURL: ajaxUrl,
             ajaxResponse: function(url, params, response){
                 //url - the URL of the request
                 //params - the parameters passed with the request
                 //response - the JSON object returned in the body of the response.
-                var resp = response;
+                var resp = null;
                 if (_ajaxCallback != null) resp = _ajaxCallback(url, params, response);
+                if (resp == undefined) resp = response;
+                if (resp.error==888 && resp.message == "Session expired.") {
+                    if (window != window.parent) {
+                        window.parent.location.reload();
+                    } else {
+                        window.location.reload();
+                    }
+                }
                 self.setData(resp.data);
                 self.setRawData(resp);
                 return resp; //return the tableData property of a response json object
@@ -1403,6 +1457,7 @@ class Formation {
             paginationSize: 50,
             //sortMode: _sortMode,
             //filterMode: _filterMode,
+            editTriggerEvent:"dblclick",
             columns: this.useCustomModel ? this.customModel : this.getModelTabulator()
         };
 

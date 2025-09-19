@@ -12,3 +12,8 @@ if (!$ISLOGGED) {
         }
     }
 }
+
+if (!$HX->active) {
+    //clearVars();
+    //header("Location: loader.php?p=login");
+}

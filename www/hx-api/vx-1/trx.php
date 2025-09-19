@@ -66,18 +66,38 @@ function api_fn($hasil, $parm, $json) {
             $doby = array(array("field"=>"inserted_at","dir"=>"desc"));
             switch ($action) {
                 case 'list':
+                    $df = str_replace("-","",$parm[3] ?? "");
+                    $dt = str_replace("-","",$parm[4] ?? "");
+                    
                     //$doby = array(array("field"=>"created_at","dir"=>"desc"));
                     if (strtolower($partid) == "all") {
                         $uni = "";
-                        $prts = DBX($dbx)->run("select participant_id partid, participant_name partname from public.config where record_type <> 'FTP'")->fetchAll();
+                        $prts = DBX($dbx)->run("select participant_id partid, participant_name partname from public.config where record_type = 'PART'")->fetchAll();
                         foreach ($prts as $part) {
                             if (strlen($uni)>0) $uni .= "union ";
-                            $uni .= "select '".$part["partid"]."' partid, '".$part["partname"]."' participant, id, record_date, order_side, cln_order_id, mkt_order_id, cln_user_id, cln_party_id, trd_user_id, trd_party_id, initiator, status, inserted_at, updated_at, trade_id FROM public.transaction_".$part["partid"]." ";
+                            $uni .= "select 
+                                        '".$part["partid"]."' partid, 
+                                        '".$part["partname"]."' participant, 
+                                        id, record_date, order_side, cln_order_id, mkt_order_id, 
+                                        cln_user_id, cln_party_id, 
+                                        trd_user_id, trd_party_id, 
+                                        initiator, status, inserted_at, updated_at, trade_id, resend,
+                                        case when initiator=1 then '".$part["partid"]."' else case when cln_party_id='".$part["partid"]."' then trd_party_id else cln_party_id end end initiator_,
+                                        case when initiator<>1 then '".$part["partid"]."' else case when cln_party_id='".$part["partid"]."' then trd_party_id else cln_party_id end end responder
+                                    FROM public.transaction_".$part["partid"]." ";
+                            if ($df != "") $uni .= " where record_date >= {$df} ";
+                            if ($df != "" && $dt != "") $uni .= " and record_date <= {$dt} ";
                         }
                         $sql = "select a.*, b.str_val status_enum from (".$uni.") a left join public.reference b on a.status=b.int_key and b.name='RFO-STATUS'";
                     } else {
                         $partname = data_lookup("public.config","participant_id",strtoupper($partid),"participant_name");
-                        $sql = "SELECT '".$partid."' partid, '".$partname."' participant, a.*, b.str_val status_enum FROM public.transaction_".$partid." a left join public.reference b on a.status=b.int_key and b.name='RFO-STATUS'";
+                        $sql = "SELECT '".$partid."' partid, '".$partname."' participant, 
+                                    a.*, b.str_val status_enum, 
+                                    case when initiator=1 then '".$partid."' else case when cln_party_id='".$partid."' then trd_party_id else cln_party_id end end initiator_,
+                                    case when initiator<>1 then '".$partid."' else case when cln_party_id='".$partid."' then trd_party_id else cln_party_id end end responder
+                                FROM public.transaction_".$partid." a left join public.reference b on a.status=b.int_key and b.name='RFO-STATUS'";
+                        if ($df != "") $sql .= " where a.record_date >= {$df} ";
+                        if ($df != "" && $dt != "") $uni .= " and a.record_date <= {$dt} ";
                     }
                     break;
                 default:

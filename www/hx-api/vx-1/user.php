@@ -49,6 +49,8 @@ function api_fn($hasil, $parm, $json) {
 
     $prms  = array();
     $hasil->debug = array();
+    $old = null;
+    $new = null;
 
     switch ($table) {
         case 'user':
@@ -57,12 +59,14 @@ function api_fn($hasil, $parm, $json) {
                 case 'reset':
                     if (!cekLevel(LEVEL_ADMIN)) done($hasil, 26);
                     $sql = "public.user";
-                    if (intval($json["ulevel"]) == 99) return done($hasil, 16);  // prevent changing user ROOT
+		            $old = data_read($sql,"id",$json["id"],$dbx);
+                    if (intval($old["ulevel"]) == 99) return done($hasil, 16);  // prevent changing user ROOT
                     if (intval($json["id"]) == intval($usr["id"])) return done($hasil, 18); // prevent resetting self password; must use change password menu;
                     $prms["id"] = $json["id"];
                     $prms["passwd"] = $json["passwd"];
                     $prms["updated_at"] = date('Y-m-d H:i:s');
                     $prms["updated_by"] = $usr["id"];
+                    $prms["chpwd"] = true;
                     break;
                 case 'level':
                     $sql = "select int_key xkey, str_val xval from public.reference where name='USER-LEVEL'";
@@ -87,7 +91,7 @@ function api_fn($hasil, $parm, $json) {
                     unset($json["uid"]);
                     unset($json["passwd"]);
                     unset($json["inserted_at"]);
-                    unset($json["updated_at"]);
+                    $json["updated_at"] = date('Y-m-d H:i:s');
                     break;
                 case 'delete':
                     if (!cekLevel(LEVEL_ADMIN)) done($hasil, 26);
@@ -121,8 +125,7 @@ function api_fn($hasil, $parm, $json) {
 
     switch ($action) {
         case 'reset':
-            $old = data_read($sql,"id",$json["id"],$dbx);
-            $new = null;
+            //$old = data_read($sql,"id",$json["id"],$dbx);
             try {
                 $new = data_update($sql,"id",$prms,$dbx);
                 $hasil->data = $new;

@@ -42,7 +42,8 @@ $lastId = getVars("last-id",0);
 
         .fixmargin { margin-top: 0 !important; }
         .m180 { left: -30px !important; }
-        .bgviolet { background-color: violet; }
+        .bgviolet { background-color: violet !important; }
+        .bggreen { background-color: green !important; }
         .bggrey { border: 1px solid grey; }
         .pointer { cursor: pointer !important; }
         .rounded { border-radius: 5px; padding-left: 5px; padding-right: 5px; }
@@ -69,6 +70,8 @@ $lastId = getVars("last-id",0);
             align-items: flex-start;
             align-content: flex-start;
             gap: 2px 10px;
+            height: 100%;
+            overflow-x: auto;
         }
         .sync_outer_box {
             padding: 10px;
@@ -103,6 +106,33 @@ $lastId = getVars("last-id",0);
             color: yellow;
             padding: 3px 10px;
         }
+        .finput {
+            display: flex;
+            flex-direction: row;
+            border: 1px solid brown;
+            border-radius: 5px;
+        }
+        .finput > div {
+            font-size: .7em;
+            padding: 3px 8px;
+            background-color: yellow;
+            border-radius: 5px 0 0 5px;
+        }
+        .finput > input {
+            border: none;
+            width: 150px;
+            font-size: .7em;
+            padding-left: 3px;
+            padding-right: 3px;
+            text-align: center;
+            border-radius: 0 5px 5px 0;
+        }
+        .finput > input.donly {
+            width: 100px;
+        }
+        .finput > input:focus {
+            outline: none;
+        }
     </style>
     <link rel="stylesheet" type="text/css" href="classes.css">
     <link rel="stylesheet" type="text/css" href="framer.css">
@@ -111,6 +141,7 @@ $lastId = getVars("last-id",0);
     <script src="classes.js"></script>
     <script src="framer.js"></script>
     <script type="text/javascript">
+    	loadStorage();
     </script>
 
     <script src="boardDash.js"></script>
@@ -119,7 +150,7 @@ $lastId = getVars("last-id",0);
 <body>
     <div id='menubar' class="ui top inverted attached mini pointing menu">
         <!-- MENU KIRI :: START -->
-        <div id='menu-kiri' class="ui inverted dropdown item icon">
+        <div id='menu-kiri' class="ui inverted blue dropdown item icon">
             <i class="bars icon"></i>
             <div class="menu">
                 <div style='display:none;' class="item" id="mnu-participant">Participant Services</div>
@@ -130,7 +161,7 @@ $lastId = getVars("last-id",0);
                     <span class="text">Settings</span>
                     <div class="menu">
                         <div class="item" id="mnu-config">Config</div>
-                        <div class="item" id="mnu-holiday">Holiday</div>
+                        <div class="item" id="mnu-holiday" <?= cekLevel(LEVEL_DEV) ? "" : "style=\"display:none;\"" ?>>Holiday</div>
                     </div>
                 </div> 
                 <div class="item" <?= cekLevel(LEVEL_ADMIN) ? "" : "style=\"display:none;\"" ?>>
@@ -147,14 +178,15 @@ $lastId = getVars("last-id",0);
         <!-- CAPTION -->
         <div class="item judul">SPPA Front End Trading - Admin</div>
         <!-- TASKBAR :: START -->
-        <a id='tdash' class="active item"><i class="tachometer alternate icon"></i> Dashboard</a>
-        <a id='ttrx' class="item"><i class="shopping cart icon"></i> Transaction</a>
-        <a id='tevent' class="item"><i class="bell outline icon"></i> Event</a>
+        <a id='tdash' class="active red item"><i class="tachometer alternate icon"></i> Dashboard</a>
+        <a id='ttrx' class="red item"><i class="shopping cart icon"></i> Transaction</a>
+        <a id='tevent' class="red item"><i class="bell outline icon"></i> Event</a>
         <!-- TASKBAR :: END -->
         <!-- MENU KANAN :: START -->
         <div class="right menu">
-            <a id='tsync' class="item" <?= cekLevel(LEVEL_DEV) ? "" : "style=\"visibility:hidden;\"" ?>><i id="icon_sync" class="sync icon"></i> Sync</a>
-            <div id='menu-kanan' class="ui inverted dropdown item">
+            <a class='item bggreen'><i class='server icon'></i> <span id='connect-to'>Server []</span></a>
+            <a id='tsync' class="red item" <?= cekLevel(LEVEL_DEV) ? "" : "style=\"visibility:hidden;\"" ?>><i id="icon_sync" class="sync icon"></i> Sync</a>
+            <div id='menu-kanan' class="ui blue inverted dropdown item">
                 <i class="user icon"></i>
                 Session
                 <div class="menu">
@@ -321,22 +353,26 @@ $lastId = getVars("last-id",0);
         });
 
         Task = {
-            Active: "tdash",
+            Active: "",
             Map: {
                 tdash: "dashBoard",
                 ttrx: "trxBoard",
                 tevent: "eventBoard",
                 tsync: "syncBoard"
             },
-            Show: function(id) {
+            Show: function(id,cmd=false) {
                 if (id != this.Active) {
-                    $id(this.Active).classList.remove('active');
-                    $id(this.Map[this.Active]).style.display = "none";  //.classList.remove('board-active');
+                    if (this.Active != "") $id(this.Active).classList.remove('active');
+                    if (this.Active != "") $id(this.Map[this.Active]).style.display = "none";  //.classList.remove('board-active');
                     this.Active = id;
                     $id(this.Active).classList.add('active');
                     $id(this.Map[this.Active]).style.display = "block";  //.classList.add('board-active');
                     $id(this.Map[this.Active]).style.height = (window.innerHeight-$id("menubar").offsetHeight)+"px";
                     if (id == 'tsync') $id('icon_sync').className = 'sync icon';
+                    if (id == "tdash") Dash.startup();
+                    if (id == "ttrx") Trx.startup();
+                    if (id == "tevent") XEvent.startup();
+                    if (cmd) setTimeout(()=>{cmd()}, 500);
                 }
                 //console.log(this.Active);
             }
@@ -350,12 +386,31 @@ $lastId = getVars("last-id",0);
         $(()=>{
             // Dashboard Init;
             Dash.startup();
-            Trx.startup();
-            XEvent.startup();
+            //Trx.startup();
+            //XEvent.startup();
+            Task.Show("tdash");
 
             TSync.startup();
             TSync.doit(<?=$lastId?>);
+            let udata = getSetting("user-data");
+            if (udata) {
+            	if (udata.chpwd != 0) {
+            		$("#mnu-chpwd").click();
+            	}
+            }
+            
+            Ref = new Refs();
+            Ref.load('FixCon', 'api/?1/config/ref/fix', ()=>{
+                var z = Ref.find('FixCon','xkey','server','xval');
+                $id('connect-to').innerHTML = 'Server ['+z+']';
+            });
+            //Ref.load('Legends', 'api/?1/config/ref/legends');
+            //Ref.load('LogType', 'api/?1/config/ref/log-type');
+            //Ref.load('AppType', 'api/?1/config/ref/app-type');
         });
     </script>
+    <!-- 
+    <?php print_r($HX); ?> 
+    -->
 </body>
 </html>

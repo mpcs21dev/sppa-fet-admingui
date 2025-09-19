@@ -15,6 +15,7 @@ header_remove("X-Powered-By");
 $hasil = new stdClass();
 $hasil->message = "OK";
 $hasil->error = 0;
+$hasil->data = array();
 
 //print $_SERVER['REQUEST_URI']."\n";
 //$arr = explode("index.php", $_SERVER['REQUEST_URI']);
@@ -88,6 +89,20 @@ if (CHECK_RIGHT) {
     if (array_search($apiver, $VERSIONS) === false) done($hasil, 5);
     if (!fnRegistered($apiver, $apifn)) done($hasil, 6);
 }
+
+/*
+if ($ISLOGGED) {
+    if (!$HX->active) {
+        clearVars();
+        $hasil->message = "Session expired";
+        $hasil->error = 888;
+        $hasil->data = array();
+        done($hasil, 888, "Session expired.");
+    }
+}
+*/
+
+$hasil->hx = json_encode($HX);
 
 // Read JSON POST
 $JPOST = json_decode(file_get_contents('php://input'), true); // change to $_POST from FormData object

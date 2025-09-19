@@ -1,12 +1,12 @@
 .boxserver {
-    filter: drop-shadow(3px 3px 6px #000000);
+    filter: drop-shadow(1px 1px 3px #000000);
     border-radius: 3px;
     border: 1px solid gray;
     padding: 3px;
     font-size: 8pt;
     margin-bottom: 10px;
-    min-width: 350px;
-    max-width: 350px;
+    min-width: 420px;
+    max-width: 420px;
 }
 .boxserver.yellow { background-color: rgb(255,255,180); border-color: rgba(175,175,0,.4); }
 .boxserver.ungu { background-color: rgb(220,255,180); border-color: rgba(175,0,175,.4); }

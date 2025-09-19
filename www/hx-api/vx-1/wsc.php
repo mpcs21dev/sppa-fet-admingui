@@ -56,7 +56,17 @@ function api_fn($hasil, $parm, $json) {
             $doby = array(array("field"=>"id","dir"=>"desc"));
             switch ($action) {
                 case 'latest':
-                    $sql = "SELECT * FROM logging";
+                    $sql = "SELECT *, case app_type when 'FIX' then app_id else '' end app_idx FROM logging";
+                    $df = $parm[2] ?? "";
+                    $dt = $parm[3] ?? "";
+                    if ($df != "" && $dt == "") {
+                        $df = str_replace("T"," ",$df);
+                        $sql .= " where inserted_at >= '{$df}'";
+                    } else if ($df != "" && $dt != "") {
+                        $df = str_replace("T"," ",$df);
+                        $dt = str_replace("T"," ",$dt);
+                        $sql .= " where inserted_at between '{$df}' and '{$dt}'";
+                    }
                     $dbx = 0;
                     break;
                 default:

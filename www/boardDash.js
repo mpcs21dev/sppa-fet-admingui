@@ -29,6 +29,7 @@ class Config extends Common {
                 this.data[i].trade = 0;
                 this.data[i].error = 0;
                 this.data[i].send = 0;
+                this.data[i].initiator = 0;
                 this.data[i].rendered = false;
             }
         }
@@ -85,6 +86,19 @@ class Config extends Common {
         }
         return hasil;
     }
+    dataByClientId(cid) {
+        var hasil = null;
+        const x = this.data.length;
+        for (var i=0; i<x; i++) {
+            //this.data[f[i]] = j.data[f[i]];
+            var m = this.data[i];
+            if (cid == m.clientId) {
+                hasil = m;
+                break;
+            }
+        }
+        return hasil;
+    }
     updateConn(j,ix,origin=""){
         if (ix === false) return false;
         var m = this.data[ix];
@@ -112,6 +126,7 @@ class Config extends Common {
             const k = Object.keys(j.data);
             const y = k.length;
             for (var l=0; l<y; l++) {
+                if (k[l] == "initiator") continue;
                 this.data[ix][k[l]] = j.data[k[l]];
                 try {
                     $id(k[l]+'_'+this.part_id+'-'+this.data[ix].clientId).innerText = j.data[k[l]];
@@ -146,12 +161,11 @@ class Config extends Common {
                             <div><div>${rec.clientName}</div><div id="${this.genId('clientId',recid)}" class="error">${rec.clientId}</div></div>
                             <div class="SInfo-separator"></div>
                             <div><div id="${this.genId('rfoRequest',recid)}">${rec.rfoRequest}</div><div>RFO</div></div>
-                            <div><div id="${this.genId('approved',recid)}">${rec.approved}</div><div>APPRV</div></div>
-                            <div><div id="${this.genId('rejected',recid)}">${rec.rejected}</div><div>RJECT</div></div>
-                            <div><div id="${this.genId('trade',recid)}">${rec.trade}</div><div>TRADE</div></div>
-                            <div class="SInfo-separator-2"></div>
                             <div><div id="${this.genId('error',recid)}">${rec.error}</div><div class="error">ERROR</div></div>
-                            <div><div id="${this.genId('send',recid)}">${rec.send}</div><div class="send">SEND</div></div>
+                            <div><div id="${this.genId('send',recid)}">${rec.send}</div><div class="send">INITIATOR</div></div>
+                            <div><div id="${this.genId('approved',recid)}">${rec.approved}</div><div>RESPONSE</div></div>
+                            <div><div id="${this.genId('rejected',recid)}">${rec.rejected}</div><div>REJECT</div></div>
+                            <div><div id="${this.genId('trade',recid)}">${rec.trade}</div><div>TRADE</div></div>
                         </div>
                     </div>
                 `;
@@ -159,8 +173,8 @@ class Config extends Common {
             return `<div class='boxserver' style='background:${this.randColor()};'>
                         <div class='caption'>
                             <span id="${this.genId('name')}">${this.part_name}</span> 
-                            [<span id="${this.genId('service_name')}">${this.service_name}</span> : 
-                            <span id="${this.genId('service_port')}">${this.service_port}</span>] 
+                            <!-- [<span id="${this.genId('service_name')}">${this.service_name}</span> : 
+                            <span id="${this.genId('service_port')}">${this.service_port}</span>] -->
                             <!-- <span id="${this.genId('service_status')}">${this.service_status}</span> -->
                         </div>
                         <div class='console'>
@@ -194,9 +208,9 @@ class Config extends Common {
             return `<div class='boxserver' style='background:${this.randColor()};'>
                         <div class='caption'>
                             <span id="${this.genId('name')}">${this.part_id}</span> 
-                            [<span id="${this.genId('service_name')}">${this.service_name}</span> : 
+                            <!-- [<span id="${this.genId('service_name')}">${this.service_name}</span> : 
                             <span id="${this.genId('service_port')}">${this.service_port}</span>] 
-                            <span id="${this.genId('service_status')}">${this.service_status}</span>
+                            <span id="${this.genId('service_status')}">${this.service_status}</span> -->
                         </div>
                         <div class='console'>
                             <div class="SInfo">
@@ -244,6 +258,13 @@ class ConBox {
             if (lmn.part_id == name) ide = ix;
         });
         return ide;
+    }
+    boxByName(name){
+        let res = null;
+        this.box.forEach((lmn,ix) => {
+            if (lmn.part_id == name) res = lmn;
+        });
+        return res;
     }
     updateMetr(j,origin=""){
         //const j = JSON.parse(data);
@@ -307,193 +328,13 @@ class ConBox {
         return hasil;
     }
 }
-/*
-class Server extends Common {
-    constructor(arr) {
-        super();
-        this.id = hashCode(arr[1]);
-        [
-            this.idx,
-            this.name, 
-            this.ip, 
-            this.service_name, 
-            this.service_port,
-            this.service_status,
-            this.cpu_core, 
-            this.cpu_speed, 
-            this.ram, 
-            this.disk, 
-            this.usage_cpu, 
-            this.usage_ram,
-            this.count_error,
-            this.count_send,
-            this.count_quote,
-            this.count_resp,
-            this.count_reject,
-            this.count_trade
-        ] = arr;
-    }
-    randColor() {
-        // https://stackoverflow.com/questions/43193341/how-to-generate-random-pastel-or-brighter-color-in-javascript
-        return "hsl(" + 360 * Math.random() + ',' +
-                    (25 + 70 * Math.random()) + '%,' + 
-                    (85 + 10 * Math.random()) + '%)';
-    }
-    render() {
-        //const clr = svr.type == "ftp" ? "yellow" : "ungu";
-        return `<div class='boxserver' style='background:${this.randColor()};'>
-                    <div class='caption'>
-                        <span id="${this.genId('name')}">${this.name}</span> 
-                        [<span id="${this.genId('service_name')}">${this.service_name}</span> : 
-                        <span id="${this.genId('service_port')}">${this.service_port}</span>] 
-                        <span id="${this.genId('service_status')}">${this.service_status}</span>
-                    </div>
-                    <div class='console'>
-                        <div class="SInfo">
-                            <!--
-                            <div><div id="${this.genId('core')}">${this.cpu_core}</div><div>CORE</div></div>
-                            <div><div id="${this.genId('speed')}">${this.cpu_speed}</div><div>SPEED</div></div>
-                            <div><div id="${this.genId('ram')}">${this.ram}</div><div>RAM</div></div>
-                            <div><div id="${this.genId('disk')}">${this.disk}</div><div>DISK</div></div>
-                            -->
-                            <div class="SInfo-separator"></div>
-                            <div><div id="${this.genId('usage_cpu')}">${this.usage_cpu}</div><div class="cpu">CPU</div></div>
-                            <div><div id="${this.genId('usage_ram')}">${this.usage_ram}</div><div class="mem">MEM</div></div>
-                        </div>
-                    </div>
-                    <div class='console'>
-                        <div class='SInfo'>
-                            <button>Message</button>
-                            <button>Event</button>
-                        </div>
-                    </div>
-                    <div class='console'>
-                        <div class='SInfo'>
-                            <div><div id="${this.genId('count_quote')}">${this.count_quote}</div><div>RFO</div></div>
-                            <div><div id="${this.genId('count_resp')}">${this.count_resp}</div><div>RESP</div></div>
-                            <div><div id="${this.genId('count_reject')}">${this.count_reject}</div><div>RJCT</div></div>
-                            <div><div id="${this.genId('count_trade')}">${this.count_trade}</div><div>TRADE</div></div>
-                            <div class="SInfo-separator"></div>
-                            <div><div id="${this.genId('count_error')}">${this.count_error}</div><div class="error">ERROR</div></div>
-                            <div><div id="${this.genId('count_send')}">${this.count_send}</div><div class="send">SEND</div></div>
-                        </div>
-                    </div>
-                </div>
-            `;
-    }
-}
 
-class AServer {
-    constructor() {
-        this.svr = [];
-    }
-    count() {
-        return this.svr.length;
-    }
-    getDS() {
-        var hasil = [];
-        for (var i=0; i<this.svr.length; i++) {
-            hasil.push({
-                id: this.svr[i].idx,
-                participant_id: this.svr[i].name,
-                service_name: this.svr[i].service_name,
-                service_port: this.svr[i].service_port,
-                status: this.svr[i].status
-            });
-        }
-        return hasil;
-    }
-    addServer(arr) {
-        let obj = new Server(arr);
-        this.svr.push(obj);
-        return this;
-    }
-    serverByName(name) {
-        let idx = false;
-        this.svr.forEach((lmn,ix) => {
-            if (lmn.name == name) idx = ix;
-        });
-        return idx;
-    }
-    serverById(id) {
-        let ide = false;
-        this.svr.forEach((lmn,ix) => {
-            if (lmn.id == id) ide = ix;
-        });
-        return ide;
-    }
-    serverByIdx(idx) {
-        let ide = false;
-        this.svr.forEach((lmn,ix) => {
-            if (lmn.idx == idx) ide = ix;
-        });
-        return ide;
-    }
-    serverLastIndex() {
-        return this.svr.length - 1;
-    }
-    render(id) {
-        let html = "";
-        for (let i = 0, len = this.svr.length; i < len; i++) {
-            html += this.svr[i].render();
-        }                
-        document.getElementById(id).innerHTML = html;
-    }
-}
-*/    
 Dash = {
     ID: 1,
     RootID: 'dashBoard',
     Data: [],
     Ses: new ConBox(),
-    /*
-    readStat: function(){
-        Api("api/?1/config/stat/listall").then(oke => {
-            if (oke.error == 0) {
-                for (var i=0; i<oke.data.length; i++) {
-                    let dx = oke.data[i];
-                    const appid = dx.appId;
-                    delete dx["id"];
-                    delete dx["appId"];
-                    delete dx["lastUpdate"];
-                    const dk = Object.keys(dx);
-                    for (var k=0; k<dk.length; k++) {
-                        try {
-                            $id(dk[k]+'_'+appid).innerText = dx[dk[k]];
-                        } catch(e) {
-                            console.log('updateStat-error',e,dk[k],dx[k]);
-                        }
-                    }
-                }
-            } else {
-                ToastError("Error readng connection table");
-                console.log(oke);
-            }
-        }, err => {
-            ToastError("Connection Status: Server Error");
-            console.log({status: "Connection Status: Server Error", detail: err});
-        });
-    },
-    readConn: function(){
-        Api("api/?1/config/fix/listall").then(oke => {
-            if (oke.error == 0) {
-                for (var i=0; i<oke.data.length; i++) {
-                    try {
-                        $id("clientId_"+oke.data[i].appId).className = oke.data[i].login == "1" ? 'send':'error';
-                    } catch(e) {
-                        console.log('updateConn-error',e,'clientId_'+this.appId,oke.data[i]);
-                    }
-                }
-            } else {
-                ToastError("Error readng connection table");
-                console.log(oke);
-            }
-        }, err => {
-            ToastError("Connection Status: Server Error");
-            console.log({status: "Connection Status: Server Error", detail: err});
-        });
-    },
-    */
+    rendered: false,
     render_wrap: function(html) {
         let div = document.createElement("div");
         div.id = "sesgrid";
@@ -502,43 +343,75 @@ Dash = {
         //console.log([this.RootID, $id(this.RootID), this]);
         $id(this.RootID).appendChild(div);
     },
-    render: function(upd = false) {
-        let selfDash = this;
-        Api("api/?1/config/config/listall").then(
-            data => {
-                if (data.error == 0) {
-                    if (data.data != null) {
-                        if (Array.isArray(data.data)) {
-                            this.Data = data.data;
-                            for (var i=0; i<data.data.length; i++) {
-                                var d = data.data[i];
-                                this.Ses.addConfig(d);
-                            }
-                            /*
-                            SES.addServer([2,"BCA-JKT","","fet-bca-jkt","9900","LIVE","4","2.0GHz","16GB","120GB","60%","30%",0,0,100,50,0,25]);
-                            SES.addServer([3,"OCBC-JKT","","fet-ocbc-jkt","9900","LIVE","4","2.0GHz","16GB","120GB","60%","30%",0,0,100,50,0,25]);
-                            SES.addServer([4,"SUCOR-JKT","","fet-sucor-jkt","9900","LIVE","4","2.0GHz","16GB","120GB","60%","30%",0,0,100,50,0,25]);
-                            SES.addServer([5,"CGS-JKT","","fet-cgs-jkt","9900","LIVE","4","2.0GHz","16GB","120GB","60%","30%",0,0,100,50,0,25]);
-                            SES.addServer([6,"TRIM-JKT","","fet-trim-jkt","9900","LIVE","4","2.0GHz","16GB","120GB","60%","30%",0,0,100,50,0,25]);
-                            */
-                            //this.Ses.render("sesgrid");
-                            this.render_wrap(this.Ses.render(upd));
-                        } else this.Data=[];
-                    } else this.Data=[];
-                } else {
-                    //SwalToast('error','Error Get Challange');
-                    ToastError("Error readng config table");
-                    console.log(data);
+    getClientName: function(pid,cid) {
+        var hasil = "";
+        /*
+        for (var i=0; i<this.Ses.count(); i++) {
+            var box = this.Ses.box[i];
+            if (box.part_id == pid) {
+                for (var x=0; x<box.data.length; x++) {
+                    var bdat = box.data[x];
+                    if (bdat.clientId == cid) {
+                        hasil = bdat.clientName;
+                        break;
+                    }
                 }
-                //setTimeout(selfDash.readConn,500);
-                //setTimeout(selfDash.readStat,1500);
-            },
-            error => {
-                //SwalToast('error','Get Challange: Server Error');
-                ToastError("Config List: Server Error");
-                console.log({status: "Config List: Server Error", detail: error});
+                break;
             }
-        );
+        }
+        */
+        var box = this.Ses.boxByName(pid);
+        if (box != null) {
+            var data = box.dataByClientId(cid);
+            if (data != null) {
+                hasil = data.clientName;
+            }
+        }
+        return hasil;
+    },
+    render: function(upd = false) {
+        if (this.rendered) return;
+        let selfDash = this;
+        try {
+            Api("api/?1/config/config/listall").then(
+                data => {
+                    if (data.error == 0) {
+                        if (data.data != null) {
+                            if (Array.isArray(data.data)) {
+                                this.Data = data.data;
+                                for (var i=0; i<data.data.length; i++) {
+                                    var d = data.data[i];
+                                    this.Ses.addConfig(d);
+                                }
+                                /*
+                                SES.addServer([2,"BCA-JKT","","fet-bca-jkt","9900","LIVE","4","2.0GHz","16GB","120GB","60%","30%",0,0,100,50,0,25]);
+                                SES.addServer([3,"OCBC-JKT","","fet-ocbc-jkt","9900","LIVE","4","2.0GHz","16GB","120GB","60%","30%",0,0,100,50,0,25]);
+                                SES.addServer([4,"SUCOR-JKT","","fet-sucor-jkt","9900","LIVE","4","2.0GHz","16GB","120GB","60%","30%",0,0,100,50,0,25]);
+                                SES.addServer([5,"CGS-JKT","","fet-cgs-jkt","9900","LIVE","4","2.0GHz","16GB","120GB","60%","30%",0,0,100,50,0,25]);
+                                SES.addServer([6,"TRIM-JKT","","fet-trim-jkt","9900","LIVE","4","2.0GHz","16GB","120GB","60%","30%",0,0,100,50,0,25]);
+                                */
+                                //this.Ses.render("sesgrid");
+                                this.render_wrap(this.Ses.render(upd));
+                            } else this.Data=[];
+                        } else this.Data=[];
+                    } else {
+                        //SwalToast('error','Error Get Challange');
+                        ToastError("Error readng config table");
+                        console.log(data);
+                    }
+                    //setTimeout(selfDash.readConn,500);
+                    //setTimeout(selfDash.readStat,1500);
+                },
+                error => {
+                    //SwalToast('error','Get Challange: Server Error');
+                    ToastError("Config List: Server Error");
+                    console.log({status: "Config List: Server Error", detail: error});
+                }
+            );
+            this.rendered = true;
+        } catch (err) {
+            ToastError(err);
+        }
     },
     startup: function() {
         this.render();
@@ -546,8 +419,7 @@ Dash = {
 }
 
 function showTrx(partid) {
-    Task.Show('ttrx');
-    Trx.Tabll.setHeaderFilterValue("participant",partid);
+    Task.Show('ttrx',()=>{Trx.Tabll.setHeaderFilterValue("participant",partid)});
 }
 function showEvent() {
     Task.Show('tevent');

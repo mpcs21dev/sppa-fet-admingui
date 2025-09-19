@@ -143,9 +143,6 @@ TSync = {
                         self.xdate = (new Date()).format("localShortTime");
                         $id('syncInfo').innerText = self.info(self.xbj);
                         self.fillControl("lastId");
-                        if (self.active) {
-                            setTimeout(doit_repeat, self.interval);
-                        }
                     } else {
                         //FError("Fetch event failed", data.message);
                         let obj = {
@@ -155,6 +152,9 @@ TSync = {
                         };
                         $id('errInfo').innerText = JSON.stringify(obj,null,2);
                         self.changeIcon();
+                    }
+                    if (self.active) {
+                        setTimeout(doit_repeat, self.interval);
                     }
                 },
                 error => {
@@ -182,10 +182,14 @@ TSync = {
                     delete dx["lastUpdate"];
                     const dk = Object.keys(dx);
                     for (var k=0; k<dk.length; k++) {
+                        if (dk[k] == "initiator") continue;
                         try {
-                            $id(dk[k]+'_'+appid).innerText = dx[dk[k]];
+                            var dval = dx[dk[k]] ?? "";
+                            dval = dval == "" ? 0 : dval;
+                            if (dval == "") dval = 0;
+                            $id(dk[k]+'_'+appid).innerText = dval;
                         } catch(e) {
-                            console.log('updateStat-error',e,dk[k],dx[k]);
+                            console.log('updateStat-error',e,dk[k],dx[dk[k]]);
                         }
                     }
                 }
@@ -283,6 +287,7 @@ TSync = {
             if (!this["init"+xval]) {
                 const tinggi = $id("sync_right").offsetHeight - $id("sync_right_tool").offsetHeight;
                 this["Table"+xval] = this["frm_wsc"+xval].xTabulator("sync_grid"+xval, tinggi, "sync_table"+xval, this["url_wsc"+xval]);
+                this["init"+xval] = true;
             } else {
                 this["Table"+xval].getData();
             }
@@ -311,6 +316,7 @@ TSync = {
                 const tinggi = $id("sync_right").offsetHeight - $id("sync_right_tool").offsetHeight;
                 if (!self["init"+xval]) {
                     self["Table"+xval] = self["frm_wsc"+xval].xTabulator("sync_grid"+xval, tinggi, "sync_table"+xval, self["url_wsc"+xval]);
+                    self["init"+xval] = true;
                 }
             }
         });

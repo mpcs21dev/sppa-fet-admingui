@@ -12,6 +12,7 @@ function api_fn($hasil, $ar = array(), $json = null) {
         // update password;
         $usr["passwd"] = $JPOST["pwd1"];
         $usr["updated_at"] = date("Y-m-d H:i:s");
+        $usr["chpwd"] = false;
         unset($usr["inserted_at"]);
         unset($usr["inserted_by"]);
         unset($usr["updated_by"]);

@@ -63,6 +63,21 @@ function api_fn($hasil, $parm, $json) {
                 case 'rec-type':
                     $sql = "select str_key xkey, str_val xval from public.reference where name='PART-REC-TYPE' order by str_val, str_key";
                     break;
+                case 'default-value':
+                    $sql = "select str_key xkey, str_val xval from public.reference where name='CONFIG-DEFAULT-VALUE'";
+                    break;
+                case 'fix':
+                    $sql = "select * from public.config where participant_id='FIX'";
+                    break;
+                case 'legends':
+                    $sql = "select str_key xkey, str_val xval from public.reference where name='LEGENDS'";
+                    break;
+                case 'log-type':
+                    $sql = "select distinct log_type vals from logging";
+                    break;
+                case 'app-type':
+                    $sql = "select distinct app_type vals from logging";
+                    break;
                 default:
                     $sql = "";
                     break;
@@ -72,16 +87,26 @@ function api_fn($hasil, $parm, $json) {
             $doby = array(array("field"=>"participant_id","dir"=>"asc"));
             switch ($action) {
                 case 'listall-noftp':
-                    $sql = "SELECT * FROM public.config where record_type <> 'FTP' order by record_type, participant_id";
+                    $sql = "SELECT * FROM public.config where record_type not in ('FTP','FIX') order by record_type, participant_id";
                     break;
                 case 'listall':
-                    $sql = "SELECT * FROM public.config order by record_type, participant_id";
+                    $sql = "SELECT * FROM public.config where record_type <> 'FIX' order by record_type, participant_id";
                     break;
                 case 'listservice':
                 case 'list':
                     $sql = "SELECT a.*, b.str_val rec_type_str FROM public.config a left join reference b on a.record_type=b.str_key and b.name='PART-REC-TYPE'";
                     break;
                 case 'create':
+                    $json["participant_name"] = $json["participant_name"] ?? "";
+                    $json["record_type"] = $json["record_type"] ?? "";
+                    $xr = false;
+                    if ($json["participant_name"] == "") $xr = true;
+                    if ($json["record_type"] == "") $xr = true;
+                    if ($xr) {
+                        $hasil->debug[] = $json;
+                        done($hasil, 600, "Empty required field");
+                    }
+
                     $sql = "public.config";
                     $json["inserted_at"] = date('Y-m-d H:i:s');
                     //$json["inserted_by"] = $usr["id"];
@@ -92,6 +117,14 @@ function api_fn($hasil, $parm, $json) {
                     unset($json["bbId"]);
                     unset($json["firmId"]);
                     unset($json["sourceId"]);
+
+                    $scek = "select count(id) ctr from public.config where participant_id=?";
+                    $sprm = array($json["participant_id"]);
+                    $ctr = DBX($dbx)->run($scek,$sprm)->fetchColumn();
+                    if ($ctr > 0) {
+                        done($hasil, 980, 'Duplicate SPPA Firm ID');
+                    }
+
                     break;
                 case 'update':
                     $sql = "public.config";
@@ -137,6 +170,8 @@ function api_fn($hasil, $parm, $json) {
 
     switch ($action) {
         case 'rec-type':
+        case 'default-value':
+        case 'legends':
         case 'listall':
         case 'listall-noftp':
             try {
@@ -214,6 +249,7 @@ function api_fn($hasil, $parm, $json) {
                             \"trd_user_id\" VARCHAR(50) NOT NULL,
                             \"trd_party_id\" VARCHAR(25) NOT NULL,
                             \"initiator\" INTEGER NOT NULL,
+                            \"resend\" INTEGER,
                             \"trade_id\" VARCHAR(50),
                             \"status\" INTEGER NOT NULL,
                             \"inserted_at\" TIMESTAMP,
@@ -247,6 +283,20 @@ function api_fn($hasil, $parm, $json) {
 
         case 'update':
             if (!cekLevel(LEVEL_ADMIN)) done($hasil, 26);
+
+            $posting = ($json["SEND_operation"] ?? "") != "";
+            $jp = array();
+            if ($posting) {                
+                $jp = array(
+                    "operation" => $json["SEND_operation"],
+                    "participantId" => $json["SEND_participantId"],
+                    "userid" => $json["SEND_userid"]
+                );
+                unset($json["SEND_operation"]);
+                unset($json["SEND_participantId"]);
+                unset($json["SEND_userid"]);
+            }
+
             $old = data_read($sql,"id",$json["id"],$dbx);
             $new = null;
             try {
@@ -254,6 +304,14 @@ function api_fn($hasil, $parm, $json) {
             } catch (Exception $e) {
                 $hasil->debug[] = array("error"=>$e->getMessage(),"sql"=>$sql,"data"=>$json);
                 done($hasil, 889, "Error updating data.");
+            }
+            if ($posting) {
+                try {
+                    $res = postJson("http://sppafet-admin-net/sppa-fet/admin/user",json_encode($jp));
+                    $hasil->debug[] = array("sppa-fet/admin/user", $res);
+                } catch (Exception $e) {
+                    $hasil->debug[] = array("error"=>$e->getMessage(),"posturl"=>"/sppa-fet/admin/user","data"=>$jp);
+                }
             }
         
             log_add($usr["id"], "UPDATE", $sql, $json["id"], json_encode($old), json_encode($new));
@@ -271,6 +329,43 @@ function api_fn($hasil, $parm, $json) {
             }
             log_add($usr["id"], "DELETE", $sql, $json["id"], json_encode($obj), "");
             $hasil->data = $obj;
+            break;
+
+        case 'fix':
+            $obj = null;
+            $data = array();
+            try {
+                $obj = DBX($dbx)->run($sql)->fetch();
+                if ($obj) {
+                    $pbj = json_decode($obj["data"]);
+                    $data[] = array(
+                        "xkey" => "server",
+                        "xval" => $pbj->currentServer
+                    );
+                }
+            } catch (Exception $e) {
+                $hasil->debug[] = array("error"=>$e->getMessage(),"sql"=>$sql);
+                done($hasil, 879, "Error loading data.");
+            }
+            $hasil->data = $data;
+            break;
+
+        case 'log-type':
+        case 'app-type':
+            $obj = null;
+            $data = array();
+            try {
+                $obj = DBX($dbx)->run($sql)->fetchAll();
+                if ($obj) {
+                    foreach ($obj as $row) {
+                        $data[] = array($row["vals"] => $row["vals"]);
+                    }
+                }
+            } catch (Exception $e) {
+                $hasil->debug[] = array("error"=>$e->getMessage(),"sql"=>$sql);
+                done($hasil, 879, "Error loading data.");
+            }
+            $hasil->data = $data;
             break;
 
         case 'execsql':

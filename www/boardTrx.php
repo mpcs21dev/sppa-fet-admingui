@@ -1,9 +1,26 @@
 <div id="trxBoard" class="board">
     <div id="leher" class="attached">
-        <div id='leher-1' class='ui rounded' style='margin-bottom: 5px;'>
+        <div id='leher-1' class='ui rounded attached menu titler' style='margin-bottom: 5px;'>
             <span class='ui small text'>Participant</span>
             <span class='padder2'></span>
             <select class='ui mini search dropdown' id='cbxPart'></select>
+            <div class="padder2"></div>
+            <div class="padder2"></div>
+            <div class="ui">Filter Date</div>
+            <div class="padder2"></div>
+            <div class="ui finput">
+                <div>Date From</div>
+                <input class="donly" id="trxfil-datefrom" type="date">
+            </div>
+            <div class="padder2"></div>
+            <div class="ui finput">
+                <div>Date To</div>
+                <input class="donly" id="trxfil-dateto" type="date">
+            </div>
+            <div class="padder2"></div>
+            <button class="ui mini brown button" id="trxfilBtnApply" data-tooltip="Apply Filter" data-position="bottom center"><i class="redo icon"></i> Apply</button>
+            <div class="padder2"></div>
+            <button class="ui mini blue button" id="trxfilBtnToday" data-tooltip="Today date" data-position="bottom center"><i class="redo icon"></i> Today</button>
         </div>
         <div class='laycol'>
             <div class='layrow'>
@@ -49,8 +66,17 @@
         leftData: null,
         leftID: 0,
         partID: '',
+        rendered: false,
         resendUrl: 'api/?1/trx/resend/',
         resend: function(row) {
+            var lanjut = true;
+            if (row.record_date+"" != (new Date()).format(noseparator)) lanjut = false;
+            if (row.status != 10) lanjut = false;
+            if (row.initiator != 1) lanjut = false;
+            if (!lanjut) {
+                ToastError("Resend failed. Can not resend this trx.");
+                return;
+            }
             var obj = {RfoResendRequest: {
                 participantId: row.partid,
                 clientId: row.cln_user_id,
@@ -78,11 +104,11 @@
         },
         init_model: function() {
             this.frmLeft.setModel({
-                id: {caption: "ID", title: "No", type: "numeric", autoValue: true, formatter: "rownum"},
+                id: {caption: "ID", title: "No", type: "numeric", autoValue: true, formatter: "rownum", width:50},
                 partid: {caption: "partid", type: "string", visible: false, noview:true,noadd:true,noedit:true},
-                participant: {caption: "Participant", type:"string", headerFilter:true},
-                record_date: {caption: "Rec Date", type: "numeric", headerFilter: true, editor:"number",headerFilterLiveFilter:false},
-                status_enum: {caption: "Status", type: "string", headerFilter: true, formatter: (c)=>{
+                participant: {caption: "SPPA Firm ID", type:"string", headerFilter:true, width:100},
+                record_date: {caption: "Rec Date", type: "numeric", width:100},
+                status_enum: {caption: "Status", type: "string", headerFilter: true, width:120, formatter: (c)=>{
                     const val = c.getValue();
                     let lmn = c.getElement();
                     switch (val) {
@@ -116,29 +142,32 @@
                     }
                     return val;
                 }},
-                order_side: {caption: "Order Side", type: "string", headerFilter: true},
-                order_id: {caption: "OrderID", type: "string", headerFilter: true},
-                cln_order_id: {caption: "Client OID", type: "string", headerFilter: true},
-                mkt_order_id: {caption: "Market OID", type: "string", headerFilter: true},
-                cln_user_id: {caption: "Cln UserID", type: "string", headerFilter: true},
-                cln_party_id: {caption: "Cln PartyID", type: "string", headerFilter: true},
-                trd_user_id: {caption: "Trd UserID", type: "string", headerFilter: true},
-                trd_party_id: {caption: "Trd PartyID", type: "string", headerFilter: true},
-                trade_id: {caption: "Trade ID", type:"string", headerFilter:true},
-                initiator: {caption: "Initiator", type: "numeric", headerFilter: true},
+                initiator_: {caption: "Initiator", type: "string", headerFilter: true, width:100},
+                responder: {caption: "Responder", type: "string", headerFilter: true, width:100},
+                order_side: {caption: "Order Side", type: "string", headerFilter: true, width:100},
+                order_id: {caption: "OrderID", type: "string", headerFilter: true, width:100},
+                cln_order_id: {caption: "Client OID", type: "string", headerFilter: true, width:100},
+                mkt_order_id: {caption: "Market OID", type: "string", headerFilter: true, width:100},
+                cln_user_id: {caption: "Cln UserID", type: "string", headerFilter: true, width:100},
+                cln_party_id: {caption: "Cln PartyID", type: "string", headerFilter: true, width:100},
+                trd_user_id: {caption: "Trd UserID", type: "string", headerFilter: true, width:100},
+                trd_party_id: {caption: "Trd PartyID", type: "string", headerFilter: true, width:100},
+                trade_id: {caption: "Trade ID", type:"string", headerFilter:true, width:100},
+                initiator: {caption: "Initiator", type:"boolean", visible: false, headerHozAlign:"center", hozAlign:"center", formatter:boolFormatter, headerFilter: true},
+                resend: {caption: "Resend", type:"boolean", headerHozAlign:"center", hozAlign:"center", formatter:boolFormatter, headerFilter: true, width:70},
                 status: {caption: "Status", type: "numeric", visible:false, noview:true},
-                inserted_at: {caption: "Created at", type: "datetime", autoValue: true},
-                updated_at: {caption: "Updated at", type: "datetime", autoValue: true}
+                inserted_at: {caption: "Created at", type: "datetime", autoValue: true, width:150},
+                updated_at: {caption: "Updated at", type: "datetime", autoValue: true, width:150}
             });
             this.frmRight.setModel({
-                id: {caption: "ID", title: "No", type: "numeric", autoValue: true, formatter: "rownum"},
+                id: {caption: "ID", title: "No", type: "numeric", autoValue: true, formatter: "rownum", width:50},
                 parent_id: {caption: "Parent ID", type: "numeric", visible: false},
-                direction: {caption: "Direction", type:"string", headerFilter: true},
-                record_type: {caption: "Rec Type", type:"string", headerFilter: true},
-                message_type: {caption: "Msg Type", type: "string", headerFilter: true},
-                data: {caption: "Data", type: "string", useTag:true, tagFormatField:"record_type"},
-                inserted_at: {caption: "Created at", type: "datetime", autoValue: true},
-                updated_at: {caption: "Updated at", type: "datetime", autoValue: true}
+                direction: {caption: "Direction", type:"string", headerFilter: true, width:100},
+                record_type: {caption: "Rec Type", type:"string", headerFilter: true, width:100},
+                message_type: {caption: "Msg Type", type: "string", headerFilter: true, width:100},
+                data: {caption: "Data", type: "string", useTag:true, tagFormatField:"record_type", width:200},
+                inserted_at: {caption: "Created at", type: "datetime", autoValue: true, width:120},
+                updated_at: {caption: "Updated at", type: "datetime", autoValue: true, width:120}
             });
         },
         init_table: function(urll="api/?1/trx/transaction/list/ALL",urlr="api/?1/trx/message/list/") {
@@ -148,9 +177,14 @@
                 w2 = $id("leher-1").offsetHeight; //parseInt($id("leher-1").height),
                 k1 = Math.ceil($("#kanan").outerHeight());
             const tinggi = w0 / 2 - 45;
-            this.Tabll = this.frmLeft.xTabulator("table_left", tinggi, "board_trx_trx", urll, {
+            var df = (new Date()).format("isoDate");
+            var dt = (new Date()).format("isoDate");
+            $id("trxfil-datefrom").value=df;
+            $id("trxfil-dateto").value=dt;
+            var url1 = urll+"/"+df+"/"+dt;
+            this.Tabll = this.frmLeft.xTabulator("table_left", tinggi, "board_trx_trx", url1, {
                 initialSort:this.leftInitialSort,
-                initialHeaderFilter: [{field:"record_date", value:<?=date("Ymd")?>}]
+                //initialHeaderFilter: [{field:"record_date", value:<?=date("Ymd")?>}]
                 /*
                 rowFormatter: (row) => {
                     var data = row.getData();
@@ -231,8 +265,24 @@
                 de.style.display = "none";
             });
         },
-        leftRefresh: function() {
-            this.Tabll.setData();
+        leftRefresh: function(mode="") {
+            if (!this.rendered) return;
+            if (mode == "apply") {
+                var p = $("#cbxPart").dropdown("get value");
+                var url = "api/?1/trx/transaction/list/"+p;
+                var df = $id("trxfil-datefrom").value;
+                var dt = $id("trxfil-dateto").value;
+                if (df != "") url += "/"+df;
+                if (df != "" && dt != "") url += "/"+dt;
+                this.Tabll.setData(url);
+            } else if (mode == "today") {
+                var p = $("#cbxPart").dropdown("get value");
+                var df = (new Date()).format("isoDate");
+                $id("trxfil-datefrom").value = df;
+                $id("trxfil-dateto").value = df;
+                var url = "api/?1/trx/transaction/list/"+p+"/"+df+"/"+df;
+                this.Tabll.setData(url);
+            } else this.Tabll.setData();
         },
         rightRefresh: function() {
             if (this.leftID > 0) {
@@ -270,61 +320,76 @@
             XFrame.setCaption("Message").setContent(this.frmRight.viewCard(parm)).setAction(false).show(false);
         },
         startup: function() {
-            this.init_model();
-            this.init_table();
-            that = this;
-            $("#btnLRefresh").on("click", ()=>{ that.leftRefresh(); });
-            $("#btnLView").on("click", ()=>{ that.leftView(); });
-            $("#btnRRefresh").on("click", ()=>{ that.rightRefresh(); });
-            $("#btnRView").on("click", ()=>{ that.rightView(); });
-            $("#btnLResend").on("click", ()=>{ that.leftResend(); });
-            Api("api/?1/config/config/listall-noftp").then(
-                data => {
-                    if (data.error == 0) {
-                        if (data.data != null) {
-                            if (Array.isArray(data.data)) {
-                                var cbs = [];
-                                const p = {
-                                    name: 'ALL',
-                                    value: 'ALL',
-                                    selected: true
-                                };
-                                //if (i==0) o["selected"]=true;
-                                cbs.push(p);
-                                for (var i=0; i<data.data.length; i++) {
-                                    var d = data.data[i];
-                                    var o = {
-                                        name: d.participant_id,
-                                        value: d.participant_name
+            if (this.rendered) return;
+            let that = this;
+            try {
+                this.init_model();
+                this.init_table();
+
+                $("#trxfilBtnApply").on("click", ()=>{ that.leftRefresh("apply"); });
+                $("#trxfilBtnToday").on("click", ()=>{ that.leftRefresh("today"); });
+
+                $("#btnLRefresh").on("click", ()=>{ that.leftRefresh(); });
+                $("#btnLView").on("click", ()=>{ that.leftView(); });
+                $("#btnRRefresh").on("click", ()=>{ that.rightRefresh(); });
+                $("#btnRView").on("click", ()=>{ that.rightView(); });
+                $("#btnLResend").on("click", ()=>{ that.leftResend(); });
+                Api("api/?1/config/config/listall-noftp").then(
+                    data => {
+                        if (data.error == 0) {
+                            if (data.data != null) {
+                                if (Array.isArray(data.data)) {
+                                    var cbs = [];
+                                    const p = {
+                                        name: 'ALL',
+                                        value: 'ALL',
+                                        selected: true
                                     };
                                     //if (i==0) o["selected"]=true;
-                                    cbs.push(o);
-                                }
-                                //console.log(cbs);
-                                $('#cbxPart').dropdown({
-                                    values: cbs,
-                                    onChange: function(xval,tex,sel) {
-                                        that.partID = xval.toLowerCase();
-                                        //init_table("api/?1/trx/message/list/"+val,"api/?1/trx/transaction/list/"+val);
-                                        that.Tabll.setData("api/?1/trx/transaction/list/"+that.partID);
-                                        //that.Tablr.setData("api/?1/trx/transaction/list/"+val);
-                                        
+                                    cbs.push(p);
+                                    for (var i=0; i<data.data.length; i++) {
+                                        var d = data.data[i];
+                                        var o = {
+                                            name: d.participant_id,
+                                            value: d.participant_name
+                                        };
+                                        //if (i==0) o["selected"]=true;
+                                        cbs.push(o);
                                     }
-                                });
+                                    //console.log(cbs);
+                                    $('#cbxPart').dropdown({
+                                        values: cbs,
+                                        onChange: function(xval,tex,sel) {
+                                            that.partID = xval.toLowerCase();
+                                            //init_table("api/?1/trx/message/list/"+val,"api/?1/trx/transaction/list/"+val);
+                                            var df = $id("trxfil-datefrom").value;
+                                            var dt = $id("trxfil-dateto").value;
+                                            var url1 = "api/?1/trx/transaction/list/"+that.partID;
+                                            if (df != "") url1 += "/"+df
+                                            if (df != "" && dt != "") url1 += "/"+dt
+                                            that.Tabll.setData(url1);
+                                            //that.Tablr.setData("api/?1/trx/transaction/list/"+val);
+                                            
+                                        }
+                                    });
+                                }
                             }
+                        } else {
+                            //SwalToast('error','Error Get Challange');
+                            ToastError("Error readng config table");
+                            console.log(data);
                         }
-                    } else {
-                        //SwalToast('error','Error Get Challange');
-                        ToastError("Error readng config table");
-                        console.log(data);
+                    },
+                    error => {
+                        //SwalToast('error','Get Challange: Server Error');
+                        ToastError("Config List: Server Error");
+                        console.log({status: "Config List: Server Error", detail: error});
                     }
-                },
-                error => {
-                    //SwalToast('error','Get Challange: Server Error');
-                    ToastError("Config List: Server Error");
-                    console.log({status: "Config List: Server Error", detail: error});
-                }
-            );
+                );
+                this.rendered = true;
+            } catch (err) {
+                ToastError(err);
+            }
         }
     };
 </script>

@@ -75,7 +75,7 @@ function api_fn($hasil, $parm, $json) {
                     }
                     if ($json["str_key"] != "") {
                         $cmd = "select count(id) ctr from public.reference where name=? and str_key=?";
-                        $cmp = array($json["name"], $json["int_key"]);
+                        $cmp = array($json["name"], $json["str_key"]);
                         $ctr = DBX($dbx)->run($cmd, $cmp)->fetchColumn();
                         if ($ctr > 0) done($hasil, 601, "Duplicate key for ".$json["name"]." : STR Key [".$json["str_key"]."]");
                     }
@@ -83,14 +83,50 @@ function api_fn($hasil, $parm, $json) {
                     $sql = "public.reference";
                     $json["inserted_at"] = date('Y-m-d H:i:s');
                     $json["updated_at"] = date('Y-m-d H:i:s');
-                    if ($json["int_key"] == "") unset($json["int_key"]);
-                    if ($json["str_key"] == "") unset($json["str_key"]);
+                    //if ($json["int_key"] == "") unset($json["int_key"]);
+                    //if ($json["str_key"] == "") unset($json["str_key"]);
+                    try {
+	                    if ($json["int_key"] == "") $json["int_key"]=null;
+                    } catch (Exception $e) {}
+                    try {
+	                    if ($json["str_key"] == "") $json["str_key"]=null;
+                    } catch (Exception $e) {}
                     break;
                 case 'update':
+                    $json["name"] = $json["name"] ?? "";
+                    $json["str_val"] = $json["str_val"] ?? "";
+                    $json["int_key"] = $json["int_key"] ?? "";
+                    $json["str_key"] = $json["str_key"] ?? "";
+                    $xr = false;
+                    if ($json["name"] == "") $xr = true;
+                    if ($json["str_val"] == "") $xr = true;
+                    if (($json["int_key"] == "") && ($json["str_key"] == "")) $xr = true;
+                    if ($xr) {
+                        $hasil->debug[] = $json;
+                        done($hasil, 600, "Empty required field");
+                    }
+
+                    if ($json["int_key"] != "") {
+                        $cmd = "select count(id) ctr from public.reference where name=? and int_key=? and id<>?";
+                        $cmp = array($json["name"], $json["int_key"], $json["id"]);
+                        $ctr = DBX($dbx)->run($cmd, $cmp)->fetchColumn();
+                        if ($ctr > 0) done($hasil, 601, "Duplicate key for ".$json["name"]." : INT Key [".$json["int_key"]."]");
+                    }
+                    if ($json["str_key"] != "") {
+                        $cmd = "select count(id) ctr from public.reference where name=? and str_key=? and id<>?";
+                        $cmp = array($json["name"], $json["str_key"], $json["id"]);
+                        $ctr = DBX($dbx)->run($cmd, $cmp)->fetchColumn();
+                        if ($ctr > 0) done($hasil, 601, "Duplicate key for ".$json["name"]." : STR Key [".$json["str_key"]."]");
+                    }
+
                     $sql = "public.reference";
                     $json["updated_at"] = date('Y-m-d H:i:s');
-                    if ($json["int_key"] == "") unset($json["int_key"]);
-                    if ($json["str_key"] == "") unset($json["str_key"]);
+                    try {
+	                    if ($json["int_key"] == "") $json["int_key"]=null;
+                    } catch (Exception $e) {}
+                    try {
+	                    if ($json["str_key"] == "") $json["str_key"]=null;
+                    } catch (Exception $e) {}
                     break;
                 case 'delete':
                     $sql = "public.reference";
