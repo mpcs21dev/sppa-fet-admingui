@@ -73,6 +73,7 @@
             if (row.record_date+"" != (new Date()).format(noseparator)) lanjut = false;
             if (row.status != 10) lanjut = false;
             if (row.initiator != 1) lanjut = false;
+            if (row.resend != 0) lanjut = false;
             if (!lanjut) {
                 ToastError("Resend failed. Can not resend this trx.");
                 return;
@@ -350,8 +351,8 @@
                                     for (var i=0; i<data.data.length; i++) {
                                         var d = data.data[i];
                                         var o = {
-                                            name: d.participant_id,
-                                            value: d.participant_name
+                                            name: d.participant_name,
+                                            value: d.participant_id
                                         };
                                         //if (i==0) o["selected"]=true;
                                         cbs.push(o);

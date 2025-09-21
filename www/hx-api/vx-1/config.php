@@ -87,7 +87,7 @@ function api_fn($hasil, $parm, $json) {
             $doby = array(array("field"=>"participant_id","dir"=>"asc"));
             switch ($action) {
                 case 'listall-noftp':
-                    $sql = "SELECT * FROM public.config where record_type not in ('FTP','FIX') order by record_type, participant_id";
+                    $sql = "SELECT * FROM public.config where record_type = 'PART' order by record_type, participant_id";
                     break;
                 case 'listall':
                     $sql = "SELECT * FROM public.config where record_type <> 'FIX' order by record_type, participant_id";

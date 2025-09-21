@@ -97,7 +97,7 @@ function api_fn($hasil, $parm, $json) {
                                     case when initiator<>1 then '".$partid."' else case when cln_party_id='".$partid."' then trd_party_id else cln_party_id end end responder
                                 FROM public.transaction_".$partid." a left join public.reference b on a.status=b.int_key and b.name='RFO-STATUS'";
                         if ($df != "") $sql .= " where a.record_date >= {$df} ";
-                        if ($df != "" && $dt != "") $uni .= " and a.record_date <= {$dt} ";
+                        if ($df != "" && $dt != "") $sql .= " and a.record_date <= {$dt} ";
                     }
                     break;
                 default:

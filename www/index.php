@@ -384,6 +384,15 @@ $lastId = getVars("last-id",0);
         $("#tsync").on("click", ()=>{Task.Show('tsync')});
 
         $(()=>{
+            Ref = new Refs();
+            Ref.load('FixCon', 'api/?1/config/ref/fix', ()=>{
+                var z = Ref.find('FixCon','xkey','server','xval');
+                $id('connect-to').innerHTML = 'Server ['+z+']';
+            });
+            //Ref.load('Legends', 'api/?1/config/ref/legends');
+            //Ref.load('LogType', 'api/?1/config/ref/log-type');
+            //Ref.load('AppType', 'api/?1/config/ref/app-type');
+
             // Dashboard Init;
             Dash.startup();
             //Trx.startup();
@@ -397,16 +406,7 @@ $lastId = getVars("last-id",0);
             	if (udata.chpwd != 0) {
             		$("#mnu-chpwd").click();
             	}
-            }
-            
-            Ref = new Refs();
-            Ref.load('FixCon', 'api/?1/config/ref/fix', ()=>{
-                var z = Ref.find('FixCon','xkey','server','xval');
-                $id('connect-to').innerHTML = 'Server ['+z+']';
-            });
-            //Ref.load('Legends', 'api/?1/config/ref/legends');
-            //Ref.load('LogType', 'api/?1/config/ref/log-type');
-            //Ref.load('AppType', 'api/?1/config/ref/app-type');
+            }            
         });
     </script>
     <!-- 
