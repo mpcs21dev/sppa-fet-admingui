@@ -23,7 +23,7 @@ $Model2 = '{
     fixMainUrl_pass: {caption:"SPPA Password", posttext:"( Do not use these chars for password: @#?&=:+%/\' )", type:"string", noview:true, placeholder:"SPPA Password", visible:false,verify:(v)=>{return FieldVerifier(v.length<1,"Field [SPPA Password] blank.")}},
     fixMainUrl_ip:   {caption:"Fix Server IP", type:"string", noview:true, visible:false, defaultValue:"172.61.2.34",verify:(v)=>{return FieldVerifier(v.length<1,"Field [FIX Server IP] blank.")}},
     fixMainUrl_port: {caption:"Fix Server Port", type:"string", noview:true, visible:false, defaultValue:"11000",verify:(v)=>{return FieldVerifier(v.length<1,"Field [FIX Server Port] blank.")}},
-    fixMainUrl_sender:{caption:"User Comp ID", posttext:"(Only letters allowed)", type:"string", noview:true, visible:false,verify:(v)=>{return FieldVerifier(v.length<1,"Field [SPPA User Comp ID] blank.")}},
+    fixMainUrl_sender:{caption:"User Comp ID", posttext:"(Only letters allowed)", upperCase:true, type:"string", noview:true, visible:false,verify:(v)=>{return FieldVerifier(v.length<1,"Field [SPPA User Comp ID] blank.")}},
     fixMainUrl_target:{caption:"Target Comp Id", posttext:"(Only letters allowed)", type:"string", noview:true, visible:false, defaultValue:"AXECHANGE",verify:(v)=>{return FieldVerifier(v.length<1,"Field [SPPA Target Comp ID] blank.")}},
     fixDrcUrl_user:  {caption:"SPPA DRC User Name", pretext:"<hr>Fix DRC URL", type:"string", placeholder:"SPPA DRC User Name", upperCase:true, noview:true, visible:false,verify:(v)=>{return FieldVerifier(v.length<1,"Field [SPPA DRC User Name] blank.")}},
     fixDrcUrl_pass:  {caption:"SPPA DRC Password", posttext:"( Do not use these chars for password: @#?&=:+%/\' )", type:"string", noview:true, visible:false,verify:(v)=>{return FieldVerifier(v.length<1,"Field [SPPA DRC Password] blank.")}},
@@ -95,6 +95,34 @@ $PRM = array(
         Ref.load('DefaultValue', 'api/?1/config/ref/default-value');
     ",
     "extraJS" => "
+        function countClientId(cid) {
+            var hasil = 0;
+            for (let i=0; i<frmLeft.Data.length; i++) {
+                var di = frmLeft.Data[i];
+                if (di['record_type'] != 'PART') continue;
+                var ci = JSON.parse(di.data);
+                for (let k=0; k<ci.length; k++) {
+                    var ck = ci[k];
+                    if (cid == ck['clientId']) hasil ++;
+                }
+            }
+            return hasil;
+        }
+        function countCompId(coid) {
+            var hasil = 0;
+            for (let i=0; i<frmLeft.Data.length; i++) {
+                var di = frmLeft.Data[i];
+                if (di['record_type'] != 'PART') continue;
+                var ci = JSON.parse(di['data']);
+                for (let k=0; k<ci.length; k++) {
+                    var ck = ci[k];
+                    var arrurl = ck.fixMainUrl.split(/[:@?&/=]/);
+                    var sender = arrurl[8] ?? '';
+                    if (coid == sender) hasil ++;
+                }
+            }
+            return hasil;
+        }
         function btnLRefresh_click() {
             var cp = Tabll.getPage();
             Tabll.setPage(cp);
@@ -308,6 +336,21 @@ $PRM = array(
                 .setVerifier(true, ()=>{ return frmRight.doVerify(); })
                 .setAction(true,()=>{
                     var odata = frmRight.readForm(false,false,true);
+                    var newCID = odata['clientId'];
+                    var newCOID = odata['fixMainUrl_sender'];
+                    var countCID = countClientId(newCID);
+                    var countCOID = countCompId(newCOID);
+                    if (countCID > 0) {
+                        alert('ERROR :: Duplicate 3rd Party ID detected.');
+                        window.location.reload();
+                        return;
+                    }
+                    if (countCOID > 0) {
+                        alert('ERROR :: Duplicate Client CompID detected.');
+                        window.location.reload();
+                        return;
+                    }
+                    /*
                     for (var i=0; i<frmRight.Data.length; i++){
                         var d = frmRight.Data[i];
                         if (d.clientId == odata['clientId']) {
@@ -317,6 +360,7 @@ $PRM = array(
                             return;
                         }
                     }
+                    */
                     odata['id'] = 1+frmRight.Data.length;
                     odata['rowid'] = leftID;
                     //odata['fixMainUrl'] = '';
@@ -461,6 +505,21 @@ $PRM = array(
                     adata['fixDrcUrl'] = 'fix5://'+url2;
                     //adata['rowid'] = leftID;
                     frmRight.updateData(adata,['id']);
+                    var newCID = adata['clientId'];
+                    var newCOID = adata['fixMainUrl_sender'];
+                    var countCID = countClientId(newCID);
+                    var countCOID = countCompId(newCOID);
+                    if (countCID > 1) {
+                        alert('ERROR :: Duplicate 3rd Party ID detected.');
+                        window.location.reload();
+                        return;
+                    }
+                    if (countCOID > 1) {
+                        alert('ERROR :: Duplicate Sender CompID detected.');
+                        window.location.reload();
+                        return;
+                    }
+                    /*
                     rids = [];
                     for (var i=0; i<frmRight.Data.length; i++){
                         var d = frmRight.Data[i];
@@ -473,6 +532,7 @@ $PRM = array(
                         }
                         rids.push(c);
                     }
+                    */
 
                     if (leftData.record_type == 'PART') {
                         var jeje = [];
@@ -530,6 +590,19 @@ $PRM = array(
                     });
                     document.getElementById('fld-fixDrcUrl_sender').addEventListener('input', function(ev) {
                     	includeChars(ev);
+                    });
+
+                    document.getElementById('fld-fixMainUrl_port').addEventListener('input', function(ev) {
+                        includeChars(ev,'1234567890');
+                    });
+                    document.getElementById('fld-fixMainUrl_ip').addEventListener('input', function(ev) {
+                        includeChars(ev,'1234567890.:');
+                    });
+                    document.getElementById('fld-fixDrcUrl_port').addEventListener('input', function(ev) {
+                        includeChars(ev,'1234567890');
+                    });
+                    document.getElementById('fld-fixDrcUrl_ip').addEventListener('input', function(ev) {
+                        includeChars(ev,'1234567890.:');
                     });
                 })
                 .show();

@@ -70,6 +70,7 @@ $FUNCTIONS->v1 = array(
     "wsc",
     "ref",
     "user",
+    "switch",
         
     "getChallange",
     "login",

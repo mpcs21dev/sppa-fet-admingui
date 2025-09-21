@@ -184,7 +184,7 @@ $lastId = getVars("last-id",0);
         <!-- TASKBAR :: END -->
         <!-- MENU KANAN :: START -->
         <div class="right menu">
-            <a class='item bggreen'><i class='server icon'></i> <span id='connect-to'>Server []</span></a>
+            <a id='tswitch' class='item bggreen' data-tooltip='Click to Switch' data-position='bottom center'><i class='server icon'></i> <span id='connect-to'>Server []</span></a>
             <a id='tsync' class="red item" <?= cekLevel(LEVEL_DEV) ? "" : "style=\"visibility:hidden;\"" ?>><i id="icon_sync" class="sync icon"></i> Sync</a>
             <div id='menu-kanan' class="ui blue inverted dropdown item">
                 <i class="user icon"></i>
@@ -382,6 +382,49 @@ $lastId = getVars("last-id",0);
         $("#ttrx").on("click", ()=>{Task.Show('ttrx')});
         $("#tevent").on("click", ()=>{Task.Show('tevent')});
         $("#tsync").on("click", ()=>{Task.Show('tsync')});
+
+        function doSwitch(md) {
+            Api('api/?1/switch/'+md).then(
+                data => {
+                    LoaderHide();
+                    if (data.error == 0) {
+                        ToastSuccess('Switching command sent');
+                        //btnRefresh_click();
+                } else {
+                        FError('Failed', data.message);
+                    }
+                },
+                error => {
+                    LoaderHide();
+                    FError('Error', error);
+                }
+            );
+        }
+        $("#tswitch").on("click", ()=>{
+            if (confirm("Switch FIX Server?")) {
+                Loader("Switching FIX Server...");
+                Api('api/?1/config/ref/fix').then(
+                    data => {
+                        //LoaderHide();
+                        if (data.error == 0) {
+                            try {
+                                var p = data.data[0]["xval"];
+                                setTimeout(()=>{doSwitch(p)}, 300);
+                            } catch (e) {
+                                LoaderHide();
+                                FError('Error',e);
+                            }
+                        } else {
+                            FError('Failed', data.message);
+                        }
+                    },
+                    error => {
+                        LoaderHide();
+                        FError('Error', error);
+                    }
+                );
+            };
+        });
 
         $(()=>{
             Ref = new Refs();

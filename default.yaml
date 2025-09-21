@@ -1,0 +1,72 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sppa-fet-adminguiv1-deployment
+  namespace: sppa-fet-dev
+  uid: 3b521423-2b2e-44d5-9149-24259fcf3fbd
+  resourceVersion: '205805'
+  generation: 43
+  creationTimestamp: '2025-08-08T10:03:35Z'
+  labels:
+    app: admingui
+    k8slens-edit-resource-version: v1
+  annotations:
+    deployment.kubernetes.io/revision: '45'
+    kubectl.kubernetes.io/last-applied-configuration: >
+      {"apiVersion":"apps/v1","kind":"Deployment","metadata":{"annotations":{},"labels":{"app":"admingui"},"name":"sppa-fet-adminguiv1-deployment","namespace":"sppa-fet-dev"},"spec":{"replicas":2,"revisionHistoryLimit":3,"selector":{"matchLabels":{"app":"admingui-deployment"}},"strategy":{"type":"RollingUpdate"},"template":{"metadata":{"labels":{"app":"admingui-deployment"}},"spec":{"containers":[{"image":"yudhistiraadjie/sppa-fet-admingui-main-v4","name":"admingui-deployment","ports":[{"containerPort":8081}]}]}}}}
+  selfLink: >-
+    /apis/apps/v1/namespaces/sppa-fet-dev/deployments/sppa-fet-adminguiv1-deployment
+status:
+  observedGeneration: 43
+  replicas: 1
+  updatedReplicas: 1
+  unavailableReplicas: 1
+  conditions:
+    - type: Progressing
+      status: 'True'
+      lastUpdateTime: '2025-09-19T20:14:39Z'
+      lastTransitionTime: '2025-08-08T14:07:10Z'
+      reason: NewReplicaSetAvailable
+      message: >-
+        ReplicaSet "sppa-fet-adminguiv1-deployment-55ff5c5499" has successfully
+        progressed.
+    - type: Available
+      status: 'False'
+      lastUpdateTime: '2025-09-19T20:15:35Z'
+      lastTransitionTime: '2025-09-19T20:15:35Z'
+      reason: MinimumReplicasUnavailable
+      message: Deployment does not have minimum availability.
+  collisionCount: 3
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: admingui-deployment
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: admingui-deployment
+    spec:
+      containers:
+        - name: admingui-deployment
+          image: ureh/sppa-fet-admin-gui:1.2.23
+          ports:
+            - containerPort: 8081
+              protocol: TCP
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          imagePullPolicy: Always
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      dnsPolicy: ClusterFirst
+      securityContext: {}
+      schedulerName: default-scheduler
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 25%
+      maxSurge: 25%
+  revisionHistoryLimit: 3
+  progressDeadlineSeconds: 600
