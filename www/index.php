@@ -184,7 +184,7 @@ $lastId = getVars("last-id",0);
         <!-- TASKBAR :: END -->
         <!-- MENU KANAN :: START -->
         <div class="right menu">
-            <a id='tswitch' class='item bggreen' data-tooltip='Click to Switch' data-position='bottom center'><i class='server icon'></i> <span id='connect-to'>Server []</span></a>
+            <a id='tswitch' class='item bggreen'><i class='server icon'></i> <span id='connect-to'>Server []</span></a>
             <a id='tsync' class="red item" <?= cekLevel(LEVEL_DEV) ? "" : "style=\"visibility:hidden;\"" ?>><i id="icon_sync" class="sync icon"></i> Sync</a>
             <div id='menu-kanan' class="ui blue inverted dropdown item">
                 <i class="user icon"></i>
@@ -389,7 +389,7 @@ $lastId = getVars("last-id",0);
                     LoaderHide();
                     if (data.error == 0) {
                         ToastSuccess('Switching command sent');
-                        //btnRefresh_click();
+                        $id('connect-to').innerHTML = 'Server ['+data.connectTo+']';
                 } else {
                         FError('Failed', data.message);
                     }
