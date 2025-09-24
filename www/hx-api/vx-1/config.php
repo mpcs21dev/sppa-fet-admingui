@@ -290,7 +290,7 @@ function api_fn($hasil, $parm, $json) {
                 $jp = array(
                     "operation" => $json["SEND_operation"],
                     "participantId" => $json["SEND_participantId"],
-                    "userid" => $json["SEND_userid"]
+                    "userId" => $json["SEND_userid"]
                 );
                 unset($json["SEND_operation"]);
                 unset($json["SEND_participantId"]);

@@ -78,11 +78,11 @@
                 ToastError("Resend failed. Can not resend this trx.");
                 return;
             }
-            var obj = {RfoResendRequest: {
+            var obj = {
                 participantId: row.partid,
                 clientId: row.cln_user_id,
                 clnOrderId: row.cln_order_id
-            }};
+            };
             $('body').modal('myConfirm', "<i class='exclamation triangle icon red'></i> Resend Order", "Continue resend selected order?", ()=>{
                 Loader("Resending order...");
                 Api(this.resendUrl+row.cln_order_id, {body: JSON.stringify(obj)}).then(
