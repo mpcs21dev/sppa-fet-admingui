@@ -71,7 +71,7 @@
         resend: function(row) {
             var lanjut = true;
             if (row.record_date+"" != (new Date()).format(noseparator)) lanjut = false;
-            if (row.status != 10) lanjut = false;
+            if ((row.status != 10) && (row.status != 11)) lanjut = false; // 
             if (row.initiator != 1) lanjut = false;
             if (row.resend != 0) lanjut = false;
             if (!lanjut) {

@@ -428,6 +428,36 @@ function log_add($uid, $act, $table="", $tid=0, $before="", $after="") {
     }
 }
 
+function log_uilogin($id,$uid,$ip1,$ip2,$ip3,$msg,$fail=true,$dbx=2) {
+    if ($fail) {
+        $sql = "insert into wsc_uilogin (user_id,user_uid,ip_1,ip_2,ip_3,msg,lastUpdate)
+                values(?,?,?,?,?,?,?)";
+        $prm = array($id,$uid,$ip1,$ip2,$ip3,$msg,date('Y-m-d H:i:s'));
+        try { DBX($dbx)->run($sql,$prm); } catch (Exception $e) { /* do nothing */ }
+
+        $sql = "select user_id,user_uid,ip_1,ip_2,ip_3,msg,lastUpdate 
+                from wsc_uilogin 
+                where user_id=? and lastUpdate >= ?";
+        $dt = new DateTime();
+        $dt->modify('-5 minutes');
+        $sdt = $dt->format('Y-m-d H:i:s');
+        $prm = array($id, $sdt);
+        $lst = null;
+        try { DBX($dbx)->run($sql,$prm)->fetchAll(); } catch (Exception $e) { /* do nothing */ }
+        if (count($lst) >= 5) {
+            DBX($dbx)->run("delete from wsc_uilogin where user_id=?", array($id));
+            $sql = "insert into public.logging (logType,appType,appId,data,inserted_at) values (?,?,?,?,LOCALTIMESTAMP)";
+            $prm = array('ERR','ADM','UI-LOGIN',json_encode($lst));
+            try { DBX(1)->run($sql,$prm); } catch (Exception $e) { /* do nothing */ }
+        }
+    } else {
+        // login success
+        $sql = "delete from wsc_uilogin where user_id=?";
+        $prm = array($id);
+        try { DBX($dbx)->run($sql,$prm); } catch (Exception $e) { /* do nothing */ }
+    }
+}
+
 function initRoot() {
     $data = array();
     $data["UserID"] = "ROOT";

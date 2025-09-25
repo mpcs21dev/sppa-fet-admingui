@@ -581,6 +581,7 @@ $PRM = array(
                 })
                 .setAfterShow(()=>{
                     $('.dropdown').dropdown();
+                    \$id('fld-clientId').readOnly = true;
                     document.getElementById('fld-fixMainUrl_pass').addEventListener('input', function(ev) {
                     	excludeChars(ev,'@#?&=:+%/\'');
                     });

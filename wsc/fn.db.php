@@ -37,6 +37,16 @@ function initdb() {
     	'uid' VARCHAR(50),
     	'tick' integer
     );";
+    $sql_7 = "CREATE TABLE wsc_uilogin (
+        'id' INTEGER primary key,
+        'user_id' INTEGER,
+        'user_uid' text,
+        'ip1' text,
+        'ip2' text,
+        'ip3' text,
+        'msg' text,
+        'lastUpdate' text
+    )";
     try {
         DBX(2)->run($sql_1);
     } catch (Exception $e) {
@@ -64,6 +74,11 @@ function initdb() {
     }
     try {
         DBX(2)->run($sql_6);
+    } catch (Exception $e) {
+        echo($e->getMessage()."\n");
+    }
+    try {
+        DBX(2)->run($sql_7);
     } catch (Exception $e) {
         echo($e->getMessage()."\n");
     }
