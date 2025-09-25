@@ -398,7 +398,8 @@ $PRM = array(
                     fdata.delete('rec_type_str');
                     fdata.append('SEND_operation','NEW');
                     fdata.append('SEND_participantId',leftData.participant_id);
-                    fdata.append('SEND_userid',odata.fixMainUrl_user);
+                    fdata.append('SEND_userId',newCID);
+                    //fdata.append('SEND_userId',odata.fixMainUrl_user);
                     Loader('Saving new record...');
                     //console.log(fdata);
                     Api('api/?1/config/config/update', {body: fdata}).then(
@@ -558,7 +559,8 @@ $PRM = array(
                     fdata.delete('rec_type_str');
                     fdata.append('SEND_operation','EDIT');
                     fdata.append('SEND_participantId',leftData.participant_id);
-                    fdata.append('SEND_userid',adata.fixMainUrl_user);
+                    fdata.append('SEND_userId',newCID);
+                    //fdata.append('SEND_userId',adata.fixMainUrl_user);
                     Loader('Updating record...');
                     Api('api/?1/config/config/update', {body: fdata}).then(
                         data => {
@@ -644,7 +646,7 @@ $PRM = array(
                 var fdata = frmLeft.formDataTabRow(leftData);
                 fdata.append('SEND_operation','DELETE');
                 fdata.append('SEND_participantId',leftData.participant_id);
-                fdata.append('SEND_userid',sel.fixMainUrl_user);
+                fdata.append('SEND_userid',sel.clientId);
                 Api('api/?1/config/config/update', {body: fdata}).then(
                     data => {
                         LoaderHide();
