@@ -432,6 +432,18 @@ $PRM = array(
                     document.getElementById('fld-fixDrcUrl_sender').addEventListener('input', function(ev) {
                     	includeChars(ev);
                     });
+                    document.getElementById('fld-fixMainUrl_port').addEventListener('input', function(ev) {
+                        includeChars(ev,'1234567890');
+                    });
+                    document.getElementById('fld-fixMainUrl_ip').addEventListener('input', function(ev) {
+                        includeChars(ev,'1234567890.:');
+                    });
+                    document.getElementById('fld-fixDrcUrl_port').addEventListener('input', function(ev) {
+                        includeChars(ev,'1234567890');
+                    });
+                    document.getElementById('fld-fixDrcUrl_ip').addEventListener('input', function(ev) {
+                        includeChars(ev,'1234567890.:');
+                    });
                     
                     \$id('fld-fixMainUrl_ip').value = Ref.find('DefaultValue','xkey','MAIN-SERVER-IP','xval');
                     \$id('fld-fixMainUrl_port').value = Ref.find('DefaultValue','xkey','MAIN-SERVER-PORT','xval');
@@ -647,7 +659,7 @@ $PRM = array(
                 var fdata = frmLeft.formDataTabRow(leftData);
                 fdata.append('SEND_operation','DELETE');
                 fdata.append('SEND_participantId',leftData.participant_id);
-                fdata.append('SEND_userid',sel.clientId);
+                fdata.append('SEND_userId',sel.clientId);
                 Api('api/?1/config/config/update', {body: fdata}).then(
                     data => {
                         LoaderHide();

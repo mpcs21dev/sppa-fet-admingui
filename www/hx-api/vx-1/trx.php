@@ -55,7 +55,11 @@ function api_fn($hasil, $parm, $json) {
     switch ($table) {
         case 'resend':
             if (!cekLevel(LEVEL_ADMIN)) done($hasil, 26);
-            $res = postJson("http://sppafet-admin-net/sppa-fet/admin/resend",json_encode($JPOST));
+            $urlr = "http://sppafet-admin-net/sppa-fet/admin/resend";
+            $hasil->debug[] = $urlr;
+            $hasil->debug[] = $JPOST;
+            $res = postJson($urlr,json_encode($JPOST));
+            $hasil->reply = $res;
             if ($res[0]) {
                 done($hasil,0,$res[1]);
             } else {

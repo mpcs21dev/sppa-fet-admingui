@@ -70,7 +70,7 @@
         resendUrl: 'api/?1/trx/resend/',
         resend: function(row) {
             var lanjut = true;
-            if (row.record_date+"" != (new Date()).format(noseparator)) lanjut = false;
+            if (row.record_date+"" != (new Date()).format('noseparator')) lanjut = false;
             if ((row.status != 10) && (row.status != 11)) lanjut = false; // 
             if (row.initiator != 1) lanjut = false;
             if (row.resend != 0) lanjut = false;
@@ -89,6 +89,15 @@
                     oke => {
                         LoaderHide();
                         if (oke.error == 0) {
+                            try {
+                                if (oke.reply.length > 1) {
+                                    var o = JSON.parse(oke.reply[1]);
+                                    if (o.status != 0) {
+                                        FError('Resend Error', o.description);
+                                        return;
+                                    }
+                                }
+                            } catch (err) { console.log(err); }
                             ToastSuccess("Resend command sent");
                         } else {
                             ToastError(oke.message);

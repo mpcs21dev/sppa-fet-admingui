@@ -290,11 +290,11 @@ function api_fn($hasil, $parm, $json) {
                 $jp = array(
                     "operation" => $json["SEND_operation"],
                     "participantId" => $json["SEND_participantId"],
-                    "userId" => $json["SEND_userid"]
+                    "userId" => $json["SEND_userId"]
                 );
                 unset($json["SEND_operation"]);
                 unset($json["SEND_participantId"]);
-                unset($json["SEND_userid"]);
+                unset($json["SEND_userId"]);
             }
 
             $old = data_read($sql,"id",$json["id"],$dbx);

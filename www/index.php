@@ -161,7 +161,7 @@ $lastId = getVars("last-id",0);
                     <span class="text">Settings</span>
                     <div class="menu">
                         <div class="item" id="mnu-config">Config</div>
-                        <div class="item" id="mnu-holiday" <?= cekLevel(LEVEL_DEV) ? "" : "style=\"display:none;\"" ?>>Holiday</div>
+                        <div class="item" id="mnu-holiday" <?= cekLevel(1000) ? "" : "style=\"display:none;\"" ?>>Holiday</div>
                     </div>
                 </div> 
                 <div class="item" <?= cekLevel(LEVEL_ADMIN) ? "" : "style=\"display:none;\"" ?>>

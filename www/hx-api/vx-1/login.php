@@ -7,6 +7,8 @@ function api_fn($hasil, $ar = array(), $json = null) {
     global $LOGGED;
     global $HX;
 
+    $hasil->debug = array();
+
     //session_start();
 
     $ip1 = $_SERVER["REMOTE_ADDR"];
@@ -20,7 +22,7 @@ function api_fn($hasil, $ar = array(), $json = null) {
     $sql = "select * from ".withSchema("user")." where UPPER(uid)=UPPER(?)";
     $row = DBX(DB_DATA)->run($sql, array($uid))->fetchAll();
     if (count($row) == 0) { // invalid user id
-        log_uilogin(0, $uid, $ip1, $ip2, $ip3, "UserID not found");
+        $hasil->debug[] = log_uilogin(0, $uid, $ip1, $ip2, $ip3, "UserID not found");
         log_add(0, "LOGIN-ATTEMPT",$uid);
         clearVars();
         $hasil->challange = getChallange();
@@ -40,7 +42,7 @@ function api_fn($hasil, $ar = array(), $json = null) {
         done($hasil, 11);
     }
 
-    log_uilogin($usr["id"], $uid, $ip1, $ip2, $ip3, "Login Success", true);
+    log_uilogin($usr["id"], $uid, $ip1, $ip2, $ip3, "Login Success", false);
     log_add($usr["id"], "LOGIN", $uid);
     /*
     if ($HX->reset($uid)) {
