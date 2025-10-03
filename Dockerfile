@@ -1,7 +1,7 @@
 FROM php:8.1-fpm-alpine3.21
  
 # Install curl dan bash
-RUN apk add --no-cache curl bash libxml2-dev postgresql-dev sqlite-dev libsodium-dev && \
+RUN apk add --no-cache curl vim bash libxml2-dev postgresql-dev sqlite-dev libsodium-dev && \
     docker-php-ext-install pdo pdo_sqlite pdo_pgsql sodium sockets
  
 # Install Caddy
@@ -15,7 +15,8 @@ WORKDIR /usr/src/myapp
  
 # Copy file konfigurasi Caddy
 COPY Caddyfile /etc/caddy/Caddyfile
- 
+COPY vimrc /root/.vimrc
+
 # Salin dan beri izin eksekusi file start.sh
 COPY start.sh /start.sh
 RUN chmod +x /start.sh
