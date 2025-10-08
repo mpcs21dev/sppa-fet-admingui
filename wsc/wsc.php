@@ -28,12 +28,13 @@ $upd = "update wsc_box set
     idleMemory=:idleMemory,
     lastUpdate=:lastUpdate
     where appId=:appId";
-$istat = "insert into wsc_stat(appId,rfoRequest,approved,rejected,trade,error,send,lastUpdate)
-    values (:appId,:rfoRequest,:approved,:rejected,:trade,:error,:send,:lastUpdate)";
+$istat = "insert into wsc_stat(appId,rfoRequest,approved,initiator,rejected,trade,error,send,lastUpdate)
+    values (:appId,:rfoRequest,:approved,:initiator,:rejected,:trade,:error,:send,:lastUpdate)";
 $ustat = "update wsc_stat set 
     rfoRequest=:rfoRequest,
     approved=:approved,
     rejected=:rejected,
+    initiator=:initiator,
     trade=:trade,
     error=:error,
     send=:send,
@@ -61,11 +62,13 @@ function cekTgl() {
 
     if ($lastTgl != date("Y-m-d")) {
         $lastTgl = date("Y-m-d");
-        $cm1 = "delete from wsc_log";
-        $cm2 = "update wsc_stat set rfoRequest=0, approved=0, rejected=0, trade=0, error=0, send=0, lastUpdate='".date("Y-m-d H:i:s")."'";
+        $cm1 = "drop table wsc_log"; // "delete from wsc_log";
+        $cm1a = "CREATE TABLE wsc_log (id integer primary key AUTOINCREMENT, msg varchar(100), tgl text)";
+        $cm2 = "update wsc_stat set rfoRequest=0, approved=0, rejected=0, initiator=0, trade=0, error=0, send=0, lastUpdate='".date("Y-m-d H:i:s")."'";
         $cm3 = "update wsc_login set login=0, lastUpdate='".date("Y-m-d H:i:s")."'";
         try {
             DBX(DBMEM)->run($cm1);
+            DBX(DBMEM)->run($cm1a);
         } catch (Exception $e) {
             echo date("Y-m-d H:i:s")." WSC_LOG ".$e->getMessage()."\n";
         }
@@ -104,7 +107,7 @@ try {
         $tbh = false;
         $dat = json_decode($row["data"]);
         if ($row["log_type"] == "STAT") $tbh = true;
-        if (($row["log_type"] == "EVNT") && (($dat->description=="FIX Client logon") || ($dat->description=="FIX Client logout"))) $tbh = true;
+        if (($row["log_type"] == "EVNT") && ((substr($dat->description,0,16)=="FIX Client logon") || (substr($dat->description,0,17)=="FIX Client logout"))) $tbh = true;
 
         if ($tbh) $xd[$row["log_type"]][$row["app_id"]] = $row["data"];
     }
@@ -126,7 +129,7 @@ try {
             $o = (array) json_decode($val);
             $parm = array();
             $parm["appId"] = $key;
-            $parm["login"] = $o["description"] == "FIX Client logon" ? 1 : 0;
+            $parm["login"] = substr($o["description"],0,16) == "FIX Client logon" ? 1 : 0;
             $parm["tgl"] = date("Y-m-d H:i:s");
             $st = DBX(DBDISK)->run($ulog,$parm);
             if ($st->rowCount() == 0) {
@@ -175,8 +178,8 @@ while ($active) {
             $stat = $arr["logType"] == "STAT";
 
             $de = $arr["data"];
-            $lgin = $arr["logType"] == 'EVNT' && $arr["appType"] == 'FIX' && $de["description"] == "FIX Client logon";
-            $lout = $arr["logType"] == 'EVNT' && $arr["appType"] == 'FIX' && $de["description"] == "FIX Client logout";
+            $lgin = $arr["logType"] == 'EVNT' && $arr["appType"] == 'FIX' && substr($de["description"],0,16) == "FIX Client logon";
+            $lout = $arr["logType"] == 'EVNT' && $arr["appType"] == 'FIX' && substr($de["description"],0,17) == "FIX Client logout";
         } catch (\WebSocket\ConnectionException $e) {
             $tgl = date("Y-m-d H:i:s");
             $msg = $e->getMessage();

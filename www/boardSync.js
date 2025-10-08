@@ -127,14 +127,14 @@ TSync = {
                             if (self.xbj.logType == "STAT") {
                                 Dash.Ses.updateStat(self.xbj,"doit");
                             }
-                            if (self.xbj.logType == "EVNT" && self.xbj.appType == "FIX" && self.xbj.data.description == "FIX Client logon") {
+                            if (self.xbj.logType == "EVNT" && self.xbj.appType == "FIX" && self.xbj.data.description.substring(0,15) == "FIX Client logon") {
                                 Dash.Ses.updateConn(self.xbj,"doit");
                                 //console.log(JSON.parse(row.msg));
                             }
                             if ((self.xbj.logType=='INFO') && (self.xbj.appType=='FTP') && (self.xbj.appId=='FTP-XML')) rtrx = true;
                             if ((self.xbj.logType!='METR') && (self.xbj.logType!='STAT') && (self.xbj.logType!='WSC')) reve = true;
 
-                            //dats[self.xbj.logType][self.xbj.appId] = row.msg;
+                            //FTP STAT --> log_type='INFO' app_type='FTP' app_id='FTP-STAT'
 
                             self.lastId = row.id;
                         }

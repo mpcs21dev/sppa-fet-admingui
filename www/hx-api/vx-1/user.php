@@ -66,7 +66,7 @@ function api_fn($hasil, $parm, $json) {
                     $prms["passwd"] = $json["passwd"];
                     $prms["updated_at"] = date('Y-m-d H:i:s');
                     $prms["updated_by"] = $usr["id"];
-                    $prms["chpwd"] = true;
+                    $prms["chpwd"] = 1;
                     break;
                 case 'level':
                     $sql = "select int_key xkey, str_val xval from public.reference where name='USER-LEVEL'";

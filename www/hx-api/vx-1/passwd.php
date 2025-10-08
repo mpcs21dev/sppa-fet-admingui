@@ -12,14 +12,18 @@ function api_fn($hasil, $ar = array(), $json = null) {
         // update password;
         $usr["passwd"] = $JPOST["pwd1"];
         $usr["updated_at"] = date("Y-m-d H:i:s");
-        $usr["chpwd"] = false;
+        $usr["chpwd"] = 0;
         unset($usr["inserted_at"]);
         unset($usr["inserted_by"]);
         unset($usr["updated_by"]);
         $new = data_update(withSchema("user"),"id",$usr);
-
-        log_add($usr["id"], "PASSWD", withSchema("user"), $usr["id"], json_encode($old), json_encode($new));
-        setVars("user-data",$new);
+        if (isset($new["error"])) {
+            $hasil->error = $new["error"];
+            $hasil->message = $new["message"];
+        } else {
+            log_add($usr["id"], "PASSWD", withSchema("user"), $usr["id"], json_encode($old), json_encode($new));
+            setVars("user-data",$new);
+        }
         $hasil->debug = $new;
         done($hasil);
     } else {

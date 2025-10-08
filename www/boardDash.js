@@ -214,10 +214,9 @@ class Config extends Common {
                         </div>
                         <div class='console'>
                             <div class="SInfo">
-                                <!--
-                                <button>Message</button>
-                                <button>Event</button>
-                                -->
+                                <div><div id="${this.genId('rfo_request')}">0</div><div class="cpu">REQUEST</div></div>
+                                <div><div id="${this.genId('rfo_valid')}">0</div><div class="send">VALID</div></div>
+                                <div><div id="${this.genId('rfo_failure')}">0</div><div class="error">FAILURE</div></div>
                                 <div class="SInfo-separator"></div>
                                 <!--
                                 <div><div id="${this.genId('core')}">${this.cpu_core}</div><div>CORE</div></div>

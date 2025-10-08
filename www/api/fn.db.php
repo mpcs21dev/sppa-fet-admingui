@@ -182,7 +182,7 @@ function data_update($table, $keyfld, $json, $dbx=0, $selectFrom = "") {
     try {
         DBX($dbx)->run($sql, $arm);
     } catch (Exception $e) {
-        return array("sql"=>$sql,"prm"=>$arm);
+        return array("error"=>e->getCode(),"message"=>e->getMessage(),"sql"=>$sql,"prm"=>$arm);
     }
 
     if ($selectFrom == "") {

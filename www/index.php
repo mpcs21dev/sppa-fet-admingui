@@ -11,6 +11,7 @@ spl_autoload_register(function ($class_name) {
 require_once("check.php");
 require_once("api/const.php");
 $lastId = getVars("last-id",0);
+$usrx = getVars("user-data");
 ?><!DOCTYPE html>
 <html>
 <head>
@@ -188,7 +189,7 @@ $lastId = getVars("last-id",0);
             <a id='tsync' class="red item" <?= cekLevel(LEVEL_DEV) ? "" : "style=\"visibility:hidden;\"" ?>><i id="icon_sync" class="sync icon"></i> Sync</a>
             <div id='menu-kanan' class="ui blue inverted dropdown item">
                 <i class="user icon"></i>
-                Session
+                <?=$usrx["uid"]?> &bull; <?=$usrx["user_name"]?> 
                 <div class="menu">
                     <a class="item" id="mnu-chpwd"><i class="key icon"></i> Change Password</a>
                     <a class="item" id="mnu-logout"><i class="sign out alternate icon"></i> Sign Out</a>

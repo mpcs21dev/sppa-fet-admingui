@@ -108,7 +108,32 @@ $PRM = array(
             }
             return hasil;
         }
+        function countUrlPart(coid,part) {
+            var xpart = {
+                'fix-user':3,
+                'fix-pass':4,
+                'fix-ip':5,
+                'fix-port':6,
+                'fix-sender':8,
+                'fix-target':10
+            };
+            var hasil = 0;
+            for (let i=0; i<frmLeft.Data.length; i++) {
+                var di = frmLeft.Data[i];
+                if (di['record_type'] != 'PART') continue;
+                var ci = JSON.parse(di['data']);
+                for (let k=0; k<ci.length; k++) {
+                    var ck = ci[k];
+                    var arrurl = ck.fixMainUrl.split(/[:@?&/=]/);
+                    var sender = arrurl[xpart[part]] ?? '';
+                    if (coid == sender) hasil ++;
+                }
+            }
+            return hasil;
+        }
         function countCompId(coid) {
+            return countUrlPart(coid,'fix-sender');
+            /*
             var hasil = 0;
             for (let i=0; i<frmLeft.Data.length; i++) {
                 var di = frmLeft.Data[i];
@@ -122,6 +147,7 @@ $PRM = array(
                 }
             }
             return hasil;
+            */
         }
         function btnLRefresh_click() {
             var cp = Tabll.getPage();
@@ -332,35 +358,30 @@ $PRM = array(
             }
             XFrame.setCaption('Add Data')
                 .setContent(frmRight.formAdd('add_rec',2,true))
-                .setConfirmation()
-                .setVerifier(true, ()=>{ return frmRight.doVerify(); })
-                .setAction(true,()=>{
+                .setConfirmation('Save Data','Are you sure?',true,()=>{
                     var odata = frmRight.readForm(false,false,true);
                     var newCID = odata['clientId'];
+                    var newFUSR = odata['fixMainUrl_user'];
                     var newCOID = odata['fixMainUrl_sender'];
                     var countCID = countClientId(newCID);
                     var countCOID = countCompId(newCOID);
+                    var countFUSR = countUrlPart(newFUSR,'fix-user');
+                    if (countFUSR > 0) {
+                        alert('ERROR :: Duplicate FIX User detected.');
+                        return false;
+                    }
                     if (countCID > 0) {
                         alert('ERROR :: Duplicate 3rd Party ID detected.');
-                        window.location.reload();
-                        return;
+                        return false;
                     }
                     if (countCOID > 0) {
                         alert('ERROR :: Duplicate Client CompID detected.');
-                        window.location.reload();
-                        return;
-                    }
-                    /*
-                    for (var i=0; i<frmRight.Data.length; i++){
-                        var d = frmRight.Data[i];
-                        if (d.clientId == odata['clientId']) {
-                            //FError('Error', 'Duplicate 3rd Party ID');
-                            alert('ERROR :: Duplicate 3rd Party ID detected.');
-                            window.location.reload();
-                            return;
-                        }
-                    }
-                    */
+                        return false;
+                    }                    
+                })
+                .setVerifier(true, ()=>{ return frmRight.doVerify(); })
+                .setAction(true,()=>{
+                    var odata = frmRight.readForm(false,false,true);
                     odata['id'] = 1+frmRight.Data.length;
                     odata['rowid'] = leftID;
                     //odata['fixMainUrl'] = '';

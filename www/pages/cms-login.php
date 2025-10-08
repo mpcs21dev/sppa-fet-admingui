@@ -16,6 +16,7 @@
 </div>
 <script type="text/javascript">
     mod_startup = () => {
+        window.document.title = "SPPA FET Web Admin - Login";
         if (PARAM.length > 0) {
             SwalToast("error", PARAM[0]);
             ToastError(PARAM[0]);

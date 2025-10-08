@@ -747,10 +747,11 @@ class Framer {
         this.okeFn = fn;
         return this;
     }
-    setConfirmation(confirmHeader="Save Data", confirmContent="Are you sure?", confirmAsk=true) {
+    setConfirmation(confirmHeader="Save Data", confirmContent="Are you sure?", confirmAsk=true, fnbc=null) {
         this.confirmShow = confirmAsk;
         this.confirmCaption = confirmHeader;
         this.confirmBody = confirmContent;
+        this.beforeConfirm = fnbc;
         return this;
     }
     show(execas = true) {
@@ -770,6 +771,10 @@ class Framer {
                 }
                 if (!lanjut) return;
                 if (this.confirmShow) {
+                    if (this.beforeConfirm != null) {
+                        var x = this.beforeConfirm();
+                        if (!x) return;
+                    }
                     $("body").modal("myConfirm", this.confirmCaption, this.confirmBody, ()=>{
                         this.okeFn(e);
                         this.close();

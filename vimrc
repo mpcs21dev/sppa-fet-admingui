@@ -3,6 +3,7 @@ filetype on
 filetype plugin on
 filetype indent on
 syntax on
+colorscheme default
 colorscheme retrobox
 set number
 set cursorline

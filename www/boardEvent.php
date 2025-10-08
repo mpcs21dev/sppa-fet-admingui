@@ -2,15 +2,13 @@
     <div id="lehere" class="ui attached menu rounded titler">
         <div class="ui buttons">
             <button class="ui mini violet button" id="btnERefresh" data-tooltip="Refresh" data-position="bottom left"><i class="redo icon"></i> Refresh</button>
-            <!--
             <div id='mnuERefresh' class="ui mini violet dropdown icon button">
                 <i class="dropdown icon"></i>
-                <div class="ui vertical menu m180">
+                <div class="ui vertical menu" style="left: -90px !important;">
                     <div id="btnmERefresh" class="mini item"><i class="redo icon"></i> Refresh Data</div>
                     <div id="btnmEReset" class="mini item"><i class="cog icon"></i> Reset Column Settings</div>
                 </div>
             </div>
-            -->
         </div>
         <div class="padder2"></div>
         <div class="padder2"></div>
@@ -57,6 +55,13 @@
         lastID: 0,
         rendered: false,
         url: 'api/?1/wsc/event/latest',
+        resetColumn: function() {
+            $("body").modal("myConfirm", "<i class='exclamation triangle icon red'></i> Reset Column", "Reset data grids column settings ?", ()=>{
+                localStorage.removeItem("tabulator-cms_event-columns");
+                if (confirm("You must reload/refresh browser window.\n\nDo it now?"))
+                    window.location.reload();
+            });
+        },
         refresh: function(reset="") {
             if (!this.rendered) return;
             //var cp = this.Tabll.getPage();
@@ -86,8 +91,8 @@
                 $('#mnuERefresh').dropdown();
                 this.frmPage.setModel({
                     id: {caption: "ID", title: "No", type: "numeric", autoValue: true, width: 50},
-                    log_type: {caption: "Log Type", type: "string", headerFilter: true, width: 100, editable:false, editor:'list', editorParams:{values:['ERR','EVNT','INFO','ORD','STAT']}, headerFilter:"list", headerFilterParams:{values:["ERR","EVNT","INFO","ORD","STAT"],clearable:true}},
-                    app_type: {caption: "App Type", type:"string", headerFilter: true, width: 100, editable:false, editor:'list', editorParams:{values:['ADM','FIX','FTP']}, headerFilter:'list', headerFilterParams:{values:['ADM','FIX','FTP'],clearable:true}},
+                    log_type: {caption: "Log Type", type: "string", headerFilter: true, width: 100, editable:false, editor:'list', editorParams:{values:['ERR','EVNT','INFO','ORD','STAT']}, headerFilter:"list", headerFilterParams:{values:{"":"[ CLEAR ]","ERR":"ERR","EVNT":"EVNT","INFO":"INFO","ORD":"ORD","STAT":"STAT"},clearable:true}},
+                    app_type: {caption: "App Type", type:"string", headerFilter: true, width: 100, editable:false, editor:'list', editorParams:{values:['ADM','FIX','FTP']}, headerFilter:'list', headerFilterParams:{values:['':'[ CLEAR ]','ADM':'ADM','FIX':'FIX','FTP':'FTP'},clearable:true}},
                     app_id: {caption: "App ID", type:"string", headerFilter: true, width: 100},
                     inserted_at: {caption: "Created at", type: "datetime", autoValue: true, width: 150},
                     app_idx: {caption: "3rd Party", type:"string", formatter: fmt_appidx, width: 150},
@@ -112,6 +117,8 @@
                     layout: "fitData",
                 });
 
+                $("#btnmEReset").on("click", ()=>{ meee.resetColumn(); });
+                $("#btnmERefresh").on("click", ()=>{ meee.refresh(); });
                 $("#btnERefresh").on("click", ()=>{ meee.refresh(); });
                 $("#evefilBtnApply").on("click", ()=>{ meee.refresh("apply"); });
                 $("#evefilBtnToday").on("click", ()=>{ meee.refresh("today"); });

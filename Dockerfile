@@ -16,6 +16,7 @@ WORKDIR /usr/src/myapp
 # Copy file konfigurasi Caddy
 COPY Caddyfile /etc/caddy/Caddyfile
 COPY vimrc /root/.vimrc
+COPY bashrc /root/.bashrc
 
 # Salin dan beri izin eksekusi file start.sh
 COPY start.sh /start.sh
