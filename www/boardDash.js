@@ -104,11 +104,12 @@ class Config extends Common {
         var m = this.data[ix];
         if (j.appId == this.part_id+'-'+m.clientId) {
             try {
-                if (j.data.description == "FIX Client logon") {
-                    $id("clientId_"+this.part_id+'-'+m.clientId).className = 'send';
+                var xid = $id("clientId_"+this.part_id+'-'+m.clientId);
+                if (j.data.description.substr(0,16) == "FIX Client logon") {
+                    if (xid) xid.className = 'send';
                 }
-                if (j.data.description == "FIX Client logout") {
-                    $id("clientId_"+this.part_id+'-'+m.clientId).className = 'error';
+                if (j.data.description.substr(0,17) == "FIX Client logout") {
+                    if (xid) xid.className = 'error';
                 }
                 //console.log('updateConn-oke',origin,'clientId_'+this.part_id+'-'+m.clientId,j);
             } catch(e) {
@@ -126,10 +127,11 @@ class Config extends Common {
             const k = Object.keys(j.data);
             const y = k.length;
             for (var l=0; l<y; l++) {
-                if (k[l] == "initiator") continue;
+                if (k[l] == "send") continue;
                 this.data[ix][k[l]] = j.data[k[l]];
                 try {
-                    $id(k[l]+'_'+this.part_id+'-'+this.data[ix].clientId).innerText = j.data[k[l]];
+                    var xid = $id(k[l]+'_'+this.part_id+'-'+this.data[ix].clientId);
+                    if (xid) xid.innerText = j.data[k[l]];
                 } catch(e) {
                     console.log('updateStat-error',origin,e,k[l]+'_'+this.part_id+'-'+this.data[ix].clientId,j.data[k[l]]);
                 }
@@ -162,7 +164,7 @@ class Config extends Common {
                             <div class="SInfo-separator"></div>
                             <div><div id="${this.genId('rfoRequest',recid)}">${rec.rfoRequest}</div><div>RFO</div></div>
                             <div><div id="${this.genId('error',recid)}">${rec.error}</div><div class="error">ERROR</div></div>
-                            <div><div id="${this.genId('send',recid)}">${rec.send}</div><div class="send">INITIATOR</div></div>
+                            <div><div id="${this.genId('initiator',recid)}">${rec.initiator}</div><div class="send">INITIATOR</div></div>
                             <div><div id="${this.genId('approved',recid)}">${rec.approved}</div><div>RESPONSE</div></div>
                             <div><div id="${this.genId('rejected',recid)}">${rec.rejected}</div><div>REJECT</div></div>
                             <div><div id="${this.genId('trade',recid)}">${rec.trade}</div><div>TRADE</div></div>

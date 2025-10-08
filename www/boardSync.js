@@ -182,12 +182,13 @@ TSync = {
                     delete dx["lastUpdate"];
                     const dk = Object.keys(dx);
                     for (var k=0; k<dk.length; k++) {
-                        if (dk[k] == "initiator") continue;
+                        if (dk[k] == "send") continue;
                         try {
                             var dval = dx[dk[k]] ?? "";
                             dval = dval == "" ? 0 : dval;
                             if (dval == "") dval = 0;
-                            $id(dk[k]+'_'+appid).innerText = dval;
+                            var dnod = $id(dk[k]+'_'+appid);
+                            if (dnod) dnod.innerText = dval;
                         } catch(e) {
                             console.log('updateStat-error',e,dk[k],dx[dk[k]]);
                         }
@@ -350,6 +351,7 @@ TSync = {
             rfoRequest: {caption: "RFO", type: "numeric"},
             approved: {caption: "Approved", type: "numeric"},
             rejected: {caption: "Rejected", type: "numeric"},
+            initiator: {caption: "Initiator", type: "numeric"},
             trade: {caption: "Trade", type: "numeric"},
             error: {caption: "Error", type: "numeric"},
             send: {caption: "Send", type: "numeric"},

@@ -92,7 +92,7 @@
                 this.frmPage.setModel({
                     id: {caption: "ID", title: "No", type: "numeric", autoValue: true, width: 50},
                     log_type: {caption: "Log Type", type: "string", headerFilter: true, width: 100, editable:false, editor:'list', editorParams:{values:['ERR','EVNT','INFO','ORD','STAT']}, headerFilter:"list", headerFilterParams:{values:{"":"[ CLEAR ]","ERR":"ERR","EVNT":"EVNT","INFO":"INFO","ORD":"ORD","STAT":"STAT"},clearable:true}},
-                    app_type: {caption: "App Type", type:"string", headerFilter: true, width: 100, editable:false, editor:'list', editorParams:{values:['ADM','FIX','FTP']}, headerFilter:'list', headerFilterParams:{values:['':'[ CLEAR ]','ADM':'ADM','FIX':'FIX','FTP':'FTP'},clearable:true}},
+                    app_type: {caption: "App Type", type:"string", headerFilter: true, width: 100, editable:false, editor:'list', editorParams:{values:['ADM','FIX','FTP']}, headerFilter:'list', headerFilterParams:{values:{'':'[ CLEAR ]','ADM':'ADM','FIX':'FIX','FTP':'FTP'},clearable:true}},
                     app_id: {caption: "App ID", type:"string", headerFilter: true, width: 100},
                     inserted_at: {caption: "Created at", type: "datetime", autoValue: true, width: 150},
                     app_idx: {caption: "3rd Party", type:"string", formatter: fmt_appidx, width: 150},
