@@ -377,7 +377,8 @@ $PRM = array(
                     if (countCOID > 0) {
                         alert('ERROR :: Duplicate Client CompID detected.');
                         return false;
-                    }                    
+                    }
+                    return true;                    
                 })
                 .setVerifier(true, ()=>{ return frmRight.doVerify(); })
                 .setAction(true,()=>{
@@ -419,7 +420,7 @@ $PRM = array(
                     fdata.delete('rec_type_str');
                     fdata.append('SEND_operation','NEW');
                     fdata.append('SEND_participantId',leftData.participant_id);
-                    fdata.append('SEND_userId',newCID);
+                    fdata.append('SEND_userId',odata.clientId);
                     //fdata.append('SEND_userId',odata.fixMainUrl_user);
                     Loader('Saving new record...');
                     //console.log(fdata);
@@ -519,7 +520,37 @@ $PRM = array(
             }
             XFrame.setCaption('Edit Record')
                 .setContent(frmRight.formEdit(parm, 'edt_rec', 2))
-                .setConfirmation()
+                .setConfirmation('Save Data','Are you sure?',true,()=>{
+                    var odata = frmRight.readForm(true,true,true);
+                    var oldCID = \$id('fld-clientId').dataset.fieldValue;
+                    var newCID = odata['clientId'];
+                    var oldFUSR = \$id('fld-fixMainUrl_user').dataset.fieldValue;
+                    var newFUSR = odata['fixMainUrl_user'];
+                    var oldCOID = \$id('fld-fixMainUrl_sender').dataset.fieldValue;
+                    var newCOID = odata['fixMainUrl_sender'];
+                    if (oldCID != newCID) {
+                        var countCID = countClientId(newCID);
+                        if (countCID > 0) {
+                            alert('ERROR :: Duplicate 3rd Party ID detected.');
+                            return false;
+                        }
+                    }
+                    if (oldFUSR != newFUSR) {
+                        var countFUSR = countUrlPart(newFUSR,'fix-user');
+                        if (countFUSR > 0) {
+                            alert('ERROR :: Duplicate FIX User detected.');
+                            return false;
+                        }
+                    }
+                    if (oldCOID != newCOID) {
+                        var countCOID = countCompId(newCOID);
+                        if (countCOID > 0) {
+                            alert('ERROR :: Duplicate Client CompID detected.');
+                            return false;
+                        }                    
+                    }
+                    return true;
+                })
                 .setVerifier(true, ()=>{ return frmRight.doVerify(); })
                 .setAction(true,()=>{
                     var adata = frmRight.readForm(true,true,true);
@@ -539,34 +570,6 @@ $PRM = array(
                     adata['fixDrcUrl'] = 'fix5://'+url2;
                     //adata['rowid'] = leftID;
                     frmRight.updateData(adata,['id']);
-                    var newCID = adata['clientId'];
-                    var newCOID = adata['fixMainUrl_sender'];
-                    var countCID = countClientId(newCID);
-                    var countCOID = countCompId(newCOID);
-                    if (countCID > 1) {
-                        alert('ERROR :: Duplicate 3rd Party ID detected.');
-                        window.location.reload();
-                        return;
-                    }
-                    if (countCOID > 1) {
-                        alert('ERROR :: Duplicate Sender CompID detected.');
-                        window.location.reload();
-                        return;
-                    }
-                    /*
-                    rids = [];
-                    for (var i=0; i<frmRight.Data.length; i++){
-                        var d = frmRight.Data[i];
-                        var c = d.clientId;
-                        if (rids.includes(c)) {
-                            //FError('Error', 'Duplicate 3rd Party ID detected.');
-                            alert('ERROR :: Duplicate 3rd Party ID detected.');
-                            window.location.reload();
-                            return;
-                        }
-                        rids.push(c);
-                    }
-                    */
 
                     if (leftData.record_type == 'PART') {
                         var jeje = [];
@@ -592,7 +595,7 @@ $PRM = array(
                     fdata.delete('rec_type_str');
                     fdata.append('SEND_operation','EDIT');
                     fdata.append('SEND_participantId',leftData.participant_id);
-                    fdata.append('SEND_userId',newCID);
+                    fdata.append('SEND_userId',adata.userId);
                     //fdata.append('SEND_userId',adata.fixMainUrl_user);
                     Loader('Updating record...');
                     Api('api/?1/config/config/update', {body: fdata}).then(

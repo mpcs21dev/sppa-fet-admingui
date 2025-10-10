@@ -114,9 +114,23 @@ try {
     print_r($xd);
     if (count($xd["STAT"])>0) {
         foreach ($xd["STAT"] as $key => $val) {
-            $parm = (array) json_decode($val);
-            $parm["appId"] = $key;
-            $parm["lastUpdate"] = date("Y-m-d H:i:s");
+            $parm = array();
+            if ($key == "FTP-STAT") {
+                $vals = (array) json_decode($val);
+                $parm["rfoRequest"] = $vals["rfoRequest"];
+                $parm["error"] = $vals["rfoFailure"];
+                $parm["send"] = $vals["rfoValid"];
+                $parm["approved"] = 0;
+                $parm["rejected"] = 0;
+                $parm["initiator"] = 0;
+                $parm["trade"] = 0;
+                $parm["appId"] = $key;
+                $parm["lastUpdate"] = date("Y-m-d H:i:s");
+            } else {
+                $parm = (array) json_decode($val);
+                $parm["appId"] = $key;
+                $parm["lastUpdate"] = date("Y-m-d H:i:s");
+            }
             //print_r($parm);
             $st = DBX(DBDISK)->run($ustat,$parm);
             if ($st->rowCount() == 0) {
@@ -207,9 +221,24 @@ while ($active) {
         }
         if ($stat) {
             try {
-                $parm = $arr["data"];
-                $parm["appId"] = $arr["appId"];
-                $parm["lastUpdate"] = date("Y-m-d H:i:s");
+                $parm = array();
+                if ($arr["appId"] == "FTP-STAT") {
+                    $vals = $arr["data"];
+                    $parm["rfoRequest"] = $vals["rfoRequest"];
+                    $parm["error"] = $vals["rfoFailure"];
+                    $parm["send"] = $vals["rfoValid"];
+                    $parm["approved"] = 0;
+                    $parm["rejected"] = 0;
+                    $parm["initiator"] = 0;
+                    $parm["trade"] = 0;
+                    $parm["appId"] = $arr["appId"];
+                    $parm["lastUpdate"] = date("Y-m-d H:i:s");
+                } else {
+                    $parm = $arr["data"];
+                    $parm["appId"] = $arr["appId"];
+                    $parm["lastUpdate"] = date("Y-m-d H:i:s");
+                }
+
                 $st = DBX(DBDISK)->run($ustat,$parm);
                 if ($st->rowCount() == 0) {
                     DBX(DBDISK)->run($istat,$parm);

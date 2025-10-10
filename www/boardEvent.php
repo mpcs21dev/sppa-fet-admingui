@@ -30,7 +30,7 @@
     </div>
     <div id="badane" class="attached standard-full flexrow">
         <div id="table_event" class="ui orange table"></div>
-        <div id="detail_event" class="ui violet table" style="display:none"></div>
+        <div id="detail_event" class="ui violet table" style="display:none;overflow:auto;"></div>
     </div>
 </div>
 <script type="text/javascript">
@@ -129,6 +129,8 @@
                     //console.log(data);
                     var de = $id("detail_event");
                     de.style.display = "block";
+                    de.style.height = $id("table_event").offsetHeight+"px";
+                    de.style.overflow = "auto";
                     de.innerHTML = vjson(data,"data");
                 });
                 this.Table.on("rowDeselected", function(row){
@@ -137,7 +139,7 @@
                     //console.log(data);
                     var de = $id("detail_event");
                     de.style.display = "none";
-                    //de.innerHTML = vjson(data,"data");
+                    de.innerHTML = "";
                 });
                 this.rendered = true;
             } catch (err) {

@@ -44,6 +44,11 @@ function api_fn($hasil, $parm, $json) {
     $sql = "";
     $dbx = 1;
 
+    $ltbl = "";
+    $lact = "";
+    $lbef = "";
+    $laft = "";
+
     $table = $parm[0];
     $action= $parm[1];
     $partid= $parm[2] ?? "ALL";
@@ -65,6 +70,10 @@ function api_fn($hasil, $parm, $json) {
             } else {
                 done($hasil,950,$res[1]);
             }
+            $lact = "RESEND";
+            $ltbl = "TRANSACTION";
+            $lbef = $JPOST;
+            $laft = $res;
             break;
         case 'transaction':
             $doby = array(array("field"=>"inserted_at","dir"=>"desc"));
@@ -185,5 +194,6 @@ function api_fn($hasil, $parm, $json) {
         
     }
 
+    if ($ltbl != "" && $lact != "") log_ui($lact,$ltbl,$lbef,$laft);
     return done($hasil);
 }

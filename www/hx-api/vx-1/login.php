@@ -44,11 +44,13 @@ function api_fn($hasil, $ar = array(), $json = null) {
 
     log_uilogin($usr["id"], $uid, $ip1, $ip2, $ip3, "Login Success", false);
     log_add($usr["id"], "LOGIN", $uid);
-    /*
+    
     if ($HX->reset($uid)) {
+        $HX->tick();
         $HX->save();
+    } else {
+        done($hasil, 808, "User still active in other session.");
     }
-    */
 
     $sql = "select * from CMSUser_Right where User_ID = ?";
     $rig = array(); //DBX(DB_RIGHT)->run($sql,array($usr["ID"]))->fetchAll();

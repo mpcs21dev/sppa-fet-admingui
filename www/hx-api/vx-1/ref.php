@@ -45,6 +45,11 @@ function api_fn($hasil, $parm, $json) {
     $sql = "";
     $dbx = DB_DATA;
 
+    $ltbl = "REFERENCE";
+    $lact = "";
+    $lbef = "";
+    $laft = "";
+
     $table = $parm[0];
     $action= $parm[1];
     $prms  = array();
@@ -58,6 +63,7 @@ function api_fn($hasil, $parm, $json) {
                     $sql = "SELECT * FROM public.reference";
                     break;
                 case 'create':
+                    $lact = "CREATE";
                     $xr = false;
                     if ($json["name"] == "") $xr = true;
                     if ($json["str_val"] == "") $xr = true;
@@ -93,6 +99,7 @@ function api_fn($hasil, $parm, $json) {
                     } catch (Exception $e) {}
                     break;
                 case 'update':
+                    $lact = "UPDATE";
                     $json["name"] = $json["name"] ?? "";
                     $json["str_val"] = $json["str_val"] ?? "";
                     $json["int_key"] = $json["int_key"] ?? "";
@@ -129,6 +136,7 @@ function api_fn($hasil, $parm, $json) {
                     } catch (Exception $e) {}
                     break;
                 case 'delete':
+                    $lact = "DELETE";
                     $sql = "public.reference";
                     break;
                 default:
@@ -180,6 +188,7 @@ function api_fn($hasil, $parm, $json) {
             $obj = null;
             try {
                 $obj = data_create($sql,"id",$json, false, false, $dbx);
+                $laft = $obj;
             } catch (Exception $e) {
                 $hasil->debug[] = array("error"=>$e->getMessage(),"sql"=>$sql,"param"=>$json);
                 return done($hasil, 889, "Error adding data.");
@@ -191,9 +200,11 @@ function api_fn($hasil, $parm, $json) {
 
         case 'update':
             $old = data_read($sql,"id",$json["id"],$dbx);
+            $lbef = $old;
             $new = null;
             try {
                 $new = data_update($sql,"id",$json,$dbx);
+                $laft = $new;
             } catch (Exception $e) {
                 $hasil->debug[] = array("error"=>$e->getMessage(),"sql"=>$sql,"data"=>$json);
                 done($hasil, 889, "Error updating data.");
@@ -201,12 +212,46 @@ function api_fn($hasil, $parm, $json) {
         
             log_add($usr["id"], "UPDATE", $sql, $json["id"], json_encode($old), json_encode($new));
             $hasil->data = $new;
-           break;
+
+            if (strtoupper($json["name"]) == "CONFIG-DEFAULT-VALUE") {
+                $ch_drcip = strtoupper($json["str_key"]) == "DRC-SERVER-IP";
+                $ch_drcport = strtoupper($json["str_key"]) == "DRC-SERVER-PORT";
+                $ch_drctarget = strtoupper($json["str_key"]) == "DRC-TARGET-COMPID";
+                $ch_mainip = strtoupper($json["str_key"]) == "MAIN-SERVER-IP";
+                $ch_mainport = strtoupper($json["str_key"]) == "MAIN-SERVER-PORT";
+                $ch_maintarget = strtoupper($json["str_key"]) == "MAIN-TARGET-COMPID";
+                if ($ch_drcip || $ch_drcport || $ch_drctarget || $ch_mainip || $ch_mainport || $ch_maintarget) {
+                    $oldval = $old["str_val"];
+                    $newval = $json["str_val"];
+                    $recs = DBX($dbx)->run("SELECT * from public.config where record_type = 'PART'")->fetchAll();
+                    $drc = $ch_drcip || $ch_drcport || $ch_drctarget;
+                    //$main = $ch_mainip || $ch_mainport || $ch_maintarget;
+                    $fname = $drc ? "fixDrcUrl" : "fixMainUrl";
+                    $u1 = "UPDATE public.config set data=:data where id=:id";
+                    foreach ($recs as $row) {
+                        //$url = $row[$fname];
+                        $data = json_decode($row["data"]);
+                        if (is_array($data)) {
+                            for ($i=0; $i<count($data); $i++) {
+                                $url = $data[$i]->$fname;
+                                $xrl = str_replace($oldval."", $newval."", $url);
+                                $data[$i]->$fname = $xrl;
+                            }
+                        } else {
+                            $hasil->debug[] = array("not an array",$data);
+                        }
+                        $row["data"] = json_encode($data);
+                        DBX($dbx)->run($u1, array("data"=>$row["data"], "id"=>$row["id"]));
+                    }
+                }
+            }
+            break;
 
         case 'delete':
             $obj = null;
             try {
                 $obj = data_delete($sql,"id",$json["id"],$dbx);
+                $lbef = $obj;
             } catch (Exception $e) {
                 $hasil->debug[] = array("error"=>$e->getMessage(),"sql"=>$sql,"data"=>$json);
                 done($hasil, 889, "Error deleting data.");
@@ -226,5 +271,6 @@ function api_fn($hasil, $parm, $json) {
         
     }
 
+    if ($ltbl != "" && $lact != "") log_ui($lact,$ltbl,$lbef,$laft);
     return done($hasil);
 }

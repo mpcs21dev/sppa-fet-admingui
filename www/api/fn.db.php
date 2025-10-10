@@ -428,6 +428,25 @@ function log_add($uid, $act, $table="", $tid=0, $before="", $after="") {
     }
 }
 
+function log_ui($act, $table="", $before="", $after="") {
+    $usr = getVars("user-data");
+    $data = array();
+    $data["action"] = $act;
+    $data["table"] = $table;
+    $data["before"] = $before;
+    $data["after"] = $after;
+    $data["ip_addr"] = $_SERVER["HTTP_X_FORWARDED_FOR"] ?? $_SERVER["X_FORWARDED_FOR"] ?? $_SERVER["REMOTE_ADDR"];
+
+    $log = array();
+    $log["log_type"] = "INFO";
+    $log["app_type"] = "ADM";
+    $log["app_id"] = "UI-".$usr["uid"];
+    $log["inserted_at"] = date("Y-m-d H:i:s");
+    $log["data"] = json_encode($data);
+
+    data_create(withSchema("logging"), "id", $log);
+}
+
 function log_uilogin($id,$uid,$ip1,$ip2,$ip3,$msg,$fail=true,$dbx=2) {
     $hasil = array();
     if ($fail) {

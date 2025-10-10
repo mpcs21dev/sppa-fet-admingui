@@ -90,7 +90,8 @@ if (CHECK_RIGHT) {
     if (!fnRegistered($apiver, $apifn)) done($hasil, 6);
 }
 
-/*
+$hasil->HXAwal = $HXAwal;
+$hasil->HXActive = $HX->toString();
 if ($ISLOGGED) {
     if (!$HX->active) {
         clearVars();
@@ -98,11 +99,13 @@ if ($ISLOGGED) {
         $hasil->error = 888;
         $hasil->data = array();
         done($hasil, 888, "Session expired.");
+    } else {
+        $HX->tick();
     }
 }
-*/
 
-$hasil->hx = json_encode($HX);
+
+//$hasil->hx = json_encode($HX);
 
 // Read JSON POST
 $JPOST = json_decode(file_get_contents('php://input'), true); // change to $_POST from FormData object

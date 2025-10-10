@@ -240,7 +240,22 @@ function Api(endpoint, {body, ...customConfig} = {}) {
         .fetch(`${endpoint}`, config)
         .then(async response => {
             if (response.ok) {
-                return await response.json();
+                let relo = false;
+                const jret = await response.json();
+                if (jret["error"]) {
+                    if (jret["error"] == 888) relo = true;
+                    if (jret["error"] == 10) relo = true;
+                    //if (jret["error"] == 808) relo = true;
+                }
+                if (relo) {
+                    ToastError("Session expired");
+                    if (window != window.parent) {
+                        window.parent.location.reload();
+                    } else {
+                        window.location.reload();
+                    }
+                }
+                return jret;
             } else {
                 const errorMessage = await response.text();
                 return Promise.reject(new Error(errorMessage));
@@ -1441,7 +1456,8 @@ class Formation {
                 var resp = null;
                 if (_ajaxCallback != null) resp = _ajaxCallback(url, params, response);
                 if (resp == undefined) resp = response;
-                if (resp.error==888 && resp.message == "Session expired.") {
+                if (resp.error==888 || resp.error==10) {
+                    ToastError("Session expired");
                     if (window != window.parent) {
                         window.parent.location.reload();
                     } else {

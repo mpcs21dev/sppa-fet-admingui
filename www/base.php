@@ -9,7 +9,8 @@ require_once(__DIR__."/api/db.php");
 class HXActive {
     private $user;
     private $tick;
-    private $timeout = 60;
+    private $timeout = 5*60; // lima menit;
+    public $count = -1;
     public $active = false;
     public $debug = array();
 
@@ -17,6 +18,16 @@ class HXActive {
         $this->user = $uid;
         $this->tick = time();
         //$this->debug[] = basename($_SERVER['PHP_SELF'])." ## construct: ".$uid;
+    }
+
+    public function toString() {
+        $hasil = array();
+        $hasil["user"] = $this->user;
+        $hasil["tick"] = $this->tick;
+        $hasil["timeout"] = $this->timeout;
+        $hasil["active"] = $this->active;
+        $hasil["count"] = $this->count;
+        return json_encode($hasil);
     }
 
     public function reset($uid="") {
@@ -54,6 +65,7 @@ class HXActive {
         //$this->debug = array_merge(array(), $j->debug);
 
         $ctr = $this->cekdb();
+        $this->count = $ctr;
         if ($ctr < 1) {
             $this->active = false;
             //$this->debug[] = basename($_SERVER['PHP_SELF'])." ## load :: cekdb :: false ;; ".$ctr;
@@ -68,13 +80,14 @@ class HXActive {
     private function cekdb($del=false) {
         //if (!$this->active) return false;
         if ($del) {
-            $sqd = "delete from wsc_session where unixepoch()-tick > ?";
-            DBX(2)->run($sqd, array($this->timeout));
+            $sqd = "delete from wsc_session where unixepoch()-tick > ".$this->timeout;
+            DBX(2)->run($sqd);
             //$this->debug[] = basename($_SERVER['PHP_SELF'])." [cekdb del] ".$sqd;
         }
-        $sql = "select count(id) ctr from wsc_session where uid=? and unixepoch()-tick <= ?";
-        $prm = array($this->user, $this->timeout);
-        $ctr = DBX(2)->run($sql, $prm)->fetchColumn();
+        //$sql = "select count(id) ctr from wsc_session where uid=? and unixepoch()-tick <= ?";
+        //$prm = array($this->user, $this->timeout);
+        $sql = "select count(id) ctr from wsc_session where uid='{$this->user}' and unixepoch()-tick <= ".$this->timeout;
+        $ctr = DBX(2)->run($sql)->fetchColumn();
         //$this->debug[] = basename($_SERVER['PHP_SELF'])." [cekdb] ".$this->user." ; ".$ctr;
         return $ctr;
     }
@@ -112,9 +125,9 @@ class HXActive {
         //$this->debug[] = basename($_SERVER['PHP_SELF'])." [tickdb] ".$this->user;
         return true;
     }
-    public function tick() {
-        $ctr = $this->cekdb();
-        if ($ctr == 0) {
+    public function tick($del=false) {
+        $ctr = $this->cekdb($del);
+        if ($ctr < 1) {
             $this->active = false;
             //$this->debug[] = basename($_SERVER['PHP_SELF'])." [tick] cekdb ".ctr;
             return false;
@@ -134,7 +147,10 @@ $ISLOGGED = $_SESSION["logged"] == $LOGGED;
 $_SESSION["vars"] = isset($_SESSION["vars"]) ? $_SESSION["vars"] : array();
 //session_write_close();
 $HX = new HXActive();
-if ($HX->load()) $HX->tick();
+//$HX->load();
+$HXAwal = $HX->toString();
+$HX->load();
+//if ($HX->load()) $HX->tick();
 
 $PATH = "";
 $PARAM = array();

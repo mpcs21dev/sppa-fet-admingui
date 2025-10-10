@@ -5,6 +5,10 @@ if (!$ISLOGGED) {
     if (strpos($_SERVER['REQUEST_URI'], "?p=login")) {
         // do nothing
     } else {
+        if (!$HX->active) {
+            //clearVars();
+            header("Location: loader.php?p=login");
+        }
         if ($DEVELOPMENT) {
             header("Location: loader.php?p=login");
         } else {
@@ -13,7 +17,3 @@ if (!$ISLOGGED) {
     }
 }
 
-if (!$HX->active) {
-    //clearVars();
-    //header("Location: loader.php?p=login");
-}

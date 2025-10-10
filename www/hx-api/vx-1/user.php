@@ -44,6 +44,11 @@ function api_fn($hasil, $parm, $json) {
     $sql = "";
     $dbx = 1;
 
+    $ltbl = "USER";
+    $lact = "";
+    $lbef = "";
+    $laft = "";
+
     $table = $parm[0];
     $action= $parm[1];
 
@@ -57,6 +62,7 @@ function api_fn($hasil, $parm, $json) {
             $doby = array(array("field"=>"uid","dir"=>"asc"));
             switch ($action) {
                 case 'reset':
+                    $lact = "RESET";
                     if (!cekLevel(LEVEL_ADMIN)) done($hasil, 26);
                     $sql = "public.user";
 		            $old = data_read($sql,"id",$json["id"],$dbx);
@@ -77,6 +83,7 @@ function api_fn($hasil, $parm, $json) {
                     break;
                 case 'create':
                     if (!cekLevel(LEVEL_ADMIN)) done($hasil, 26);
+                    $lact = "CREATE";
                     $sql = "public.user";
                     $json["inserted_at"] = date('Y-m-d H:i:s');
                     $json["updated_at"] = date('Y-m-d H:i:s');
@@ -87,14 +94,17 @@ function api_fn($hasil, $parm, $json) {
                     break;
                 case 'update':
                     if (!cekLevel(LEVEL_ADMIN)) done($hasil, 26);
+                    $lact = "UPDATE";
                     $sql = "public.user";
                     unset($json["uid"]);
                     unset($json["passwd"]);
                     unset($json["inserted_at"]);
                     $json["updated_at"] = date('Y-m-d H:i:s');
+                    $json["updated_by"] = $usr["id"];
                     break;
                 case 'delete':
                     if (!cekLevel(LEVEL_ADMIN)) done($hasil, 26);
+                    $lact = "DELETE";
                     $sql = "public.user";
                     break;
                 default:
@@ -125,9 +135,11 @@ function api_fn($hasil, $parm, $json) {
 
     switch ($action) {
         case 'reset':
-            //$old = data_read($sql,"id",$json["id"],$dbx);
+            $old = data_read($sql,"id",$prms["id"],$dbx);
+            $lbef = $old;
             try {
                 $new = data_update($sql,"id",$prms,$dbx);
+                $laft = $new;
                 $hasil->data = $new;
             } catch (Exception $e) {
                 $hasil->debug[] = array("error"=>$e->getMessage(), "sql"=>$sql,"data"=>$json);
@@ -169,6 +181,7 @@ function api_fn($hasil, $parm, $json) {
         case 'create':
             try {
                 $obj = data_create($sql,"id",$json);
+                $laft = $obj;
                 $hasil->data = $obj;
             } catch (Exception $e) {
                 $hasil->debug[] = array("error"=>$e->getMessage(), "sql"=>$sql,"data"=>$json);
@@ -178,9 +191,11 @@ function api_fn($hasil, $parm, $json) {
 
         case 'update':
             $old = data_read($sql,"id",$json["id"],$dbx);
+            $lbef = $old;
             $new = null;
             try {
                 $new = data_update($sql,"id",$json,$dbx);
+                $laft = $new;
                 $hasil->data = $new;
             } catch (Exception $e) {
                 $hasil->debug[] = array("error"=>$e->getMessage(), "sql"=>$sql,"data"=>$json);
@@ -191,6 +206,7 @@ function api_fn($hasil, $parm, $json) {
         case 'delete':
             try {
                 $obj = data_delete($sql,"id",$json["id"]);
+                $lbef = $obj;
                 $hasil->data = $obj;
             } catch (Exception $e) {
                 $hasil->debug[] = array("error"=>$e->getMessage(), "sql"=>$sql,"data"=>$json);
@@ -209,5 +225,6 @@ function api_fn($hasil, $parm, $json) {
         
     }
 
+    if ($lact != "" && $ltbl != "") log_ui($lact,$ltbl,$lbef,$laft);
     return done($hasil);
 }

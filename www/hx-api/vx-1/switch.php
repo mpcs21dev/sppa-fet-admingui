@@ -42,5 +42,6 @@ function api_fn($hasil, $parm, $json) {
         done($hasil, 700, $e->getMessage());
     }
 
+    log_ui("SWITCH","CONFIG",$jp,$cdt);
     return done($hasil);
 }
