@@ -240,7 +240,7 @@ function api_fn($hasil, $parm, $json) {
             break;
 
         case 'create':
-            if (!cekLevel(LEVEL_ADMIN)) done($hasil, 26);
+            //if (!cekLevel(LEVEL_ADMIN)) done($hasil, 26);
             $obj = null;
             try {
                 $obj = data_create($sql,"id",$json, false, false, $dbx);
@@ -291,7 +291,7 @@ function api_fn($hasil, $parm, $json) {
             break;
 
         case 'update':
-            if (!cekLevel(LEVEL_ADMIN)) done($hasil, 26);
+            //if (!cekLevel(LEVEL_ADMIN)) done($hasil, 26);
 
             $posting = ($json["SEND_operation"] ?? "") != "";
             $jp = array();
