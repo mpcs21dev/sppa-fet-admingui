@@ -4,19 +4,19 @@
 */
 function api_fn($hasil, $ar = array(), $json = null) {
     global $JPOST;
-    $usr = getVars("user-data");
-    $old = getVars("user-data");
-    $usr["passwd"] = data_lookup(withSchema("user"),"id",$usr["id"],"passwd");
+    $usr = data_read(withSchema("user"),"id",$JPOST["id"]);
+    $old = $usr;
+    //$usr["passwd"] = data_lookup(withSchema("user"),"id",$usr["id"],"passwd");
     //$id = intval($usr["id"]);
     if ($usr["passwd"] == $JPOST["pwd0"]) {
         $dx = data_lookup(withSchema("reference"),"name","PASSWORD-EXPIRE","str_val");
         // update password;
         $usr["passwd"] = $JPOST["pwd1"];
         $usr["updated_at"] = date("Y-m-d H:i:s");
+        $usr["updated_by"] = $JPOST["id"];
         $usr["chpwd"] = 0;
         unset($usr["inserted_at"]);
         unset($usr["inserted_by"]);
-        unset($usr["updated_by"]);
         $skrg = new DateTime('now');
         $skrg->add(new DateInterval("P{$dx}D"));
         $usr["passwd_expire"] = $skrg->format("Y-m-d")." 00:00:00";
@@ -25,8 +25,7 @@ function api_fn($hasil, $ar = array(), $json = null) {
             $hasil->error = $new["error"];
             $hasil->message = $new["message"];
         } else {
-            log_add($usr["id"], "PASSWD", withSchema("user"), $usr["id"], json_encode($old), json_encode($new));
-            setVars("user-data",$new);
+            log_add($usr["id"], "UNEXPIRE", withSchema("user"), $usr["id"], json_encode($old), json_encode($new));
         }
         $hasil->debug = $new;
         done($hasil);

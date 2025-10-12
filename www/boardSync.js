@@ -177,6 +177,18 @@ TSync = {
                 for (var i=0; i<oke.data.length; i++) {
                     let dx = oke.data[i];
                     const appid = dx.appId;
+                    if (appid == "FTP-STAT") {
+                        var fix = Dash.Ses.configByName('FTP');
+                        var fid = Dash.Ses.box[fix]["id"];
+                        try {
+                            $id("rfo_request_"+fid).innerText = dx["rfoRequest"];
+                            $id("rfo_valid_"+fid).innerText = dx["send"];
+                            $id("rfo_failure_"+fid).innerText = dx["error"];
+                        } catch (err) {
+                            console.log({err,dx});
+                        }
+                        continue;
+                    }
                     delete dx["id"];
                     delete dx["appId"];
                     delete dx["lastUpdate"];

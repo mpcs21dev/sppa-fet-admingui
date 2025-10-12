@@ -71,6 +71,7 @@ $FUNCTIONS->v1 = array(
     "ref",
     "user",
     "switch",
+    "unexpire",
         
     "getChallange",
     "login",

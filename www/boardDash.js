@@ -121,6 +121,16 @@ class Config extends Common {
     }
     updateStat(j,ix,origin=""){
         //const j = JSON.parse(data);
+        if (j.appId == "FTP-STAT") {
+            try {
+                $id(this.genId("rfo_request")).innerText = j.data.rfoRequest;
+                $id(this.genId("rfo_failure")).innerText = j.data.rfoFailure;
+                $id(this.genId("rfo_valid")).innerText = j.data.rfoValid;
+            } catch (err) {
+                console.log({err,j});
+            }
+            return true;
+        }
         if (ix === false) return false;
         var m = this.data[ix];
         if (j.appId == this.part_id+'-'+m.clientId) {
@@ -285,6 +295,12 @@ class ConBox {
     }
     updateStat(j,origin=""){
         //const j = JSON.parse(data);
+        if (j.appId == "FTP-STAT") {
+            let ix = this.configByName('FTP');
+            if (ix !== false) {
+                return this.box[ix].updateStat(j,ix,origin);
+            }
+        }
         const x = this.box.length;
         for (var i=0; i<x; i++) {
             let ix = this.box[i].indexByClientId(j.appId);

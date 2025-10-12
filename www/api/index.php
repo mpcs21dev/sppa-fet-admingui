@@ -79,7 +79,7 @@ if (CHECK_RIGHT) {
     }
     
 } else {
-    if ((!$ISLOGGED && $apiver=="1" && !in_array($apifn, array("login","getChallange","init-root","info","migrate")) ) ||
+    if ((!$ISLOGGED && $apiver=="1" && !in_array($apifn, array("login","unexpire","getChallange","init-root","info","migrate")) ) ||
         (!$ISLOGGED && $apiver=="99" && !in_array($apifn, array("writedbcon")) ))
     {
         // ($apifn!="login" && $apifn!="getChallange" && $apifn!="init-root" && $apifn!="info")

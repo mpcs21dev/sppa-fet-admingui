@@ -29,6 +29,7 @@ $Model = '{
         user_level:{caption:"User Level", type:"string", noadd:true, noedit:true},
         email: {caption:"Email", type: "string"},
         chpwd: {caption:"Ch Pass", type: "boolean", formatter: boolFormatter, hozAlign: "center"},
+        passwd_expire: {caption:"Password Expired", type:"datetime",noadd: true, formatter:medDateFormatter},
         enabled: {caption:"Enable", type: "boolean", noadd: true, formatter: boolFormatter, hozAlign: "center"},
         inserted_at: {caption:"Created", type: "datetime", autoValue: true, formatter: datetimeFormatter},
         updated_at: {caption:"Updated", type: "datetime", autoValue: true, formatter: datetimeFormatter}

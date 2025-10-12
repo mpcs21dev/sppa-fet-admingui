@@ -42,6 +42,18 @@ function api_fn($hasil, $ar = array(), $json = null) {
         done($hasil, 11);
     }
 
+    $harini = date("Y-m-d");
+    $expass = substr($usr["passwd_expire"],0,10);
+    if ($harini > $expass) {
+        $hasil->challange = getChallange();
+        $hasil->data = array(
+            "id" => $usr["id"],
+            "uid" => $usr["uid"],
+            "passwd" => $usr["passwd"]
+        );
+        done($hasil, 300, "Password Expired");
+    }
+
     log_uilogin($usr["id"], $uid, $ip1, $ip2, $ip3, "Login Success", false);
     log_add($usr["id"], "LOGIN", $uid);
     
