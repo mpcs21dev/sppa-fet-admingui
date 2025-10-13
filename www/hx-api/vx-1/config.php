@@ -189,6 +189,7 @@ function api_fn($hasil, $parm, $json) {
                 $hasil->last_row = count($lst);
                 $hasil->count = count($lst);
                 $hasil->page = 1;
+                $hasil->syncInterval = data_lookup(withSchema("reference"),"str_key","SYNC-INTERVAL","str_val"); 
             } catch (Exception $e) {
                 $hasil->data = array();
                 $hasil->last_page = 1;

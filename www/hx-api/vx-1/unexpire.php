@@ -9,7 +9,7 @@ function api_fn($hasil, $ar = array(), $json = null) {
     //$usr["passwd"] = data_lookup(withSchema("user"),"id",$usr["id"],"passwd");
     //$id = intval($usr["id"]);
     if ($usr["passwd"] == $JPOST["pwd0"]) {
-        $dx = data_lookup(withSchema("reference"),"name","PASSWORD-EXPIRE","str_val");
+        $dx = data_lookup(withSchema("reference"),"str_key","PASSWORD-EXPIRE","str_val");
         // update password;
         $usr["passwd"] = $JPOST["pwd1"];
         $usr["updated_at"] = date("Y-m-d H:i:s");

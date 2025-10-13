@@ -5,8 +5,8 @@
     padding: 3px;
     font-size: 8pt;
     margin-bottom: 10px;
-    min-width: 420px;
-    max-width: 420px;
+    min-width: 380px;
+    max-width: 380px;
 }
 .boxserver.yellow { background-color: rgb(255,255,180); border-color: rgba(175,175,0,.4); }
 .boxserver.ungu { background-color: rgb(220,255,180); border-color: rgba(175,0,175,.4); }

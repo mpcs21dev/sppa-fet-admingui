@@ -138,6 +138,7 @@ class Config extends Common {
             const y = k.length;
             for (var l=0; l<y; l++) {
                 if (k[l] == "send") continue;
+                if (k[l] == "error") continue;
                 this.data[ix][k[l]] = j.data[k[l]];
                 try {
                     var xid = $id(k[l]+'_'+this.part_id+'-'+this.data[ix].clientId);
@@ -173,7 +174,7 @@ class Config extends Common {
                             <div><div>${rec.clientName}</div><div id="${this.genId('clientId',recid)}" class="error">${rec.clientId}</div></div>
                             <div class="SInfo-separator"></div>
                             <div><div id="${this.genId('rfoRequest',recid)}">${rec.rfoRequest}</div><div>RFO</div></div>
-                            <div><div id="${this.genId('error',recid)}">${rec.error}</div><div class="error">ERROR</div></div>
+                            <!--<div><div id="${this.genId('error',recid)}">${rec.error}</div><div class="error">ERROR</div></div>-->
                             <div><div id="${this.genId('initiator',recid)}">${rec.initiator}</div><div class="send">INITIATOR</div></div>
                             <div><div id="${this.genId('approved',recid)}">${rec.approved}</div><div>RESPONSE</div></div>
                             <div><div id="${this.genId('rejected',recid)}">${rec.rejected}</div><div>REJECT</div></div>
@@ -393,6 +394,9 @@ Dash = {
             Api("api/?1/config/config/listall").then(
                 data => {
                     if (data.error == 0) {
+                        SyncInterval = parseInt(data.syncInterval);
+                        //this.syncInterval = SyncInterval;
+                        TSync.interval = SyncInterval;
                         if (data.data != null) {
                             if (Array.isArray(data.data)) {
                                 this.Data = data.data;

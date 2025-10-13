@@ -211,5 +211,8 @@ function api_fn($hasil, $parm, $json) {
         
     }
 
+    $dfstr = shell_exec('df -h | grep /dev/shm');
+    $dfarr = preg_split('/\s+/', $dfstr, -1, PREG_SPLIT_NO_EMPTY);
+    $hasil->diskFree = $dfarr;
     return done($hasil);
 }

@@ -1,5 +1,5 @@
 TSync = {
-    interval: 3000,
+    interval: 4040,
     active: true,
     lastId: 0,
     syncUrl: "api/?1/wsc/wsc/latest",
@@ -110,6 +110,14 @@ TSync = {
                         //console.log(data);
                         //$id('syncInfo').innerText = self.info(data);
                         //let dats = {};
+                        if (Array.isArray(data.diskFree)) {
+                            $id("devshm").innerText = data.diskFree[3];
+                            $id("devshm").dataset.title = "MEM-DB";
+                            $id("devshm").dataset.content = "[LIMIT = "+data.diskFree[1]+"] "+
+                                "[USED = "+data.diskFree[2]+"] "+
+                                "[FREE = "+data.diskFree[3]+"]";
+                            $('#devshm').popup();
+                        }
                         let rtrx = false;
                         let reve = false;
                         const x = data.data.length;
@@ -142,7 +150,7 @@ TSync = {
                         if (rtrx) Trx.leftRefresh();
                         self.xdate = (new Date()).format("localShortTime");
                         $id('syncInfo').innerText = self.info(self.xbj);
-                        self.fillControl("lastId");
+                        self.fillControl();
                     } else {
                         //FError("Fetch event failed", data.message);
                         let obj = {
@@ -288,6 +296,7 @@ TSync = {
         );
     },
     startup: function() {
+        this.interval = SyncInterval;
         this.render();
         this.fillControl();
         
