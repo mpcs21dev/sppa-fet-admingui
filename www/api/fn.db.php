@@ -5,6 +5,8 @@ $PurConfig = HTMLPurifier_Config::createDefault();
 $XPuri = new HTMLPurifier($PurConfig);
 //$clean_html = $XPuri->purify($dirty_html);
 */
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
 
 function withSchema($tblname) {
     if (DEF_SCHEMA == "") {
@@ -489,6 +491,58 @@ function log_uilogin($id,$uid,$ip1,$ip2,$ip3,$msg,$fail=true,$dbx=2) {
                         "val" => $prm,
                         "err" => $e->getMessage()
                     ); 
+                }
+                // send mail
+                if ($id != 0) {
+                    $du = data_read(withSchema("user"),"id",$id);
+                    $mailfrom = strtolower(data_lookup(withSchema("reference"),"str_key","SYSTEM-MAIL","str_val")??"");
+                    $email = $du["email"] ?? "";
+                    $name = $du["user_name"] ?? "";
+                    if ($du != null && $email != "" && $mailfrom != "") {
+                        require 'vendor/autoload.php'; // Adjust path if needed
+
+                        $mail = new PHPMailer(true);
+                        try {
+                            //Server settings
+                            $mail->isSMTP();                                            // Send using SMTP
+                            $mail->Host       = 'mail.smtp2go.com';                     // Set the SMTP server to send through
+                            $mail->SMTPAuth   = true;                                   // Enable SMTP authentication
+                            $mail->Username   = 'test-sppa-dev';                     // SMTP username
+                            $mail->Password   = 'Asht123$';                        // SMTP password
+                            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;         // Enable implicit TLS encryption
+                            $mail->Port       = 2525;                                    // TCP port to connect to; use 587 if you added SMTPSecure above
+
+                            //Recipients
+                            $mail->setFrom($mailfrom, 'SPPA FET - DEV');
+                            $mail->addAddress($email, $name);     // Add a recipient
+
+                            //Content
+                            $t = "<table><tr><th>UserID</th><th>IP 1</th><th>IP 2</th><th>IP 3</th><th>Message</th><th>Logged At</th></tr>";
+                            foreach ($lst as $row) {
+                                $t .= "<tr><td>{$row['user_uid']}</td><td>{$row['ip1']}</td><td>{$row['ip2']}</td><td>{$row['ip3']}</td><td>{$row['msg']}</td><td>{$row['lastUpdate']}</td></tr>";
+                            }
+                            $t .= "</table>";
+                            $mail->isHTML(true);                                  // Set email format to HTML
+                            $mail->Subject = 'SPPA FET - Login Failed';
+                            $mail->Body    = '<b>Dear '.$name.'.</b><br><br>This is an automated email to '.
+                                'warn you that there are failed login attempts using your UserID.<br><br>'.
+                                $t.
+                                '<br><br>'.
+                                '';
+                            $mail->AltBody = 'Dear '.$name.'. This is an automated email to warn you that '.
+                                'there are failed login attempts using your UserID.';
+
+                            $mail->send();
+                            //echo 'Message has been sent';
+                        } catch (Exception $e) {
+                            //echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
+                            $hasil[] = array(
+                                "when" => "Sending email",
+                                "err" => $mail->ErrorInfo,
+                                "from" => $mailfrom
+                            );
+                        }
+                    }
                 }
             }
         }

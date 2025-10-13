@@ -35,7 +35,7 @@ function api_fn($hasil, $ar = array(), $json = null) {
     $hashed = defHash($pin.getChallange());
 
     if (($hashed != $pwd) || ($usr["enabled"]!=1)) {  // invalid pin
-        log_uilogin($usr["id"], $uid, $ip1, $ip2, $ip3, "Wrong password");
+        $hasil->debug[] = log_uilogin($usr["id"], $uid, $ip1, $ip2, $ip3, "Wrong password");
         log_add(0, "LOGIN-ATTEMPT",$uid);
         clearVars();
         $hasil->challange = getChallange();
