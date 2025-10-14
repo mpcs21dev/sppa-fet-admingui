@@ -165,7 +165,7 @@ $usrx = getVars("user-data");
                         <div class="item" id="mnu-holiday" <?= cekLevel(1000) ? "" : "style=\"display:none;\"" ?>>Holiday</div>
                     </div>
                 </div> 
-                <div class="item" <?= cekLevel(LEVEL_ADMIN) ? "" : "style=\"display:none;\"" ?>>
+                <div class="item" >
                     <i class="dropdown icon"></i>
                     <span class="text">Administrative</span>
                     <div class="menu">

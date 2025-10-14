@@ -78,6 +78,8 @@ function api_fn($hasil, $ar = array(), $json = null) {
     setVars("last-id", $lastId);
     $_SESSION["logged"] = $LOGGED;
 
+    log_ui("LOGIN","SUCCESS");
+
     $hasil->data = $usr;
     $hasil->lastLog = $lastId;
     $hasil->challange = $ch;

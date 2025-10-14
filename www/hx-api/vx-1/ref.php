@@ -234,8 +234,14 @@ function api_fn($hasil, $parm, $json) {
                         if (is_array($data)) {
                             for ($i=0; $i<count($data); $i++) {
                                 $url = $data[$i]->$fname;
-                                $xrl = str_replace($oldval."", $newval."", $url);
-                                $data[$i]->$fname = $xrl;
+                                //$xrl = str_replace($oldval."", $newval."", $url);
+                                $ov = preg_split('/[:@?&\/=]/', $url, -1, PREG_SPLIT_NO_EMPTY);
+                                if ($ch_drcip || $ch_mainip) $ov[3] = $newval;
+                                if ($ch_drcport || $ch_mainport) $ov[4] = $newval;
+                                if ($ch_drctarget || $ch_maintarget) {
+                                    if ($ov[5]=="targetCompId"){$ov[6]=$newval;}else{$ov[8] = $newval;}
+                                }
+                                $data[$i]->$fname = "{$ov[0]}://{$ov[1]}:{$ov[2]}@{$ov[3]}:{$ov[4]}?{$ov[5]}={$ov[6]}&{$ov[7]}={$ov[8]}";
                             }
                         } else {
                             $hasil->debug[] = array("not an array",$data);

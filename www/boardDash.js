@@ -105,10 +105,11 @@ class Config extends Common {
         if (j.appId == this.part_id+'-'+m.clientId) {
             try {
                 var xid = $id("clientId_"+this.part_id+'-'+m.clientId);
-                if (j.data.description.substr(0,16) == "FIX Client logon") {
+                //console.log([xid,j.data.description,j.data.description.substring(0,16)]);
+                if (j.data.description.substring(0,16) == "FIX Client logon") {
                     if (xid) xid.className = 'send';
                 }
-                if (j.data.description.substr(0,17) == "FIX Client logout") {
+                if (j.data.description.substring(0,17) == "FIX Client logout") {
                     if (xid) xid.className = 'error';
                 }
                 //console.log('updateConn-oke',origin,'clientId_'+this.part_id+'-'+m.clientId,j);

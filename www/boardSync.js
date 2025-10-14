@@ -135,7 +135,7 @@ TSync = {
                             if (self.xbj.logType == "STAT") {
                                 Dash.Ses.updateStat(self.xbj,"doit");
                             }
-                            if (self.xbj.logType == "EVNT" && self.xbj.appType == "FIX" && self.xbj.data.description.substring(0,15) == "FIX Client logon") {
+                            if (self.xbj.logType == "EVNT" && self.xbj.appType == "FIX" && self.xbj.data.description.substring(0,13) == "FIX Client log") {
                                 Dash.Ses.updateConn(self.xbj,"doit");
                                 //console.log(JSON.parse(row.msg));
                             }

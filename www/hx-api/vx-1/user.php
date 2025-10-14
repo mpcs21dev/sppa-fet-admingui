@@ -82,7 +82,7 @@ function api_fn($hasil, $parm, $json) {
                     $sql = "select a.*, b.str_val user_level from public.user a left join public.reference b on a.ulevel=b.int_key and b.name='USER-LEVEL'";
                     break;
                 case 'create':
-                    if (!cekLevel(LEVEL_ADMIN)) done($hasil, 26);
+                    if (!cekLevel(2)) done($hasil, 26);
                     $lact = "CREATE";
                     $sql = "public.user";
                     $json["inserted_at"] = date('Y-m-d H:i:s');
@@ -93,7 +93,7 @@ function api_fn($hasil, $parm, $json) {
                     unset($json["user_level"]);
                     break;
                 case 'update':
-                    if (!cekLevel(LEVEL_ADMIN)) done($hasil, 26);
+                    if (!cekLevel(2)) done($hasil, 26);
                     $lact = "UPDATE";
                     $sql = "public.user";
                     unset($json["uid"]);

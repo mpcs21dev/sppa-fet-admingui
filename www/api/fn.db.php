@@ -517,7 +517,7 @@ function log_uilogin($id,$uid,$ip1,$ip2,$ip3,$msg,$fail=true,$dbx=2) {
                             $mail->addAddress($email, $name);     // Add a recipient
 
                             //Content
-                            $t = "<table><tr><th>UserID</th><th>IP 1</th><th>IP 2</th><th>IP 3</th><th>Message</th><th>Logged At</th></tr>";
+                            $t = "<table width=\"100%\" border=\"1\" cellpadding=\"5\" cellspacing=\"0\"><tr><th>UserID</th><th>IP 1</th><th>IP 2</th><th>IP 3</th><th>Message</th><th>Logged At</th></tr>";
                             foreach ($lst as $row) {
                                 $t .= "<tr><td>{$row['user_uid']}</td><td>{$row['ip1']}</td><td>{$row['ip2']}</td><td>{$row['ip3']}</td><td>{$row['msg']}</td><td>{$row['lastUpdate']}</td></tr>";
                             }
