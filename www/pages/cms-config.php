@@ -485,6 +485,9 @@ $PRM = array(
                 })
                 .show();
         }
+        function btnREdit_ftp(sel) {
+            //
+        }
         function btnREdit_click() {
             var xel = (Tabll.getSelectedData())[0]; // get first selected element
             if (xel == undefined) {
@@ -497,6 +500,11 @@ $PRM = array(
             var sel = (Tablr.getSelectedData())[0]; // get first selected element
             if (sel == undefined) {
                 ToastError('No row selected');
+                return;
+            }
+
+            if (leftData.record_type == 'FTP') {
+                btnREdit_ftp(sel);
                 return;
             }
 

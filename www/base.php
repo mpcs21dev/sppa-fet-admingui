@@ -15,7 +15,7 @@ class HXActive {
     public $debug = array();
 
     public function __construct($uid="") {
-        $this->user = $uid;
+        $this->user = strtoupper($uid);
         $this->tick = time();
         //$this->debug[] = basename($_SERVER['PHP_SELF'])." ## construct: ".$uid;
     }
@@ -31,7 +31,7 @@ class HXActive {
     }
 
     public function reset($uid="") {
-        $this->user = $uid;
+        $this->user = strtoupper($uid);
         $this->tick = time();
         $this->active = false;
         $hreg = $this->reg();

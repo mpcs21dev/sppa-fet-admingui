@@ -15,20 +15,39 @@ $Model = '{
         }
         return true;
     }},
-    str_key:   {caption:"STR Key", type:"string", upperCase:true, headerFilter: true, verify: (v,a)=>{
-        if ((a.int_key == "")&&(a.str_key == "")) {
-            FiError("Error","One of key fields (INT Key or STR Key) must have value");
-            return false;
+    str_key:   {caption:"STR Key", type:"string", upperCase:true, headerFilter: true, 
+        verify: (v,a)=>{
+            if ((a.int_key == "")&&(a.str_key == "")) {
+                FiError("Error","One of key fields (INT Key or STR Key) must have value");
+                return false;
+            }
+            return true;
         }
-        return true;
-    }},
-    str_val:   {caption:"Value", type:"string", upperCase:true, headerFilter: true, verify: (v)=>{
-        if (v == "") {
-            FiError("Error","Field Value required");
-            return false;
+    },
+    str_val:   {caption:"Value", type:"string", upperCase:false, headerFilter: true, 
+        formatter: function(cell) {
+            var hasil = "";
+            var vlu = cell.getValue();
+            try {
+                var row = cell.getRow();
+                var rdat = row.getData();
+                if (rdat["str_key"] == "SMTP_PASS") {
+                    const pl = vlu.length;
+                    hasil = "&bull;".repeat(pl);
+                } else {
+                    hasil = vlu;
+                }
+            } catch (e) {}
+            return hasil;
+        },
+        verify: (v)=>{
+            if (v == "") {
+                FiError("Error","Field Value required");
+                return false;
+            }
+            return true;
         }
-        return true;
-    }},
+    },
     updated_at:{caption:"Updated Date", type:"datetime", autoValue:true, formatter: datetimeFormatter},
     inserted_at:{caption:"Inserted Date", type:"datetime", autoValue:true, formatter: datetimeFormatter}
 }';

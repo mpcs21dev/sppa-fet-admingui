@@ -496,6 +496,10 @@ function log_uilogin($id,$uid,$ip1,$ip2,$ip3,$msg,$fail=true,$dbx=2) {
                 if ($id != 0) {
                     $du = data_read(withSchema("user"),"id",$id);
                     $mailfrom = strtolower(data_lookup(withSchema("reference"),"str_key","SYSTEM-MAIL","str_val")??"");
+                    $mailHost = data_lookup(withSchema("reference"),"str_key","SMTP_HOST","str_val")??"mail.smtp2go.com";
+                    $mailUser = data_lookup(withSchema("reference"),"str_key","SMTP_USER","str_val")??"test-sppa-dev";
+                    $mailPass = data_lookup(withSchema("reference"),"str_key","SMTP_PASS","str_val")??"Asht123$";
+                    $mailPort = data_lookup(withSchema("reference"),"str_key","SMTP_PORT","str_val")??2525;
                     $email = $du["email"] ?? "";
                     $name = $du["user_name"] ?? "";
                     if ($du != null && $email != "" && $mailfrom != "") {
@@ -504,16 +508,16 @@ function log_uilogin($id,$uid,$ip1,$ip2,$ip3,$msg,$fail=true,$dbx=2) {
                         $mail = new PHPMailer(true);
                         try {
                             //Server settings
-                            $mail->isSMTP();                                            // Send using SMTP
-                            $mail->Host       = 'mail.smtp2go.com';                     // Set the SMTP server to send through
-                            $mail->SMTPAuth   = true;                                   // Enable SMTP authentication
-                            $mail->Username   = 'test-sppa-dev';                     // SMTP username
-                            $mail->Password   = 'Asht123$';                        // SMTP password
-                            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;         // Enable implicit TLS encryption
-                            $mail->Port       = 2525;                                    // TCP port to connect to; use 587 if you added SMTPSecure above
+                            $mail->isSMTP();                                   // Send using SMTP
+                            $mail->Host       = $mailHost;                     // Set the SMTP server to send through
+                            $mail->SMTPAuth   = true;                          // Enable SMTP authentication
+                            $mail->Username   = $mailUser;                     // SMTP username
+                            $mail->Password   = $mailPass;                        // SMTP password
+                            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;   // Enable implicit TLS encryption
+                            $mail->Port       = $mailPort;                        // TCP port to connect to; use 587 if you added SMTPSecure above
 
                             //Recipients
-                            $mail->setFrom($mailfrom, 'SPPA FET - DEV');
+                            $mail->setFrom($mailfrom, 'SPPA FET');
                             $mail->addAddress($email, $name);     // Add a recipient
 
                             //Content
