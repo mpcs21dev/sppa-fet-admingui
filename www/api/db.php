@@ -166,7 +166,15 @@ function DBX($idx) {
     static $dbusr = null;
     static $dbpas = null;
     static $dbdsn = null;
+
+    /*
+    // dev
+    if ($dbusr == null) $dbusr = "sppa";
+    if ($dbpas == null) $dbpas = "bjfgua5M5gkUDZxjXxkIOMYZ4";
+    if ($dbdsn == null) $dbdsn = "pgsql:host=10.102.0.43;port=5432;dbname=sppa_fet;sslmode=disable";
+    */
     
+    // prod
     if ($dbusr == null) $dbusr = "sppa";
     if ($dbpas == null) $dbpas = "aNpjEGdDvKeVyH0JwKCiMNtKPYm2QNRz";
     if ($dbdsn == null) $dbdsn = "pgsql:host=10.102.0.82;port=5432;dbname=sppa_fet;sslmode=disable";

@@ -16,6 +16,11 @@ $Model = '{
         return true;
     }},
     str_key:   {caption:"STR Key", type:"string", upperCase:true, headerFilter: true, 
+        formatter: (cell)=>{
+            var v = cell.getValue();
+            LastKey = v;
+            return v;
+        },
         verify: (v,a)=>{
             if ((a.int_key == "")&&(a.str_key == "")) {
                 FiError("Error","One of key fields (INT Key or STR Key) must have value");
@@ -28,16 +33,23 @@ $Model = '{
         formatter: function(cell) {
             var hasil = "";
             var vlu = cell.getValue();
+            const pl = vlu.length;
+            //if (LastKey == "SMTP_PASS") console.log(LastKey,vlu);
             try {
                 var row = cell.getRow();
                 var rdat = row.getData();
                 if (rdat["str_key"] == "SMTP_PASS") {
-                    const pl = vlu.length;
                     hasil = "&bull;".repeat(pl);
                 } else {
                     hasil = vlu;
                 }
-            } catch (e) {}
+            } catch (e) {
+                if (LastKey == "SMTP_PASS") {
+                    hasil = "&bull;".repeat(pl);
+                } else {
+                    hasil = vlu;
+                }
+            }
             return hasil;
         },
         verify: (v)=>{
@@ -65,9 +77,12 @@ $PRM = array(
     "extraButtons" => "",
     "jsStartup" => "",
     "addAfterShow" => "",
-    "editAfterShow" => "",
+    "editAfterShow" => "
+        if (sel.str_key == 'SMTP_PASS') \$id('fld-str_val').type = 'password';
+    ",
     "model" => $Model,
     "extraJS" => "
+        LastKey = '';
         function checkAdd(row) {
             const name_ = row.get('name');
             const int_key_ = row.get('int_key');

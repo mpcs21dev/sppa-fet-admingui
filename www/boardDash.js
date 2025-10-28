@@ -172,7 +172,7 @@ class Config extends Common {
                 cli += `
                     <div class='console'>
                         <div class='SInfo'>
-                            <div><div>${rec.clientName}</div><div id="${this.genId('clientId',recid)}" class="error">${rec.clientId}</div></div>
+                            <div><div>${myEscape(rec.clientName)}</div><div id="${this.genId('clientId',recid)}" class="error">${myEscape(rec.clientId)}</div></div>
                             <div class="SInfo-separator"></div>
                             <div><div id="${this.genId('rfoRequest',recid)}">${rec.rfoRequest}</div><div>RFO</div></div>
                             <!--<div><div id="${this.genId('error',recid)}">${rec.error}</div><div class="error">ERROR</div></div>-->
@@ -186,7 +186,7 @@ class Config extends Common {
             }
             return `<div class='boxserver' style='background:${this.randColor()};'>
                         <div class='caption'>
-                            <span id="${this.genId('name')}">${this.part_name}</span> 
+                            <span id="${this.genId('name')}">${myEscape(this.part_name)}</span>
                             <!-- [<span id="${this.genId('service_name')}">${this.service_name}</span> : 
                             <span id="${this.genId('service_port')}">${this.service_port}</span>] -->
                             <!-- <span id="${this.genId('service_status')}">${this.service_status}</span> -->
@@ -221,7 +221,7 @@ class Config extends Common {
         } else {
             return `<div class='boxserver' style='background:${this.randColor()};'>
                         <div class='caption'>
-                            <span id="${this.genId('name')}">${this.part_id}</span> 
+                            <span id="${this.genId('name')}">${myEscape(this.part_name)}</span>
                             <!-- [<span id="${this.genId('service_name')}">${this.service_name}</span> : 
                             <span id="${this.genId('service_port')}">${this.service_port}</span>] 
                             <span id="${this.genId('service_status')}">${this.service_status}</span> -->

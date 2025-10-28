@@ -20,6 +20,10 @@ function burnSetting() {
     STO = {};
     saveStorage();
 }
+function myEscape(teks){
+    var hasil = teks.replaceAll("&","&amp;");
+    return hasil.replaceAll("\"","&quot;").replaceAll("<","&lt;").replaceAll(">","&gt;");
+}
 normalizeCase = (teks, allcaps=false) => {
     if (allcaps) return teks.toLowerCase().replace(/(?<=(?:^|[.?!])\W*)[a-z]/g, i => i.toUpperCase());
     return teks.replace(/(?<=(?:^|[.?!])\W*)[a-z]/g, i => i.toUpperCase());
@@ -1413,6 +1417,8 @@ class Formation {
                     //teks = '<pre>'+rep+'</pre>';
                     teks = jsonToHTMLTable(obj,'vertical');
                 }
+            } else {
+                teks = escapeTag(teks);
             }
             hasil += `<tr><td class="collapsing">${meta.caption}</td><td${style}>${teks}</td></tr>`;
         }

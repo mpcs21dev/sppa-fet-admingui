@@ -66,7 +66,7 @@ function api_fn($hasil, $parm, $json) {
                     if (!cekLevel(LEVEL_ADMIN)) done($hasil, 26);
                     $sql = "public.user";
 		            $old = data_read($sql,"id",$json["id"],$dbx);
-                    if (intval($old["ulevel"]) == 99) return done($hasil, 16);  // prevent changing user ROOT
+                    if (intval($old["ulevel"]) > intval($usr["ulevel"])) return done($hasil, 16);  // prevent changing user ROOT
                     if (intval($json["id"]) == intval($usr["id"])) return done($hasil, 18); // prevent resetting self password; must use change password menu;
                     $prms["id"] = $json["id"];
                     $prms["passwd"] = $json["passwd"];
@@ -79,10 +79,12 @@ function api_fn($hasil, $parm, $json) {
                     break;
                 case 'listall':
                 case 'list':
+                    if (!cekLevel(2)) done($hasil, 26);
                     $sql = "select a.*, b.str_val user_level from public.user a left join public.reference b on a.ulevel=b.int_key and b.name='USER-LEVEL'";
                     break;
                 case 'create':
                     if (!cekLevel(2)) done($hasil, 26);
+                    if (intval($json["ulevel"]) > intval($usr["ulevel"])) return done($hasil,16);
                     $lact = "CREATE";
                     $sql = "public.user";
                     $json["inserted_at"] = date('Y-m-d H:i:s');
@@ -94,6 +96,8 @@ function api_fn($hasil, $parm, $json) {
                     break;
                 case 'update':
                     if (!cekLevel(2)) done($hasil, 26);
+                    if (intval($json["ulevel"]) > intval($usr["ulevel"])) return done($hasil,16);
+
                     $lact = "UPDATE";
                     $sql = "public.user";
                     unset($json["uid"]);
@@ -104,6 +108,7 @@ function api_fn($hasil, $parm, $json) {
                     break;
                 case 'delete':
                     if (!cekLevel(LEVEL_ADMIN)) done($hasil, 26);
+                    if (intval($json["ulevel"]) > intval($usr["ulevel"])) return done($hasil,16);
                     $lact = "DELETE";
                     $sql = "public.user";
                     break;
@@ -150,6 +155,7 @@ function api_fn($hasil, $parm, $json) {
         case 'listall':
             try {
                 $lst = DBX($dbx)->run($sql)->fetchAll();
+                $lst["passwd"]="";
                 $hasil->data = $lst;
                 $hasil->last_page = 1;
                 $hasil->last_row = count($lst);

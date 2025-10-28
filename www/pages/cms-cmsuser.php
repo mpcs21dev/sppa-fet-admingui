@@ -143,8 +143,8 @@ $PRM = array(
                 return;
             }
 
-            if (sel['ulevel'] == 99) {
-                ToastError('Reset Password','Cannot reset password for user ROOT');
+            if (sel['ulevel'] > getSetting('user-data')['ulevel']) {
+                ToastError('Reset Password','Cannot reset password for higher role.');
                 return;
             }
 

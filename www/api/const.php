@@ -12,6 +12,8 @@ define("DB_RIGHT",1);
 define("DB_LOG",2);
 
 define("LEVEL_USER",1);
+define("LEVEL_OTD",1);
+define("LEVEL_POP",2);
 define("LEVEL_ADMIN",5);
 define("LEVEL_DEV", 99);
 
@@ -34,7 +36,7 @@ $ERR = array(
     "This is ROOT-only function",       // 13
     "Unsupported file upload",          // 14
     "",                                 // 15
-    "User ROOT is read-only",           // 16
+    "Cannot add/change/delete higher level user",  // 16
     "No changes to data",               // 17
     "User can't reset password",        // 18
     "",

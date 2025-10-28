@@ -162,17 +162,19 @@ $usrx = getVars("user-data");
                     <span class="text">Settings</span>
                     <div class="menu">
                         <div class="item" id="mnu-config">Config</div>
-                        <div class="item" id="mnu-holiday" <?= cekLevel(1000) ? "" : "style=\"display:none;\"" ?>>Holiday</div>
+                        <?= cekLevel(1000)?'<div class="item" id="mnu-holiday">Holiday</div>':'' ?>
                     </div>
                 </div> 
-                <div class="item" <?= cekLevel(2) ? "" : "style=\"display:none;\"" ?>>
+                <?php if (cekLevel(2)) { ?>
+                <div class="item">
                     <i class="dropdown icon"></i>
                     <span class="text">Administrative</span>
                     <div class="menu">
-                        <div class="item" id="mnu-ref" <?= cekLevel(LEVEL_DEV) ? "" : "style=\"display:none;\"" ?>>Reference</div>
+                        <?= cekLevel(LEVEL_DEV) ? '<div class="item" id="mnu-ref">Reference</div>' : '' ?>
                         <div class="item" id="mnu-user">User</div>
                     </div>
                 </div>
+                <?php } ?>
             </div>
         </div>
         <!-- MENU KIRI :: END -->
@@ -272,15 +274,15 @@ $usrx = getVars("user-data");
             return o;
         }
 
-        $("#mnu-participant").on("click", ()=>{assignFr("mprt","Participant Services","loader.php?p=participant");});
-        $("#mnu-transaction").on("click", ()=>{assignFr("mtrx","Transaction List","loader.php?p=transaction");});
-        $("#mnu-event").on("click", ()=>{assignFr("meve","Event List","loader.php?p=event");});
+        //$("#mnu-participant").on("click", ()=>{assignFr("mprt","Participant Services","loader.php?p=participant");});
+        //$("#mnu-transaction").on("click", ()=>{assignFr("mtrx","Transaction List","loader.php?p=transaction");});
+        //$("#mnu-event").on("click", ()=>{assignFr("meve","Event List","loader.php?p=event");});
 
-        $("#mnu-config").on("click", ()=>{assignFr("mcfg","Configuration","loader.php?p=config");});
-        $("#mnu-holiday").on("click", ()=>{assignFr("mday","Holiday","loader.php?p=holiday");});
+        if ($id("mnu-config")) $("#mnu-config").on("click", ()=>{assignFr("mcfg","Configuration","loader.php?p=config");});
+        //$("#mnu-holiday").on("click", ()=>{assignFr("mday","Holiday","loader.php?p=holiday");});
 
-        $("#mnu-ref").on("click", ()=>{assignFr("mref","Reference","loader.php?p=ref");});
-        $("#mnu-user").on("click", ()=>{assignFr("musr","User","loader.php?p=cmsuser");});
+        if ($id("mnu-ref")) $("#mnu-ref").on("click", ()=>{assignFr("mref","Reference","loader.php?p=ref");});
+        if ($id("mnu-user")) $("#mnu-user").on("click", ()=>{assignFr("musr","User","loader.php?p=cmsuser");});
         $("#mnu-chpwd").on("click", ()=>{
             var frmPwd = new Formation();
             frmPwd.setModel({

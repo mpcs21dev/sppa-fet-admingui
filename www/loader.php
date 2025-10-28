@@ -74,12 +74,29 @@ header_remove("X-Powered-By");
 <body>
     <div class="pusher">
     <?php
-    if ($PATH != "") {
-        //include_once("api/const.php");
-        if (file_exists("pages/cms-".$PATH.".php")) {
-            include_once("pages/cms-".$PATH.".php");
+    $pages = array(
+        "cmsuser" => 2,
+        "config" => 1,
+        "holiday" => 9999,
+        "ref" => 2
+    );
+    function cekPage($ix) {
+        global $pages;
+        if (isset($pages[$ix])) {
+            return cekLevel($pages[$ix]);
         } else {
-            include_once("static/404.html");
+            return true;
+        }
+    }
+    if ($PATH != "") {
+        if (!cekPage($PATH)) {
+            include_once("static/403.html");
+        } else {
+            if (file_exists("pages/cms-".$PATH.".php")) {
+                include_once("pages/cms-".$PATH.".php");
+            } else {
+                include_once("static/404.html");
+            }
         }
     }
     ?>

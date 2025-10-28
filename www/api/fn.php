@@ -4,6 +4,7 @@ function done($ret, $err=0, $msg="") {
     $ret->error = $err;
     if ($err != 0) $ret->message = $msg=="" ? (isset($ERR[$err]) ? $ERR[$err] : "Unregistered Error") : $msg;
     $ret->tgl = date('Y-m-d H:i:s'); //date_format(date(), 'Y-m-d H:i:s');
+    $ret->debug = "";
 
     header('Content-Type: application/json');
     echo(json_encode($ret)."\n");
