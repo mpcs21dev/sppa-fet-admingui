@@ -168,16 +168,11 @@ function DBX($idx) {
     static $dbdsn = null;
 
     /*
-    // dev
-    if ($dbusr == null) $dbusr = "sppa";
-    if ($dbpas == null) $dbpas = "bjfgua5M5gkUDZxjXxkIOMYZ4";
-    if ($dbdsn == null) $dbdsn = "pgsql:host=10.102.0.43;port=5432;dbname=sppa_fet;sslmode=disable";
     */
     
-    // prod
-    if ($dbusr == null) $dbusr = "sppa";
-    if ($dbpas == null) $dbpas = "aNpjEGdDvKeVyH0JwKCiMNtKPYm2QNRz";
-    if ($dbdsn == null) $dbdsn = "pgsql:host=10.102.0.82;port=5432;dbname=sppa_fet;sslmode=disable";
+    if ($dbusr == null) $dbusr = $_SERVER["DB_NUSER"];
+    if ($dbpas == null) $dbpas = $_SERVER["DB_PUSER"];
+    if ($dbdsn == null) $dbdsn = "pgsql:host=".$_SERVER["DB_SERVER"].";port=".$_SERVER["DB_PORT"].";dbname=".$_SERVER["DB_NAME"].";sslmode=disable";
     /*
     if ($dbusr == null) $dbusr = "postgres";
     if ($dbpas == null) $dbpas = "postgres";
