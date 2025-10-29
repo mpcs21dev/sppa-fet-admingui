@@ -7,6 +7,8 @@ header_remove("X-Powered-By");
     <meta charset="utf-8">
     <meta name="viewport" content="width=1024, initial-scale=1"/>
     <script src="lib/forge-sha256.min.js"></script>
+    <script type="text/javascript" src="lib/cryptojs-aes.min.js"></script>
+    <script type="text/javascript" src="lib/cryptojs-aes-format.js"></script>
     <script src="lib/jquery-3.7.1.min.js"></script>
     <script src="lib/sweetalert2.all.min.js"></script>
     <link href="lib/tabulator/css/tabulator_simple.min.css" rel="stylesheet">

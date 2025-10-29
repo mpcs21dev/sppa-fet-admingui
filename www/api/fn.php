@@ -1,10 +1,24 @@
 <?php
+use Nullix\CryptoJsAes\CryptoJsAes;
+require_once("CryptoJsAes.php");
+
 function done($ret, $err=0, $msg="") {
     global $ERR;
     $ret->error = $err;
     if ($err != 0) $ret->message = $msg=="" ? (isset($ERR[$err]) ? $ERR[$err] : "Unregistered Error") : $msg;
     $ret->tgl = date('Y-m-d H:i:s'); //date_format(date(), 'Y-m-d H:i:s');
-    $ret->debug = "";
+    unset($ret->debug);
+    unset($ret->sql);
+
+    if (isset($ret->data)) {
+        if ($ret->data != "") {
+            $ch = isset($ret->challange) ? $ret->challange : getChallange();
+            $px = $ch.$ret->tgl;
+            //$de = encryptDx($ret->data,$px);
+            $ret->HXDATA = CryptoJsAes::encrypt(json_encode($ret->data),$px);
+            unset($ret->data);
+        }
+    }
 
     header('Content-Type: application/json');
     echo(json_encode($ret)."\n");
@@ -165,3 +179,4 @@ function checkMime($fn,$xtra=array()) {
         return false;
     }
 }
+

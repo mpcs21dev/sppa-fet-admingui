@@ -138,6 +138,8 @@ $usrx = getVars("user-data");
     <link rel="stylesheet" type="text/css" href="classes.css">
     <link rel="stylesheet" type="text/css" href="framer.css">
     <script src="lib/forge-sha256.min.js"></script>
+    <script type="text/javascript" src="lib/cryptojs-aes.min.js"></script>
+    <script type="text/javascript" src="lib/cryptojs-aes-format.js"></script>
     <script src="index.js"></script>
     <script src="classes.js"></script>
     <script src="framer.js"></script>

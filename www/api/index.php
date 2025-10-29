@@ -90,8 +90,8 @@ if (CHECK_RIGHT) {
     if (!fnRegistered($apiver, $apifn)) done($hasil, 6);
 }
 
-$hasil->HXAwal = $HXAwal;
-$hasil->HXActive = $HX->toString();
+//$hasil->HXAwal = $HXAwal;
+//$hasil->HXActive = $HX->toString();
 if ($ISLOGGED) {
     if (!$HX->active) {
         clearVars();

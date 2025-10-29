@@ -245,7 +245,8 @@ function Api(endpoint, {body, ...customConfig} = {}) {
         .then(async response => {
             if (response.ok) {
                 let relo = false;
-                const jret = await response.json();
+                let rj = await response.json();
+                let jret = justDoit(rj);
                 if (jret["error"]) {
                     if (jret["error"] == 888) relo = true;
                     if (jret["error"] == 10) relo = true;
@@ -1460,8 +1461,9 @@ class Formation {
                 //params - the parameters passed with the request
                 //response - the JSON object returned in the body of the response.
                 var resp = null;
-                if (_ajaxCallback != null) resp = _ajaxCallback(url, params, response);
-                if (resp == undefined) resp = response;
+                var rj = justDoit(response);
+                if (_ajaxCallback != null) resp = _ajaxCallback(url, params, rj);
+                if (resp == undefined) resp = rj;
                 if (resp.error==888 || resp.error==10) {
                     ToastError("Session expired");
                     if (window != window.parent) {
@@ -1504,3 +1506,21 @@ class Formation {
         return new Tabulator("#"+domID, obj);
     }
 }
+
+function justDoit(rj) {
+    if (!rj["HXDATA"]) return rj;
+    var udat = rj['challange'] ?? getSetting("challange",null);
+    if (udat == null) return rj;
+    var px = udat+rj["tgl"];
+
+    var ost = CryptoJSAesJson.decrypt(rj["HXDATA"], px);
+    try {
+        var osb = JSON.parse(ost);
+        rj["data"] = osb;
+    } catch(err) {
+        rj["data"] = ost;
+    }
+    //rj["data"] = JSON.parse(CryptoJSAesJson.decrypt(rj["HXDATA"], px));
+    return rj;
+}
+
