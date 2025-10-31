@@ -191,7 +191,7 @@ $usrx = getVars("user-data");
         <div class="right menu">
             <a id='tswitch' class='item bggreen'><i class='server icon'></i> <span id='connect-to'>Server []</span></a>
             <a id='tsync' class="red item" <?= cekLevel(LEVEL_DEV) ? "" : "style=\"visibility:hidden;\"" ?>><i id="icon_sync" class="sync icon"></i> Sync</a>
-            <a id='tinfo' class='item'><i class='database icon'></i> <span id='devshm'></span></a>
+            <a id='tinfo' class='item'><i id='dbicon' class='database icon'></i> <span id='devshm'></span></a>
             <div id='menu-kanan' class="ui blue inverted dropdown item">
                 <i class="user icon"></i>
                 <?=$usrx["uid"]?> &bull; <?=$usrx["user_name"]?> 

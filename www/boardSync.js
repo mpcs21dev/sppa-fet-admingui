@@ -104,6 +104,7 @@ TSync = {
         if (id>0) this.lastId = id;
         self = this;
         function doit_repeat() {
+            $id('dbicon').className = 'green database icon';
             Api(self.syncUrl+'/'+self.lastId).then(
                 data => {
                     if (data.error == 0) {
@@ -164,6 +165,7 @@ TSync = {
                     if (self.active) {
                         setTimeout(doit_repeat, self.interval);
                     }
+                    $id('dbicon').className = 'database icon';
                 },
                 error => {
                     //FError("Fetch event error", error);
@@ -174,6 +176,7 @@ TSync = {
                     };
                     $id('errInfo').innerText = JSON.stringify(obj,null,2);
                     self.changeIcon();
+                    $id('dbicon').className = 'database icon';
                 }
             );
         }
