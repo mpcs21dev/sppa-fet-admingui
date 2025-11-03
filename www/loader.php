@@ -1,6 +1,7 @@
 <?php
 require_once "check.php";
 header_remove("X-Powered-By");
+$usrx = getVars("user-data");
 ?><!DOCTYPE html>
 <html>
 <head>
@@ -80,7 +81,7 @@ header_remove("X-Powered-By");
         "cmsuser" => 2,
         "config" => 1,
         "holiday" => 9999,
-        "ref" => 2
+        "ref" => 1
     );
     function cekPage($ix) {
         global $pages;

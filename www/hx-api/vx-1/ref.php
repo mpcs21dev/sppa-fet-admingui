@@ -26,7 +26,7 @@
     ]
 */
 function api_fn($hasil, $parm, $json) {
-    if (!cekLevel(LEVEL_DEV)) done($hasil, 26);
+    //if (!cekLevel(LEVEL_DEV)) done($hasil, 26);
     global $JPOST;
 
     if (count($parm)<2) {
@@ -60,9 +60,11 @@ function api_fn($hasil, $parm, $json) {
             $doby = array(array("field"=>"name","dir"=>"asc"),array("field"=>"int_key","dir"=>"asc"),array("field"=>"str_key","dir"=>"asc"));
             switch ($action) {
                 case 'list':
-                    $sql = "SELECT * FROM public.reference";
+                    $sql = "SELECT * FROM public.reference where name='SETTING'";
+                    if (cekLevel(2)) $sql = "SELECT * FROM public.reference";
                     break;
                 case 'create':
+                    if (!cekLevel(2)) done($hasil, 26);
                     $lact = "CREATE";
                     $xr = false;
                     if ($json["name"] == "") $xr = true;
@@ -134,8 +136,14 @@ function api_fn($hasil, $parm, $json) {
                     try {
 	                    if ($json["str_key"] == "") $json["str_key"]=null;
                     } catch (Exception $e) {}
+                    if (!cekLevel(2)) {
+                        unset($json["name"]);
+                        unset($json["str_key"]);
+                        unset($json["int_key"]);
+                    }
                     break;
                 case 'delete':
+                    if (!cekLevel(2)) done($hasil, 26);
                     $lact = "DELETE";
                     $sql = "public.reference";
                     break;

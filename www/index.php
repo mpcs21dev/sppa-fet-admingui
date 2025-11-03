@@ -156,9 +156,6 @@ $usrx = getVars("user-data");
         <div id='menu-kiri' class="ui inverted blue dropdown item icon">
             <i class="bars icon"></i>
             <div class="menu">
-                <div style='display:none;' class="item" id="mnu-participant">Participant Services</div>
-                <div style='display:none;' class="item" id="mnu-transaction">Transaction List</div>
-                <div style='display:none;' class="item" id="mnu-event">Event List</div>
                 <div class="item">
                     <i class="dropdown icon"></i>
                     <span class="text">Settings</span>
@@ -167,12 +164,13 @@ $usrx = getVars("user-data");
                         <?= cekLevel(1000)?'<div class="item" id="mnu-holiday">Holiday</div>':'' ?>
                     </div>
                 </div> 
-                <?php if (cekLevel(2)) { ?>
+                <?php if (cekLevel(1)) { ?>
                 <div class="item">
                     <i class="dropdown icon"></i>
                     <span class="text">Administrative</span>
                     <div class="menu">
-                        <?= cekLevel(LEVEL_DEV) ? '<div class="item" id="mnu-ref">Reference</div>' : '' ?>
+                        <?= cekLevel(LEVEL_DEV) ? '<div class="item" id="mnu-ref">Reference</div>' : 
+                        ($usrx["ulevel"] == 1 ? '<div class="item" id="mnu-ref">Reference</div>' : '') ?>
                         <div class="item" id="mnu-user">User</div>
                     </div>
                 </div>

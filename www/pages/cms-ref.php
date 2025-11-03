@@ -63,22 +63,29 @@ $Model = '{
     updated_at:{caption:"Updated Date", type:"datetime", autoValue:true, formatter: datetimeFormatter},
     inserted_at:{caption:"Inserted Date", type:"datetime", autoValue:true, formatter: datetimeFormatter}
 }';
-
+$startup = cekLevel(2) ? "" : "
+    \$id('btnAdd').remove();
+    \$id('btnDelete').remove();
+";
+$ulevel = $usrx["ulevel"];
 $PRM = array(
     "icon" => "check double",
     "caption" => "Reference",
     "accordionID" => "",
     "menuID" => "menu-ref",
     "apiList" => "api/?1/ref/ref/list",
-    "apiCreate" => "api/?1/ref/ref/create",
+    "apiCreate" => cekLevel(2) ? "api/?1/ref/ref/create" : "",
     "apiUpdate" => "api/?1/ref/ref/update",
-    "apiDelete" => "api/?1/ref/ref/delete",
+    "apiDelete" => cekLevel(2) ? "api/?1/ref/ref/delete" : "",
     "labelField" => "name",
     "extraButtons" => "",
-    "jsStartup" => "",
+    "jsStartup" => $startup,
     "addAfterShow" => "",
     "editAfterShow" => "
-        if (sel.str_key == 'SMTP_PASS') \$id('fld-str_val').type = 'password';
+        if (sel.str_key == 'SMTP_PASS') {
+            var xel = \$id('fld-str_val');
+            if (xel) xel.type = 'password'; 
+        }
     ",
     "model" => $Model,
     "extraJS" => "
