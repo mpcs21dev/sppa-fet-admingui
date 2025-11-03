@@ -171,7 +171,7 @@ $usrx = getVars("user-data");
                     <div class="menu">
                         <?= cekLevel(LEVEL_DEV) ? '<div class="item" id="mnu-ref">Reference</div>' : 
                         ($usrx["ulevel"] == 1 ? '<div class="item" id="mnu-ref">Reference</div>' : '') ?>
-                        <div class="item" id="mnu-user">User</div>
+                        <?= cekLevel(2) ? '<div class="item" id="mnu-user">User</div>' : '' ?>
                     </div>
                 </div>
                 <?php } ?>

@@ -42,15 +42,14 @@
         Api("api/?1/login",{body: data}).then(
             data => {
                 LoaderHide();
+                setSetting("challange",data.challange);
                 if (data.error == 0) {
                     ToastSuccess("Login Success");
                     setSetting("user-data",data.data);
-                    setSetting("challange",data.challange);
                     setSetting("last-log",data.lastLog);
                     window.location.replace("index.php");
                 } else {
                     ToastError("Login", data.message);
-                    setSetting("challange",data.challange);
                     if (data.error == 300) {
                         oldies = data.data;
                         window.setTimeout(do_expired,900);
@@ -121,6 +120,7 @@
                 Api('api/?1/unexpire', {body: JSON.stringify(fdata)}).then(
                     data => {
                         LoaderHide();
+                        setSetting("challange",data.challange);
                         if (data.error == 0) {
                             ToastSuccess('Change password success');
                             //btnRefresh_click();

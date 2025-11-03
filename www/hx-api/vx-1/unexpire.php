@@ -4,10 +4,15 @@
 */
 function api_fn($hasil, $ar = array(), $json = null) {
     global $JPOST;
+    clearVars();
+    $hasil->challange = getChallange();
     $usr = data_read(withSchema("user"),"id",$JPOST["id"]);
     $old = $usr;
     //$usr["passwd"] = data_lookup(withSchema("user"),"id",$usr["id"],"passwd");
     //$id = intval($usr["id"]);
+    if ($usr["passwd"] == $JPOST["pwd1"]) {
+        done($hasil, 600, "New passord same as old password");
+    }
     if ($usr["passwd"] == $JPOST["pwd0"]) {
         $dx = data_lookup(withSchema("reference"),"str_key","PASSWORD-EXPIRE","str_val");
         // update password;
