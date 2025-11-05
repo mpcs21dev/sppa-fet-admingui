@@ -36,6 +36,7 @@ function initdb() {
     $sql_6 = "CREATE TABLE wsc_session (
     	'id' INTEGER primary key AUTOINCREMENT,
     	'uid' VARCHAR(50),
+        'ipaddr' VARCHAR(32),
     	'tick' integer
     );";
     $sql_7 = "CREATE TABLE wsc_uilogin (

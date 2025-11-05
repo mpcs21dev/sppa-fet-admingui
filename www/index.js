@@ -1303,7 +1303,7 @@ class Formation {
             var fval = data[key];
             if (meta.lookup) fval = Lookup.value(meta.lookup.table, fval);
             if (meta.editorFormat) fval = meta.editorFormat({getValue:()=>fval});
-            var nval = (fval+"").replace(/"/g, '&quot;');
+            var nval = escapeTag(fval); //(fval+"").replace(/"/g, '&quot;');
             var addx = `value="${nval}"`;
  
             var pretex = meta.pretext ?? "";
@@ -1321,7 +1321,7 @@ class Formation {
             var control = "";
             switch (meta.control || meta.type || "input") {
                 case "password":
-                    control = `${pref}<input type="password" id="${this.prefixId}${key}" name="${key}" data-field-name="${key}" data-field-value="${data[key]}" placeholder="${ph}" ${addx}>${suff}`;
+                    control = `${pref}<input type="password" id="${this.prefixId}${key}" name="${key}" data-field-name="${key}" data-field-value="${escapeTag(data[key])}" placeholder="${ph}" ${addx}>${suff}`;
                     break;
                 case "color":
                     control = `${pref}<input type="color" id="${this.prefixId}${key}" name="${key}" data-field-name="${key}" data-field-value="${data[key]}" placeholder="${ph}" ${addx}>${suff}`;
@@ -1333,7 +1333,7 @@ class Formation {
                     control += `<div id="${this.prefixId}${key}-prv">${isi}</div>`;
                     break;
                 case "textarea":
-                    control = `${pref}<textarea class="hta94" id="${this.prefixId}${key}" name="${key}" data-field-name="${key}" data-field-value="${data[key]}" placeholder="${ph}" ${maxl} ${addx}>${fval}</textarea>${suff}`;
+                    control = `${pref}<textarea class="hta94" id="${this.prefixId}${key}" name="${key}" data-field-name="${key}" data-field-value="${escapeTag(data[key])}" placeholder="${ph}" ${maxl} ${addx}>${escapeTag(fval)}</textarea>${suff}`;
                     break;
                 case "date":
                     addx = `value="${fval.substring(0,10)}"`;
@@ -1365,7 +1365,7 @@ class Formation {
                     control = `${pref}<div class="ui toggle checkbox"><input type="checkbox" id="${this.prefixId}${key}" name="${key}" data-field-name="${key}" data-field-value="${data[key]}" placeholder="${ph}" ${addx} ${addy}><label></label></div>${suff}`;
                     break;
                 default:
-                    control = `${pref}<input type="text" id="${this.prefixId}${key}" name="${key}" data-field-name="${key}" data-field-value="${data[key]}" placeholder="${ph}" ${maxl} ${uclass} ${addx}>${suff}`;
+                    control = `${pref}<input type="text" id="${this.prefixId}${key}" name="${key}" data-field-name="${key}" data-field-value="${escapeTag(data[key])}" placeholder="${ph}" ${maxl} ${uclass} ${addx}>${suff}`;
                     break;
             }
             hasil += control;
@@ -1391,7 +1391,7 @@ class Formation {
             if (meta.hidden || false) continue; // ini kenapa banyak ya?
             var tag = meta.useTag || false;
             var crlf = meta.crlf || false;
-            var teks = data[key];
+            var teks = escapeTag(data[key]);
             if (meta.formatter && (!indices.includes(key))) {
                 var cell = {
                     getValue: () => {return data[key];}
@@ -1419,7 +1419,7 @@ class Formation {
                     teks = jsonToHTMLTable(obj,'vertical');
                 }
             } else {
-                teks = escapeTag(teks);
+                //teks = escapeTag(teks);
             }
             hasil += `<tr><td class="collapsing">${meta.caption}</td><td${style}>${teks}</td></tr>`;
         }

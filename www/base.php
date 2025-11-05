@@ -9,6 +9,7 @@ require_once(__DIR__."/api/db.php");
 class HXActive {
     private $user;
     private $tick;
+    private $ipaddr;
     private $timeout = 5*60; // lima menit;
     public $count = -1;
     public $active = false;
@@ -17,6 +18,7 @@ class HXActive {
     public function __construct($uid="") {
         $this->user = strtoupper($uid);
         $this->tick = time();
+        $this->ipaddr = $_SERVER["HTTP_X_FORWARDED_FOR"]??$_SERVER["X_FORWARDED_FOR"]??$_SERVER["REMOTE_ADDR"];
         //$this->debug[] = basename($_SERVER['PHP_SELF'])." ## construct: ".$uid;
     }
 
@@ -26,6 +28,7 @@ class HXActive {
         $hasil["tick"] = $this->tick;
         $hasil["timeout"] = $this->timeout;
         $hasil["active"] = $this->active;
+        $hasil["ipaddr"] = $this->ipaddr;
         $hasil["count"] = $this->count;
         return json_encode($hasil);
     }
@@ -33,6 +36,7 @@ class HXActive {
     public function reset($uid="") {
         $this->user = strtoupper($uid);
         $this->tick = time();
+        $this->ipaddr = $_SERVER["HTTP_X_FORWARDED_FOR"]??$_SERVER["X_FORWARDED_FOR"]??$_SERVER["REMOTE_ADDR"];
         $this->active = false;
         $hreg = $this->reg();
         //$this->debug[] = basename($_SERVER['PHP_SELF'])." ## reset; ".$uid."; reg=".$hreg;
@@ -46,6 +50,7 @@ class HXActive {
         $j->tick = $this->tick;
         $j->timeout = $this->timeout;
         $j->active = $this->active;
+        $j->ipaddr = $this->ipaddr;
         //$j->debug = $this->debug;
         $_SESSION["__ACTIVE"] = $j;
         return true;
@@ -61,6 +66,7 @@ class HXActive {
 
         $this->user = $j->user;
         $this->tick = $j->tick;
+        $this->ipaddr = $j->ipaddr;
         $this->timeout = $j->timeout;
         //$this->debug = array_merge(array(), $j->debug);
 
@@ -93,8 +99,8 @@ class HXActive {
     }
 
     private function regdb() {
-        $sql = "insert into wsc_session(uid, tick) values (?, unixepoch())";
-        $prm = array($this->user);
+        $sql = "insert into wsc_session(uid, ipaddr, tick) values (?, ?, unixepoch())";
+        $prm = array($this->user, $this->ipaddr);
         DBX(2)->run($sql, $prm);
         //$this->debug[] = basename($_SERVER['PHP_SELF'])." [regdb] ".$this->user;
         return true;
@@ -147,9 +153,9 @@ $ISLOGGED = $_SESSION["logged"] == $LOGGED;
 $_SESSION["vars"] = isset($_SESSION["vars"]) ? $_SESSION["vars"] : array();
 //session_write_close();
 $HX = new HXActive();
-//$HX->load();
-$HXAwal = $HX->toString();
 $HX->load();
+//$HXAwal = $HX->toString();
+//$HX->load();
 //if ($HX->load()) $HX->tick();
 
 $PATH = "";
