@@ -113,11 +113,16 @@ TSync = {
                         //let dats = {};
                         if (Array.isArray(data.diskFree)) {
                             $id("devshm").innerText = data.diskFree[3];
+                            /*
                             $id("devshm").dataset.title = "MEM-DB";
                             $id("devshm").dataset.content = "[LIMIT = "+data.diskFree[1]+"] "+
                                 "[USED = "+data.diskFree[2]+"] "+
                                 "[FREE = "+data.diskFree[3]+"]";
                             $('#devshm').popup();
+                            */
+                            $id("shm-limit").innerText = "LIMIT: "+data.diskFree[1];
+                            $id("shm-used").innerText  = "USED : "+data.diskFree[2];
+                            $id("shm-free").innerText  = "FREE : "+data.diskFree[3];
                         }
                         let rtrx = false;
                         let reve = false;

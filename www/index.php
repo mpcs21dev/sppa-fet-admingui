@@ -134,6 +134,8 @@ $usrx = getVars("user-data");
         .finput > input:focus {
             outline: none;
         }
+        .bmono { font-family: monospace; font-weight: bold; white-space: pre; }
+        .mono { font-family: monospace; white-space: pre; }
     </style>
     <link rel="stylesheet" type="text/css" href="classes.css">
     <link rel="stylesheet" type="text/css" href="framer.css">
@@ -187,9 +189,19 @@ $usrx = getVars("user-data");
         <!-- TASKBAR :: END -->
         <!-- MENU KANAN :: START -->
         <div class="right menu">
-            <a id='tswitch' class='item bggreen'><i class='server icon'></i> <span id='connect-to'>Server []</span></a>
             <a id='tsync' class="red item" <?= cekLevel(LEVEL_DEV) ? "" : "style=\"visibility:hidden;\"" ?>><i id="icon_sync" class="sync icon"></i> Sync</a>
-            <a id='tinfo' class='item'><i id='dbicon' class='database icon'></i> <span id='devshm'></span></a>
+            <a id='tswitch' class='item bggreen'><i class='server icon'></i> <span id='connect-to'>Server []</span></a>
+            <!-- <a id='tinfo' class='item'><i id='dbicon' class='database icon'></i> <span id='devshm'></span></a> -->
+            <div id='tinfo' class='ui orange inverted dropdown item'>
+                <i id="dbicon" class="database icon"></i>
+                <span id='devshm'></span>
+                <div class="menu">
+                    <div class="item" id="shm-info"><i class="memory icon"></i> MEM-DB Info</div>
+                    <div class="item" id="shm-limit">Limit</div>
+                    <div class="item" id="shm-used">Used</div>
+                    <div class="item" id="shm-free">Free</div>
+                </div>
+            </div>
             <div id='menu-kanan' class="ui blue inverted dropdown item">
                 <i class="user icon"></i>
                 <?=$usrx["uid"]?> &bull; <?=$usrx["user_name"]?> 
@@ -266,6 +278,7 @@ $usrx = getVars("user-data");
 
         $('#menu-kiri').dropdown();
         $('#menu-kanan').dropdown();
+        $('#tinfo').dropdown();
 
         function assignFr(name,caption,url,vfill=true,vgutt=35) {
             let o = new Framr(name,caption,url);
