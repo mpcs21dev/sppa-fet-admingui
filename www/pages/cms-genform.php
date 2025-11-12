@@ -262,7 +262,7 @@ foreach ($DPRM as $key=>$val) $PPRM[$key] = array_key_exists($key, $PRM) ? $PRM[
             prm.icon = "exclamation triangle icon red";
         }
 
-        $('body').modal('myConfirm', `<i class='${prm.icon}'></i> ${prm.title}`, prm.get_caption(sel), ()=>{
+        $('body').modal('myConfirm', `<i class='${prm.icon}'></i> ${escapeTag(prm.title)}`, escapeTag(prm.get_caption(sel)), ()=>{
             Loader(prm.msg_loader);
             var fdata = frmPage.formDataTabRow(sel);
             Api(prm.api, {body: fdata}).then(

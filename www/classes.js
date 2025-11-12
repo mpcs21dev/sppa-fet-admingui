@@ -97,7 +97,7 @@ function jsonToHTMLTable(xjson,headingType,mode="mixed",tableClass="mvtable"){
             var fld = tableHeaders[k];
             if (mode=="camel") fld = capitalizeWords(camelCaseSpacer(tableHeaders[k]));
             if (mode=="underscore") fld = capitalizeWords(undescoreSpace(tableHeaders[k]));
-            headersHtml += "<th>"+fld+"</th>";
+            headersHtml += "<th>"+escapeTag(fld)+"</th>";
         }
         headersHtml+="</tr>";
 
@@ -108,7 +108,7 @@ function jsonToHTMLTable(xjson,headingType,mode="mixed",tableClass="mvtable"){
                 if(typeof parsedJson[l][tableHeaders[m]] == 'undefined')
                     rows += "<td></td>";
                 else
-                rows += "<td>"+  parsedJson[l][tableHeaders[m]]  +"</td>";
+                    rows += "<td>"+  escapeTag(parsedJson[l][tableHeaders[m]])  +"</td>";
             }
             rows += "</tr>";
         }
@@ -133,15 +133,20 @@ function jsonToHTMLTable(xjson,headingType,mode="mixed",tableClass="mvtable"){
                     if (mode=="camel") fld = capitalizeWords(camelCaseSpacer(tableHeaders[k]));
                     if (mode=="underscore") fld = capitalizeWords(undescoreSpace(tableHeaders[k]));
                     if (mode=="mixed") fld = capitalizeWords(camelCaseSpacer(undescoreSpace(tableHeaders[k])));
-                    rows += "<th>"+fld+"</th>";
+                    rows += "<th>"+escapeTag(fld)+"</th>";
                 }
                 if(typeof parsedJson[l][tableHeaders[k]] == 'undefined')
                     rows += "<td></td>";
                 else {
                     var content = parsedJson[l][tableHeaders[k]];
-                    if (Array.isArray(content)) content = jsonToHTMLTable(content,'vertical');
-                    if (content instanceof Object) content = jsonToHTMLTable(content,'vertical');
-                    rows += "<td>"+  content +"</td>";
+                    var doe = true;
+                    try {
+                        var jp = JSON.parse(content);
+                        content = jp;
+                    } catch (e) { /* do nothing */ }
+                    if (Array.isArray(content)) { content = jsonToHTMLTable(content,'vertical'); doe=false; }
+                    if (content instanceof Object) { content = jsonToHTMLTable(content,'vertical'); doe=false; }
+                    rows += "<td>"+  (doe?escapeTag(content):content) +"</td>";
                 }
             }
             rows += "</tr>";

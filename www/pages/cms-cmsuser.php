@@ -57,6 +57,7 @@ $PRM = array(
 
         Ref.load('User', 'api/?1/user/user/listall');
         Ref.load('UserLevel', 'api/?1/user/user/level');
+        usrx = getSetting('user-data');
     ",
     "fnAdd" => "btnAdd2_click",
     "fnDelete" => "btnDel_click",
@@ -106,17 +107,17 @@ $PRM = array(
                 return;
             }
 
-            if (sel['uid'] == 'ROOT') {
-                ToastError('Delete User','Cannot delete user ROOT');
+            if (sel['ulevel'] > usrx['ulevel']) {
+                ToastError('Delete User','Cannot delete higher level user');
                 return;
             }
 
-            if (getSetting('user-data')['uid'] != 'ROOT'  &&  getSetting('user-data')['uid'] != 'APPDEV') {
-                ToastError('Delete User','Only ROOT can delete user');
+            if (usrx[ulevel] < 5) {
+                ToastError('Delete User','Only administrators can delete user');
                 return;
             }
 
-            $('body').modal('myConfirm', `<i class='exclamation triangle icon red'></i> Delete User`, `Delete user [\${sel.user_name}] ?`, ()=>{
+            $('body').modal('myConfirm', `<i class='exclamation triangle icon red'></i> Delete User`, `Delete user [\${escapeTag(sel.user_name)}] ?`, ()=>{
                 Loader('Deleting User...');
                 var fdata = frmPage.formDataTabRow(sel);
                 Api('api/?1/user/user/delete', {body: fdata}).then(

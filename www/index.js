@@ -33,6 +33,11 @@ caseNormalizer = (teks) => {
     if (sket == teks) return normalizeCase(teks, true);
     return normalizeCase(teks);
 }
+function removeTag(str) {
+    if ((str === null) || (str ==='')) return str;
+    str = str.toString();
+    return str.replace(/(<([^>]+)>)/ig, '');
+}
 function escapeTag(str) {
     return (""+str).replace(/&/g, "&amp;")
           .replace(/</g, "&lt;")
@@ -1009,6 +1014,7 @@ class Formation {
             useTag:     wrap tag in view
             pretext:    text before field label
             posttext:   text after field label
+            allowHTML:  all | loose | strict | none
             <-- for tabulator -->
             title
             formatter
@@ -1108,6 +1114,7 @@ class Formation {
             //var ucase = meta.upperCase || this.upperValue;
             var control = meta.control || meta.type || "";
             var normalCase = meta.normalize || false;
+            var html_allow = (meta.allowHTML || "none").toLowerCase();
 
             var e = document.getElementById(this.prefixId+key);
             if (e) {
@@ -1126,6 +1133,7 @@ class Formation {
                             var value = readonly ? e.dataset.fieldValue : e.value;
                             if (normalCase) value = caseNormalizer(value);
                             if (ucase) value = value.toUpperCase();
+                            if (html_allow == "none") value = removeTag(value);
                             if (value == this.tempData[e.dataset.fieldName] && value == ""){
                                 if (getRO) {
                                     hasil.append(e.dataset.fieldName, value);
@@ -1139,6 +1147,7 @@ class Formation {
                             var value = e.value;
                             if (normalCase) value = caseNormalizer(value);
                             if (ucase) value = value.toUpperCase();
+                            if (html_allow == "none") value = removeTag(value);
                             if (!auto) {
                                 hasil.append(e.dataset.fieldName, value);
                                 obj[e.dataset.fieldName] = value;

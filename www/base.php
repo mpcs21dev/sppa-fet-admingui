@@ -1,5 +1,9 @@
 <?php
+@header_remove("X-Powered-By");
+@ini_set('expose_php', 'off');
 date_default_timezone_set('Asia/Jakarta');
+error_reporting(0);
+
 $LOGGED = "^___^";
 $DEVELOPMENT = true;
 
@@ -146,6 +150,7 @@ class HXActive {
     }
 }
 
+session_name("CMSXID");
 session_start();
 
 $_SESSION["logged"] = isset($_SESSION["logged"]) ? $_SESSION["logged"] : "";

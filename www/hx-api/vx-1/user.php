@@ -155,7 +155,6 @@ function api_fn($hasil, $parm, $json) {
         case 'listall':
             try {
                 $lst = DBX($dbx)->run($sql)->fetchAll();
-                $lst["passwd"]="";
                 $hasil->data = $lst;
                 $hasil->last_page = 1;
                 $hasil->last_row = count($lst);

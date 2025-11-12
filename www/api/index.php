@@ -10,8 +10,6 @@ require_once("db.php");
 require_once("fn.php");
 require_once("fn.db.php");
 
-header_remove("X-Powered-By");
-
 $hasil = new stdClass();
 $hasil->message = "OK";
 $hasil->error = 0;

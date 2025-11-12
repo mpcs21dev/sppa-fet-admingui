@@ -1,6 +1,5 @@
 <?php
 require_once "check.php";
-header_remove("X-Powered-By");
 $usrx = getVars("user-data");
 ?><!DOCTYPE html>
 <html>

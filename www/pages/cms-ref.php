@@ -29,7 +29,7 @@ $Model = '{
             return true;
         }
     },
-    str_val:   {caption:"Value", type:"string", upperCase:false, headerFilter: true, 
+    str_val:   {caption:"Value", type:"string", upperCase:false, allowHTML:"all", headerFilter: true, 
         formatter: function(cell) {
             var hasil = "";
             var vlu = cell.getValue();
@@ -86,7 +86,12 @@ $PRM = array(
             var xel = \$id('fld-str_val');
             if (xel) xel.type = 'password'; 
         }
-    ",
+        if (sel.str_key == 'PASSWORD-EXPIRE') {
+            document.getElementById('fld-str_val').addEventListener('input', function(ev) {
+                includeChars(ev,'0123456789');
+            });
+        }
+     ",
     "model" => $Model,
     "extraJS" => "
         LastKey = '';
