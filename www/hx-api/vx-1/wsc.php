@@ -214,5 +214,11 @@ function api_fn($hasil, $parm, $json) {
     $dfstr = shell_exec('df -h | grep /dev/shm');
     $dfarr = preg_split('/\s+/', $dfstr, -1, PREG_SPLIT_NO_EMPTY);
     $hasil->diskFree = $dfarr;
+    $hasil->server = "";
+    try {
+        $csvr = json_decode(DBX(0)->run("select data from public.config where participant_id='FIX'")->fetchColumn());
+        $hasil->server = $csvr->currentServer;
+    }
+
     return done($hasil);
 }

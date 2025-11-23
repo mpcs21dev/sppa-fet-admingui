@@ -1,6 +1,5 @@
 <?php
 function api_fn($hasil, $parm, $json) {
-    if (!cekLevel(LEVEL_ADMIN)) done($hasil, 26);
     global $JPOST;
 
     if (count($parm)<1) {

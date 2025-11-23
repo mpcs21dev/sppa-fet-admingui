@@ -124,6 +124,9 @@ TSync = {
                             $id("shm-used").innerText  = "USED : "+data.diskFree[2];
                             $id("shm-free").innerText  = "FREE : "+data.diskFree[3];
                         }
+                        if (data.server != "") {
+                            $id("connect-to").innerText = `Server [${data.server}]`;
+                        }
                         let rtrx = false;
                         let reve = false;
                         const x = data.data.length;
@@ -182,6 +185,9 @@ TSync = {
                     $id('errInfo').innerText = JSON.stringify(obj,null,2);
                     self.changeIcon();
                     $id('dbicon').className = 'database icon';
+                    if (self.active) {
+                        setTimeout(doit_repeat, self.interval);
+                    }
                 }
             );
         }
